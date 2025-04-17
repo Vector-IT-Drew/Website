@@ -392,106 +392,33 @@
     
     <!-- Property Gallery -->
     <div class="property-gallery mb-4">
-        {% set has_images = false %}
-        
         <!-- If we have images -->
-        {% if listing.unit_images %}
-            {% if listing.unit_images is string and listing.unit_images.startswith('http') %}
-                <!-- Single image -->
-                <div class="gallery-grid">
-                    <div class="gallery-main">
-                        <img src="{{ listing.unit_images }}" alt="{{ listing.address }}" class="gallery-img">
+        <div class="gallery-grid">
+            <div class="gallery-main">
+                <img src="{{ listing.unit_images[0] if listing.unit_images else 'https://dl.dropboxusercontent.com/scl/fi/in5oflurzeui3k61z2vh6/img-coming-soon-4.jpeg?rlkey=rp9ucjxfih59yldqgsib9ukdl&st=4byf8tgo&dl=0' }}" alt="{{ listing.address }}" class="gallery-img">
+                <div class="gallery-overlay"></div>
+            </div>
+            <div class="gallery-sidebar" {% if listing.unit_images|length == 1 or not listing.unit_images %}style="display: flex; flex-direction: column; justify-content: center; align-items: center; background-color: rgba(0, 0, 0, 0.1);"{% endif %}>
+                {% if listing.unit_images|length > 1 %}
+                    <div class="gallery-item">
+                        <img src="{{ listing.unit_images[1] if listing.unit_images|length > 1 else 'https://dl.dropboxusercontent.com/scl/fi/in5oflurzeui3k61z2vh6/img-coming-soon-4.jpeg?rlkey=rp9ucjxfih59yldqgsib9ukdl&st=4byf8tgo&dl=0' }}" alt="{{ listing.address }}" class="gallery-img">
                         <div class="gallery-overlay"></div>
                     </div>
-                    <div class="gallery-sidebar" style="background-color: rgba(0, 0, 0, 0.5); display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                        <div style="text-align: center; padding: 20px;">
-                            <i class="fas fa-camera fa-3x mb-3" style="color: rgba(255, 255, 255, 0.5);"></i>
-                            <p class="text-white-50">Additional property photos<br>coming soon</p>
-                        </div>
-                    </div>
-                </div>
-                {% set has_images = true %}
-            {% elif listing.unit_images is string and listing.unit_images != '[]' %}
-                {% set images = listing.unit_images|replace('\"', '"')|from_json %}
-                {% if images and images|length > 0 %}
-                    <div class="gallery-grid">
-                        <div class="gallery-main">
-                            <img src="{{ images[0] }}" alt="{{ listing.address }}" class="gallery-img">
-                            <div class="gallery-overlay"></div>
-                        </div>
-                        <div class="gallery-sidebar" {% if images|length == 1 %}style="display: flex; flex-direction: column; justify-content: center; align-items: center; background-color: rgba(0, 0, 0, 0.1);"{% endif %}>
-                            {% if images|length > 1 %}
-                                <div class="gallery-item">
-                                    <img src="{{ images[1] }}" alt="{{ listing.address }}" class="gallery-img">
-                                    <div class="gallery-overlay"></div>
-                                </div>
-                                
-                                {% if images|length > 2 %}
-                                <div class="gallery-item">
-                                    <img src="{{ images[2] }}" alt="{{ listing.address }}" class="gallery-img">
-                                    <div class="gallery-overlay"></div>
-                                </div>
-                                {% endif %}
-                            {% else %}
-                                <div style="text-align: center; padding: 20px;">
-                                    <i class="fas fa-camera fa-3x mb-3" style="color: rgba(255, 255, 255, 0.3);"></i>
-                                    <p class="text-white-50">More photos coming soon</p>
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                    {% set has_images = true %}
-                {% endif %}
-            {% elif listing.unit_images is iterable and listing.unit_images is not string and listing.unit_images|length > 0 %}
-                <div class="gallery-grid">
-                    <div class="gallery-main">
-                        <img src="{{ listing.unit_images[0] }}" alt="{{ listing.address }}" class="gallery-img">
+                    
+                    {% if listing.unit_images|length > 2 %}
+                    <div class="gallery-item">
+                        <img src="{{ listing.unit_images[2] if listing.unit_images|length > 2 else 'https://dl.dropboxusercontent.com/scl/fi/in5oflurzeui3k61z2vh6/img-coming-soon-4.jpeg?rlkey=rp9ucjxfih59yldqgsib9ukdl&st=4byf8tgo&dl=0' }}" alt="{{ listing.address }}" class="gallery-img">
                         <div class="gallery-overlay"></div>
                     </div>
-                    <div class="gallery-sidebar" {% if listing.unit_images|length == 1 %}style="display: flex; flex-direction: column; justify-content: center; align-items: center; background-color: rgba(0, 0, 0, 0.1);"{% endif %}>
-                        {% if listing.unit_images|length > 1 %}
-                            <div class="gallery-item">
-                                <img src="{{ listing.unit_images[1] }}" alt="{{ listing.address }}" class="gallery-img">
-                                <div class="gallery-overlay"></div>
-                            </div>
-                            
-                            {% if listing.unit_images|length > 2 %}
-                            <div class="gallery-item">
-                                <img src="{{ listing.unit_images[2] }}" alt="{{ listing.address }}" class="gallery-img">
-                                <div class="gallery-overlay"></div>
-                            </div>
-                            {% endif %}
-                        {% else %}
-                            <div style="text-align: center; padding: 20px;">
-                                <i class="fas fa-camera fa-3x mb-3" style="color: rgba(255, 255, 255, 0.3);"></i>
-                                <p class="text-white-50">More photos coming soon</p>
-                            </div>
-                        {% endif %}
-                    </div>
-                </div>
-                {% set has_images = true %}
-            {% endif %}
-        {% endif %}
-        
-        <!-- Fallback if no images -->
-        {% if not has_images %}
-            <div class="gallery-grid">
-                <div class="gallery-main" style="background: linear-gradient(135deg, var(--primary) 0%, #1a3a68 100%);">
-                    <div class="d-flex justify-content-center align-items-center h-100">
-                        <div style="text-align: center;">
-                            <i class="fas fa-building fa-5x text-white opacity-25 mb-3"></i>
-                            <p class="text-white-50">No images available for this property</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="gallery-sidebar" style="display: flex; flex-direction: column; justify-content: center; align-items: center; background-color: rgba(0, 0, 0, 0.1);">
+                    {% endif %}
+                {% else %}
                     <div style="text-align: center; padding: 20px;">
                         <i class="fas fa-camera fa-3x mb-3" style="color: rgba(255, 255, 255, 0.3);"></i>
-                        <p class="text-white-50">Property photos coming soon</p>
+                        <p class="text-white-50">More photos coming soon</p>
                     </div>
-                </div>
+                {% endif %}
             </div>
-        {% endif %}
+        </div>
         
         <!-- Floor Plan Badge -->
         <div class="virtual-tour-badge" id="floorplan-badge" style="cursor: pointer;">

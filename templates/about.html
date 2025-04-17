@@ -5,13 +5,23 @@
 {% block content %}
 <!-- Main Hero Section -->
 <section class="about-hero position-relative" style="height: 100vh; background-color: var(--primary-dark);">
-    <div class="position-absolute w-100 h-100 top-20 start-0" style="background-image: url('{{ url_for('static', filename='images/about/nyc-skyline-2.png') }}'); background-size: cover; background-position: bottom; opacity: 1;"></div>
+    <div class="position-absolute w-100 h-100 top-0 start-0" style="background-image: url('{{ url_for('static', filename='images/about/nyc-skyline-2.png') }}'); background-size: cover; background-position: top; opacity: 1;"></div>
     
-    <div class="container h-100 d-flex align-items-start position-relative" style="padding-top: 11%;">
-        <div class="row w-100">
-            <div class="col-lg-10 mx-auto text-center">
-                <h1 class="display-2 fw-bold text-white mb-4" style="letter-spacing: -0.5px;">About Vector New York</h1>
-                <hr class="mx-auto opacity-25 mt-4 mb-0" style="width: 50px; height: 3px; background-color: var(--accent);"></hr>
+    <div class="container h-100 position-relative" style="padding-top: 6%;">
+        <div class="row">
+            <div class="col-lg-4 offset-lg-1">
+                <div class="d-flex flex-column align-items-center" style="opacity: 0.5;">
+                    <div class="mb-2">
+                        <img src="{{ url_for('static', filename='images/Vector Icon.png') }}" alt="Vector Icon" height="120" class="mb-2">
+                    </div>
+                    <div class="mb-3">
+                        <img src="{{ url_for('static', filename='images/Vector Text.png') }}" alt="Vector Text" height="60">
+                    </div>
+                    <p class="lead mb-3" style="font-weight: 300; font-size: 1.5rem; letter-spacing: 1px;">
+                        About Us
+                    </p>
+                    <hr class="opacity-25 mt-4 mb-0" style="width: 50px; height: 3px; background-color: var(--accent);"></hr>
+                </div>
             </div>
         </div>
     </div>
@@ -30,10 +40,10 @@
                 <div class="row align-items-center mb-4">
                     <div class="col-lg-7">
                         <div class="intro-text">
-                            <p class="text-white mb-4 fs-5 lh-lg">
+                            <p class="text-white mb-3 fs-5 lh-base">
                                 At Vector New York, we believe great leasing starts with great living. Since 2021, we've built one of the city's most trusted and innovative residential leasing operations, representing more than 15,000 homes across every corner of New York—from iconic high-rise towers and design-forward boutique buildings to charming walk-ups and thoughtfully managed affordable housing.
                             </p>
-                            <p class="text-white mb-4 fs-5 lh-lg">
+                            <p class="text-white mb-3 fs-5 lh-base">
                                 We're not just here to fill apartments—we're here to help people find homes they can thrive in. Because when tenants love where they live, everything else falls into place.
                             </p>
                             <hr class="mx-auto opacity-25 mt-4 mb-4" style="width: 50%; height: 1px; background-color: var(--accent);">
@@ -41,7 +51,7 @@
                     </div>
                     <div class="col-lg-5">
                         <div class="intro-image px-4">
-                            <img src="{{ url_for('static', filename='images/about/tech_blue.png') }}" alt="Modern Real Estate Technology" class="img-fluid rounded">
+                            <img src="{{ url_for('static', filename='images/about/city-artsy-yellow.jpeg') }}" alt="Modern Real Estate Technology" class="img-fluid rounded">
                         </div>
                     </div>
                 </div>
@@ -49,10 +59,10 @@
                 <div class="row mt-3">
                     <div class="col-12">
                         <h3 class="h4 text-white mb-4">Technology Meets Hospitality</h3>
-                        <p class="text-white fs-5 lh-lg">
+                        <p class="text-white fs-5 lh-base">
                             We're not a traditional brokerage. Instead, we operate like a dedicated leasing department for owners and property managers—powered by automation, real-time data tracking, and a department-based approach that replaces the outdated "jack-of-all-trades" agent model.
                         </p>
-                        <p class="text-white fs-5 lh-lg">
+                        <p class="text-white fs-5 lh-base">
                             This allows us to move fast, stay transparent, and deliver consistent results at scale—keeping buildings full and tenants satisfied.
                         </p>
                         <hr class="mx-auto opacity-25 mt-4 mb-4" style="width: 50%; height: 1px; background-color: var(--accent);">
@@ -109,21 +119,21 @@
                 <h2 class="display-5 fw-bold text-white mb-5">A Better Leasing Experience for Everyone</h2>
                 
                 <div class="row align-items-center">
-                    <div class="col-lg-5 order-lg-1 order-2 mt-5 mt-lg-0">
-                        <div class="experience-image px-4">
-                            <img src="{{ url_for('static', filename='images/about/3d-floor-plans-blue.png') }}" alt="3D Floor Plan Visualization" class="img-fluid rounded">
+                    <div class="col-lg-5 order-lg-1 order-2 mt-3 mt-lg-0">
+                        <div class="experience-image px-4 pt-0 pb-5">
+                            <img src="{{ url_for('static', filename='images/about/better-leasing-large.jpeg') }}" alt="3D Floor Plan Visualization" class="img-fluid rounded">
                         </div>
                     </div>
                     <div class="col-lg-7 order-lg-2 order-1">
-                        <p class="text-white mb-4 fs-5 lh-lg">
+                        <p class="text-white mb-3 fs-5 lh-base">
                             Whether you're a renter hoping for a streamlined, supportive path to your next apartment—or an owner looking to optimize performance across a portfolio—we make the process easy, thoughtful, and effective for all parties.
                         </p>
-                        <ul class="text-white fs-5 lh-lg mb-4">
+                        <ul class="text-white fs-5 lh-base mb-3">
                             <li>Quick and responsive scheduling</li>
                             <li>Modern visuals and listing design that respect your time and taste</li>
                             <li>Clear communication from first inquiry to lease signing</li>
                         </ul>
-                        <p class="text-white fs-5 lh-lg">
+                        <p class="text-white fs-5 lh-base">
                             Our in-house creative team ensures every listing is showcased at its best—from luxury-focused, AI-enhanced staging to dynamic video tours to clear, representative descriptions that help renters imagine daily life both inside the apartment and throughout the building—because every apartment deserves to shine, and every renter deserves to feel confident in what they're shopping for.
                         </p>
                         <hr class="mx-auto opacity-25 mt-4 mb-4" style="width: 50%; height: 1px; background-color: var(--accent);">
@@ -142,23 +152,23 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-xl-10 col-lg-11">
-                <h2 class="display-5 fw-bold text-white mb-5">Built for Scale. Tuned for People.</h2>
+                <h2 class="display-5 fw-bold text-white mb-5">Better Data. Better Outcomes. Better Living.</h2>
                 
                 <div class="row align-items-center">
-                    <div class="col-lg-7">
-                        <p class="text-white mb-4 fs-5 lh-lg">
+                    <div class="col-lg-6">
+                        <p class="text-white mb-3 fs-5 lh-base">
                             We track every phase of the leasing journey—monitoring listing engagement, response rates, tour feedback, time-to-lease, and lease outcomes—to continuously improve both the renter and owner experience.
                         </p>
-                        <p class="text-white mb-4 fs-5 lh-lg">
+                        <p class="text-white mb-3 fs-5 lh-base">
                             For owners, this means unmatched visibility, lower vacancy, and actionable insights that go beyond marketing. For tenants, it means faster answers, less stress, and homes that match both budget and lifestyle.
                         </p>
-                        <p class="text-white mb-4 fs-5 lh-lg">
+                        <p class="text-white mb-3 fs-5 lh-base">
                             At Vector New York, we're proving that technology, transparency, and a little humanity can transform the rental experience—for everyone.
                         </p>
                     </div>
-                    <div class="col-lg-5">
+                    <div class="col-lg-6">
                         <div class="analytics-image px-4">
-                            <img src="{{ url_for('static', filename='images/about/reporting_color.png') }}" alt="Data-driven Reporting" class="img-fluid rounded">
+                            <img src="{{ url_for('static', filename='images/about/better-leasing-2.jpeg') }}" alt="Data-driven Reporting" class="img-fluid rounded">
                         </div>
                     </div>
                 </div>

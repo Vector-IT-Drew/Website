@@ -470,6 +470,8 @@ def get_all_listings(address=None,
                     safe_json_loads(item.get('unit_images'), []),
                     "building_amenities":
                     safe_json_loads(item.get('building_amenities'), []),
+                    "building_image":
+                    item.get('building_image', ''),
                     "expiry":
                     item.get('expiry', '-'),
                     "move_out":

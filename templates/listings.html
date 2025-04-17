@@ -505,11 +505,16 @@
                 <div class="listing-card h-100 d-flex flex-column">
                     <!-- Image on top -->
                     <div class="listing-img" id="listing-image-{{ loop.index }}" 
+                            {% set default_images = ['https://dl.dropboxusercontent.com/scl/fi/fy2wl340lre6y2gm84m13/img-coming-soon-2.jpeg?rlkey=xkao9jz2p6mrznqhb8e3hf7w6&st=k3gwz5kj&dl=0', 'https://dl.dropboxusercontent.com/scl/fi/5kqjpn1lqdt6p73zo5xkj/img-coming-soon-3.jpeg?rlkey=ngk4iu9pvl6jusqps220pi2uv&st=ttncu3xt&dl=0', 'https://dl.dropboxusercontent.com/scl/fi/in5oflurzeui3k61z2vh6/img-coming-soon-4.jpeg?rlkey=rp9ucjxfih59yldqgsib9ukdl&st=x5td7577&dl=0', 'https://dl.dropboxusercontent.com/scl/fi/erhz52z0z7lskr8ru5v1h/img-coming-soon-5.jpeg?rlkey=bf8j1tpvtqb2q02tcjy0mdp3v&st=r7mtn0d7&dl=0'] %}
+
+                        
+                            {% set background_url = default_images|random %}
                             {% if listing.unit_images and (listing.unit_images|length > 0) and listing.unit_images[0] %}
-                                style="background-image: url('{{ listing.unit_images[0] }}');"
-                            {% else %}
-                                style="background-image: url('https://i0.wp.com/port2flavors.com/wp-content/uploads/2022/07/placeholder-614.png?fit=1200%2C800&ssl=1');"
+                                {% set background_url = listing.unit_images[0] %}
+                            {% elif listing.building_image != '' %}
+                                {% set background_url = listing.building_image %}
                             {% endif %}
+                            style="background-image: url('{{ background_url }}');"
                         
                         <!-- Property type and features badges -->
                         <div class="listing-badges">
