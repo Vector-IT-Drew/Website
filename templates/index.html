@@ -3,28 +3,34 @@
 {% block title %}Vector New York - Revolutionizing Real Estate{% endblock %}
 
 {% block content %}
-<section id="hero-section" class="hero-section text-white position-relative" style="height: 100vh; margin-top: -10px;">
-    <div class="position-absolute w-100 h-100 top-0 start-0" style="background-image: url('{{ url_for('static', filename='images/nyc-skyline (2).png') }}'); background-size: cover; background-position: center bottom; opacity: 1; padding-top: 0; margin-top: 0;">
+<!-- Main Hero Section - Structured like about.html -->
+<section class="hero-section position-relative" style="height: 100vh; background-color: var(--primary-dark); margin-top: -10px;">
+    <div class="position-absolute w-100 h-100 top-0 start-0" style="background-image: url('{{ url_for('static', filename='images/nyc-skyline (2).png') }}'); background-size: cover; background-position: center bottom; opacity: 1;"></div>
     
-    <div class="mask d-flex align-items-top justify-content-center" style="background-color: rgba(11, 21, 39, 0.3); height: 100%; padding-top:4%;">
-        <div class="text-center text-white" style="max-width: 800px; padding: 2rem; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);">
-            <div class="mb-2">
-                <img src="{{ url_for('static', filename='images/Vector Icon.png') }}" alt="Vector Icon" height="120" class="mb-2">
-            </div>
-            <div class="mb-2">
-                <img src="{{ url_for('static', filename='images/Vector Text.png') }}" alt="Vector Text" height="60">
-            </div>
-            <p class="lead mb-3" style="font-weight: 300; font-size: 1.5rem; max-width: 600px; margin: 0 auto; letter-spacing: 1px;">
-                Leasing Simplified
-            </p>
-            <div class="mt-5 pt-5">
-                <a href="#content-section" class="text-white scroll-down-link">
-                    <i class="fas fa-chevron-down fa-2x"></i>
-                </a>
+    <div class="container h-100 position-relative" style="padding-top: 6%;">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <div class="d-flex flex-column align-items-center">
+                    <div class="mb-2">
+                        <img src="{{ url_for('static', filename='images/Vector Icon.png') }}" alt="Vector Icon" height="120" class="mb-2">
+                    </div>
+                    <div class="mb-2">
+                        <img src="{{ url_for('static', filename='images/Vector Text.png') }}" alt="Vector Text" height="60">
+                    </div>
+                    <p class="lead mb-3" style="font-weight: 300; font-size: 1.5rem; max-width: 600px; margin: 0 auto; letter-spacing: 1px;">
+                        Leasing Simplified
+                    </p>
+                    <div class="mt-5 pt-5">
+                        <a href="#content-section" class="text-white scroll-down-link">
+                            <i class="fas fa-chevron-down fa-2x"></i>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
+    
+    <div class="position-absolute bottom-0 w-100" style="height: 100px; background: linear-gradient(to top, var(--primary), transparent);"></div>
 </section>
 
 <!-- Content Section (for scrolling) -->
