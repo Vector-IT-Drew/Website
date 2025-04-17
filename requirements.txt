@@ -7,6 +7,7 @@ flask==2.3.3
 werkzeug==2.3.7  # This version is compatible with Flask 2.3.3 and Flask-Session
 gunicorn==21.2.0
 flask-session==0.5.0
+flask-wtf==2.0.3  # Added for FlaskForm
 
 # Database
 mysql-connector-python==8.1.0
@@ -23,6 +24,8 @@ python-dotenv==1.0.0
 python-dateutil==2.8.2
 pytz==2023.3
 requests==2.31.0
+markdown2==2.4.10  # Added for markdown template filter
+
 
 # Development tools
 pytest==7.4.0
