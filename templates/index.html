@@ -3,27 +3,9 @@
 {% block title %}Vector New York - Revolutionizing Real Estate{% endblock %}
 
 {% block content %}
-<section id="hero-section" class="hero-section text-white position-relative" style="height: 100vh; width: 100%; background-image: url('{{ url_for('static', filename='images/nyc-skyline (2).png') }}'); background-size: cover; background-position: center top; background-repeat: no-repeat;">
-    <style>
-        /* Default for mobile - show more of the image */
-        #hero-section {
-            background-position: center 25%;
-            background-size: cover;
-        }
-/*         
-        @media (min-width: 768px) {
-            #hero-section {
-                background-size: auto 100% !important;
-                background-position: center center;
-            }
-        }
-        @media (min-width: 1420px) {
-            #hero-section {
-                background-size: 100% auto !important;
-                background-position: center center;
-            }
-        } */
-    </style>
+<section id="hero-section" class="hero-section text-white position-relative" style="height: 100vh;">
+    <div class="position-absolute w-100 h-100 top-0 start-0" style="background-image: url('{{ url_for('static', filename='images/nyc-skyline (2).png') }}'); background-size: cover; background-position: center top; opacity: 1;">
+    
     <div class="mask d-flex align-items-top justify-content-center" style="background-color: rgba(11, 21, 39, 0.3); height: 100%; padding-top:4%;">
         <div class="text-center text-white" style="max-width: 800px; padding: 2rem; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);">
             <div class="mb-2">
@@ -42,6 +24,7 @@
             </div>
         </div>
     </div>
+</div>
 </section>
 
 <!-- Content Section (for scrolling) -->
