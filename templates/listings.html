@@ -1,0 +1,650 @@
+{% extends 'base.html' %}
+
+{% block title %}Vector New York - Luxury Apartments{% endblock %}
+
+{% block extra_css %}
+<style>
+    .listings-hero {
+        background-color: var(--primary-dark);
+        background-image: linear-gradient(to bottom, rgba(11, 21, 39, 0.9), rgba(7, 15, 30, 0.8)), 
+                          url('https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1400&q=80');
+        background-size: cover;
+        object-fit: cover;
+        background-position: center center;
+        background-position: center;
+        padding: 5rem 0;
+        margin-bottom: 3rem;
+    }
+    
+    .filter-panel {
+        background-color: rgba(7, 15, 30, 0.7);
+        backdrop-filter: blur(10px);
+        border-radius: 6px;
+        border: 1px solid rgba(42, 127, 255, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .filter-panel:hover {
+        border-color: rgba(42, 127, 255, 0.2);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+    
+    .form-control, .form-select {
+        background-color: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: white;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        background-color: rgba(255, 255, 255, 0.08);
+        border-color: rgba(42, 127, 255, 0.5);
+        box-shadow: 0 0 0 0.25rem rgba(42, 127, 255, 0.25);
+    }
+    
+    .listing-card {
+        border-radius: 6px;
+        width: 100%;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        background-color: rgba(13, 25, 45, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .listing-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
+        border-color: rgba(42, 127, 255, 0.2);
+    }
+    
+    .listing-img {
+        height: 250px;
+        width: 100%;
+        background-size: cover;
+        object-fit: cover;
+        background-position: center center;
+        background-position: center;
+        position: relative;
+        width: 100%; /* Ensure image uses full width */
+    }
+    
+    .listing-badges {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+    
+    .listing-price {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(to top, rgba(7, 15, 30, 0.95), transparent);
+        padding: 1.5rem 0.75rem 0.5rem;
+        color: white;
+        font-weight: 600;
+    }
+    
+    .feature-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-color: rgba(42, 127, 255, 0.1);
+        color: rgba(255, 255, 255, 0.9);
+        margin-right: 8px;
+    }
+    
+    .available-tag {
+        display: inline-block;
+        color: #1ed760;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+        text-transform: uppercase;
+        margin-bottom: 0;
+    }
+    
+    .view-details-btn {
+        background-color: rgba(42, 127, 255, 0.2);
+        border: 1px solid rgba(42, 127, 255, 0.3);
+        color: white;
+        transition: all 0.3s ease;
+    }
+    
+    .view-details-btn:hover {
+        background-color: rgba(42, 127, 255, 0.3);
+        border-color: rgba(42, 127, 255, 0.5);
+    }
+    
+    .range-slider {
+        -webkit-appearance: none;
+        width: 100%;
+        height: 6px;
+        border-radius: 3px;
+        background: rgba(255, 255, 255, 0.1);
+        outline: none;
+    }
+    
+    .range-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: var(--accent);
+        cursor: pointer;
+    }
+    
+    .range-slider::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: var(--accent);
+        cursor: pointer;
+    }
+    
+    .range-value {
+        text-align: center;
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-top: 4px;
+    }
+    
+    .filter-title {
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.6);
+        margin-bottom: 0.75rem;
+    }
+    
+    .features-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 3px; /* Even smaller gap */
+        margin-top: 3px; /* Even smaller margin */
+    }
+    
+    .feature-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.15rem 0.35rem; /* Smaller padding */
+        background-color: rgba(255, 255, 255, 0.05);
+        border-radius: 3px;
+        font-size: 0.7rem; /* Even smaller font size */
+    }
+    
+    .feature-badge i {
+        margin-right: 2px;
+        font-size: 0.7rem; /* Smaller icon size */
+    }
+    
+    .neighborhood-tag {
+        display: inline-block;
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.7);
+        margin-top: 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Filters Section -->
+<section class="listings-hero py-4">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-11">
+                <div class="filter-panel p-3 mt-3">
+                    <form action="{{ url_for('listings') }}" method="GET">
+                        <div class="row">
+                            <!-- First Row: Bedroom, Bathroom, Neighborhood side by side -->
+                            <div class="col-md-4 mb-3">
+                                <label class="filter-title">Bedrooms</label>
+                                <select name="beds" id="beds" class="form-select">
+                                    <option value="">Any</option>
+                                    <option value="0" {% if request.args.get('beds') == '0' %}selected{% endif %}>Studio</option>
+                                    <option value="1" {% if request.args.get('beds') == '1' %}selected{% endif %}>1+ Bed</option>
+                                    <option value="2" {% if request.args.get('beds') == '2' %}selected{% endif %}>2+ Beds</option>
+                                    <option value="3" {% if request.args.get('beds') == '3' %}selected{% endif %}>3+ Beds</option>
+                                    <option value="4" {% if request.args.get('beds') == '4' %}selected{% endif %}>4+ Beds</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-4 mb-3">
+                                <label class="filter-title">Bathrooms</label>
+                                <select name="baths" id="baths" class="form-select">
+                                    <option value="">Any</option>
+                                    <option value="1" {% if request.args.get('baths') == '1' %}selected{% endif %}>1+ Bath</option>
+                                    <option value="1.5" {% if request.args.get('baths') == '1.5' %}selected{% endif %}>1.5+ Baths</option>
+                                    <option value="2" {% if request.args.get('baths') == '2' %}selected{% endif %}>2+ Baths</option>
+                                    <option value="3" {% if request.args.get('baths') == '3' %}selected{% endif %}>3+ Baths</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-4 mb-3">
+                                <label class="filter-title">Neighborhood</label>
+                                <select name="neighborhood" id="neighborhood" class="form-select">
+                                    <option value="">Any</option>
+                                    <option value="Upper East Side" {% if request.args.get('neighborhood') == 'Upper East Side' %}selected{% endif %}>Upper East Side</option>
+                                    <option value="Upper West Side" {% if request.args.get('neighborhood') == 'Upper West Side' %}selected{% endif %}>Upper West Side</option>
+                                    <option value="Chelsea" {% if request.args.get('neighborhood') == 'Chelsea' %}selected{% endif %}>Chelsea</option>
+                                    <option value="SoHo" {% if request.args.get('neighborhood') == 'SoHo' %}selected{% endif %}>SoHo</option>
+                                    <option value="Tribeca" {% if request.args.get('neighborhood') == 'Tribeca' %}selected{% endif %}>Tribeca</option>
+                                    <option value="Midtown" {% if request.args.get('neighborhood') == 'Midtown' %}selected{% endif %}>Midtown</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Second Row: Price Range, Availability and Sort By side by side -->
+                            <div class="col-md-4 mb-3">
+                                <div>
+                                    <label class="filter-title">Price Range</label>
+                                    
+                                    <!-- Import the range selector script -->
+                                    <script src="https://cdn.jsdelivr.net/gh/maxshuty/accessible-web-components@latest/dist/simpleRange.min.js"></script>
+                                    
+                                    <!-- Custom price range display -->
+                                    <div class="mb-2" id="priceRangeDisplay" style="font-weight: 500; text-align: center; color: white;">
+                                        Price Range: Loading...
+                                    </div>
+                                    
+                                    <!-- Range selector component -->
+                                    <range-selector
+                                        id="priceRangeSelector"
+                                        min-label="Min"
+                                        max-label="Max"
+                                        min-range="650"
+                                        max-range="25000"
+                                        current-min="{{ request.args.get('min_price', 2000) }}"
+                                        current-max="{{ request.args.get('max_price', 25000) }}"
+                                      
+                                        slider-color="#1e2d42"
+                                        prefix="$"
+                                        step="100"
+                                        event-name-to-emit-on-change="price-range-changed"
+                                        format-with-commas
+                                        hide-label
+                                        hide-legend
+                                    />
+                                    
+                                    <!-- Hidden inputs for form submission -->
+                                    <input type="hidden" name="min_price" id="min-price-input" value="{{ request.args.get('min_price', 2000) }}">
+                                    <input type="hidden" name="max_price" id="max-price-input" value="{{ request.args.get('max_price', 25000) }}">
+                                    
+                                    <script>
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        const priceRangeSelector = document.getElementById('priceRangeSelector');
+                                        const minInput = document.getElementById('min-price-input');
+                                        const maxInput = document.getElementById('max-price-input');
+                                        const findPropertiesForm = document.querySelector('.filter-panel form');
+
+                                        // Get values from URL parameters or use defaults
+                                        let currentMinPrice = {{ request.args.get('min_price', 600) }};
+                                        let currentMaxPrice = {{ request.args.get('max_price', 25000) }};
+                                        
+                                        // Round values to nearest 100 (min down, max up)
+                                        currentMinPrice = Math.floor(currentMinPrice / 100) * 100;
+                                        currentMaxPrice = Math.ceil(currentMaxPrice / 100) * 100;
+                                        
+                                        // Force update the hidden inputs with the rounded values
+                                        minInput.value = currentMinPrice;
+                                        maxInput.value = currentMaxPrice;
+                                        
+                                        // Format price with $ and commas for display
+                                        function formatPrice(price) {
+                                            return '$' + price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                                        }
+                                        
+                                        // Force update the range selector immediately
+                                        if (priceRangeSelector && priceRangeSelector.shadowRoot) {
+                                            // Give the component time to initialize
+                                            setTimeout(function() {
+                                                try {
+                                                    // Set the min and max knob positions to match URL values
+                                                    const minSlider = priceRangeSelector.shadowRoot.querySelector('#minRangeSlider');
+                                                    const maxSlider = priceRangeSelector.shadowRoot.querySelector('#maxRangeSlider');
+                                                    
+                                                    // Try to update the display text elements too
+                                                    const minDisplay = priceRangeSelector.shadowRoot.querySelector('.range-min-value');
+                                                    const maxDisplay = priceRangeSelector.shadowRoot.querySelector('.range-max-value');
+                                                    
+                                                    if (minDisplay && maxDisplay) {
+                                                        minDisplay.textContent = formatPrice(currentMinPrice);
+                                                        maxDisplay.textContent = formatPrice(currentMaxPrice);
+                                                    }
+                                                    
+                                                    if (minSlider && maxSlider) {
+                                                        minSlider.value = currentMinPrice;
+                                                        maxSlider.value = currentMaxPrice;
+                                                        
+                                                        // Trigger change events to update the display
+                                                        minSlider.dispatchEvent(new Event('input'));
+                                                        maxSlider.dispatchEvent(new Event('change'));
+                                                        maxSlider.dispatchEvent(new Event('input'));
+                                                        maxSlider.dispatchEvent(new Event('change'));
+                                                        
+                                                        // Add additional event listeners to ensure updates when dragging beyond limits
+                                                        // Handle mouse and touch events for both sliders
+                                                        ['mouseup', 'touchend'].forEach(function(eventType) {
+                                                            minSlider.addEventListener(eventType, function() {
+                                                                // Ensure values are rounded properly
+                                                                currentMinPrice = roundPriceToNearest100(minSlider.value, false);
+                                                                minInput.value = currentMinPrice;
+                                                                
+                                                                // Update the custom price range display
+                                                                if (priceRangeDisplay) {
+                                                                    priceRangeDisplay.textContent = 'Price Range: ' + formatPrice(currentMinPrice) + ' - ' + formatPrice(currentMaxPrice);
+                                                                }
+                                                            });
+                                                            
+                                                            maxSlider.addEventListener(eventType, function() {
+                                                                // Ensure values are rounded properly
+                                                                currentMaxPrice = roundPriceToNearest100(maxSlider.value, true);
+                                                                maxInput.value = currentMaxPrice;
+                                                                
+                                                                // Update the custom price range display
+                                                                if (priceRangeDisplay) {
+                                                                    priceRangeDisplay.textContent = 'Price Range: ' + formatPrice(currentMinPrice) + ' - ' + formatPrice(currentMaxPrice);
+                                                                }
+                                                            });
+                                                        });
+                                                    }
+                                                } catch (e) {
+                                                    console.error('Error setting slider values:', e);
+                                                }
+                                            }, 100);
+                                        }
+
+                                        // Get the custom price range display
+                                        const priceRangeDisplay = document.getElementById('priceRangeDisplay');
+                                        
+                                        // Update price range display with the initial values
+                                        if (priceRangeDisplay) {
+                                            priceRangeDisplay.textContent = 'Price Range: ' + formatPrice(currentMinPrice) + ' - ' + formatPrice(currentMaxPrice);
+                                        }
+                                        
+                                        // Function to round the values to nearest 100
+                                        function roundPriceToNearest100(value, roundUp = false) {
+                                            if (roundUp) {
+                                                // Round up to the nearest 100
+                                                return Math.ceil(value / 100) * 100;
+                                            } else {
+                                                // Round down to the nearest 100
+                                                return Math.floor(value / 100) * 100;
+                                            }
+                                        }
+                                        
+                                        // Listen for the standard change event from the slider component
+                                        document.addEventListener('price-range-changed', (e) => {
+                                            // Round min price down to nearest 100
+                                            currentMinPrice = roundPriceToNearest100(e.detail.minRangeValue, false);
+                                            minInput.value = currentMinPrice;
+                                            console.log('Min price changed:', currentMinPrice);
+                                            
+                                            // Round max price up to nearest 100
+                                            currentMaxPrice = roundPriceToNearest100(e.detail.maxRangeValue, true);
+                                            maxInput.value = currentMaxPrice;
+                                            console.log('Max price changed:', currentMaxPrice);
+                                            
+                                            // Update the custom price range display
+                                            if (priceRangeDisplay) {
+                                                priceRangeDisplay.textContent = 'Price Range: ' + formatPrice(currentMinPrice) + ' - ' + formatPrice(currentMaxPrice);
+                                            }
+                                        });
+                                        
+                                        // Also listen to input events for live updates while dragging
+                                        // Set a small timeout to allow the component to initialize
+                                        setTimeout(function() {
+                                            try {
+                                                const minSlider = priceRangeSelector.shadowRoot.querySelector('#minRangeSlider');
+                                                const maxSlider = priceRangeSelector.shadowRoot.querySelector('#maxRangeSlider');
+                                                
+                                                if (minSlider) {
+                                                    minSlider.addEventListener('input', function() {
+                                                        // Round min price down to nearest 100
+                                                        const newMinPrice = roundPriceToNearest100(parseFloat(minSlider.value), false);
+                                                        
+                                                        // Update the custom price range display in real-time
+                                                        if (priceRangeDisplay) {
+                                                            priceRangeDisplay.textContent = 'Price Range: ' + formatPrice(newMinPrice) + ' - ' + formatPrice(currentMaxPrice);
+                                                        }
+                                                    });
+                                                }
+                                                
+                                                if (maxSlider) {
+                                                    maxSlider.addEventListener('input', function() {
+                                                        // Round max price up to nearest 100
+                                                        const newMaxPrice = roundPriceToNearest100(parseFloat(maxSlider.value), true);
+                                                        
+                                                        // Update the custom price range display in real-time
+                                                        if (priceRangeDisplay) {
+                                                            priceRangeDisplay.textContent = 'Price Range: ' + formatPrice(currentMinPrice) + ' - ' + formatPrice(newMaxPrice);
+                                                        }
+                                                    });
+                                                }
+                                            } catch (e) {
+                                                console.error('Error setting up live update handlers:', e);
+                                            }
+                                        }, 500);
+                                        
+                                        // Make sure values are synchronized before form submission
+                                        findPropertiesForm.addEventListener('submit', function(event) {
+                                            // Use our tracked values
+                                            minInput.value = currentMinPrice;
+                                            maxInput.value = currentMaxPrice;
+                                            console.log('Form submitting with price range:', minInput.value, '-', maxInput.value);
+                                        });
+                                    });
+                                    </script>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4 mb-3">
+                                <label class="filter-title">Availability</label>
+                                <div class="d-flex gap-4 mt-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="availability" id="availability_any" value="" {% if not request.args.get('availability') %}checked{% endif %}>
+                                        <label class="form-check-label" for="availability_any">All Units</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="availability" id="availability_now" value="available" {% if request.args.get('availability') == 'available' %}checked{% endif %}>
+                                        <label class="form-check-label" for="availability_now">Available Now</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4 mb-3">
+                                <label class="filter-title">Sort By</label>
+                                <select name="sort" id="sort" class="form-select">
+                                    <option value="price_asc" {% if request.args.get('sort') == 'price_asc' %}selected{% endif %}>Price (Low to High)</option>
+                                    <option value="price_desc" {% if request.args.get('sort') == 'price_desc' %}selected{% endif %}>Price (High to Low)</option>
+                                    <option value="size_desc" {% if request.args.get('sort') == 'size_desc' %}selected{% endif %}>Largest</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Third Row: Search Button -->
+                            <div class="col-12 mt-2 mb-3">
+                                <div class="d-flex justify-content-start">
+                                    <button type="submit" class="btn btn-primary px-5">
+                                        <i class="fas fa-search me-2"></i>Find Properties
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Results Section -->
+<section class="py-5">
+    <div class="container">
+        <!-- Results Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="h4 mb-0">{% if listings %}{{ listings|length }} Properties{% else %}No Properties{% endif %} Available</h2>
+            </div>
+            <div>
+                <a href="{{ url_for('listings') }}" class="btn btn-sm btn-outline-secondary">
+                    <i class="fas fa-redo-alt me-2"></i>Reset Filters
+                </a>
+            </div>
+        </div>
+        
+        <!-- Listings Grid -->
+        {% if listings %}
+        <div class="row g-4">
+            {% for listing in listings %}
+            <div class="col-lg-4 col-md-6">
+                <div class="listing-card h-100 d-flex flex-column">
+                    <!-- Image on top -->
+                    <div class="listing-img" id="listing-image-{{ loop.index }}" 
+                            {% if listing.unit_images and (listing.unit_images|length > 0) and listing.unit_images[0] %}
+                                style="background-image: url('{{ listing.unit_images[0] }}');"
+                            {% else %}
+                                style="background-image: url('https://i0.wp.com/port2flavors.com/wp-content/uploads/2022/07/placeholder-614.png?fit=1200%2C800&ssl=1');"
+                            {% endif %}
+                        
+                        <!-- Property type and features badges -->
+                        <div class="listing-badges">
+                            <span class="badge bg-primary">{{ listing.property_type }}</span>
+                            {% if listing.floor and listing.floor != 0 and listing.floor != '0' %}
+                            <span class="badge bg-info">Floor {{ listing.floor }}</span>
+                            {% endif %}
+                            {% if listing.exposure and listing.exposure != '0' and listing.exposure != '' %}
+                            <span class="badge bg-secondary"><i class="fas fa-compass me-1" style="font-size: 0.9em;"></i> Exp: {{ listing.exposure }}</span>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Price overlay -->
+                        <div class="listing-price">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="fs-4 fw-bold">
+                                    {% if listing.actual_rent is none %}
+                                        Price on request
+                                    {% elif listing.actual_rent == 'N/A' %}
+                                        {{ listing.actual_rent }}
+                                    {% else %}
+                                        ${{ "{:,.0f}".format(listing.actual_rent) }}
+                                    {% endif %}
+                                </div>
+                                <div class="availability-badge"
+                                     style="font-size: 0.9em; color: {% if listing.move_out %}orange{% else %}green{% endif %};">
+                                    {% if listing.move_out %}
+                                        Available on {{ listing.move_out }}
+                                    {% else %}
+                                        Available Now
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Content -->
+                    <div class="p-3 d-flex flex-column flex-grow-1">
+                        
+                        <!-- Building/Neighborhood name -->
+                        <p class="text-muted small mb-1">
+                            <i class="fas fa-building me-1"></i>
+                            {% if listing.building_name and listing.building_name != '-' %}
+                                {{ listing.building_name }}
+                            {% elif listing.neighborhood and listing.neighborhood != '-' %}
+                                {{ listing.neighborhood }}
+                            {% elif listing.borough and listing.borough != '-' %}
+                                {{ listing.borough }}
+                            {% else %}
+                                None
+                            {% endif %}
+                        </p>
+                        
+                        <!-- Address -->
+                        <p class="text-muted small mb-1">
+                            <i class="fas fa-map-marker-alt me-1"></i>
+                            {{ listing.address }}{% if listing.unit %}, #{{ listing.unit }}{% endif %}, {{ listing.city }}
+                        </p>
+                        
+                        <!-- Features list -->
+                        <div class="features-list">
+                            <div class="feature-badge">
+                                <i class="fas fa-bed"></i> {% if listing.beds == 0 %}Studio{% elif listing.beds and listing.beds != 'N/A' %}{{ listing.beds }} Bed{% if listing.beds != 1 %}s{% endif %}{% else %}N/A{% endif %}
+                            </div>
+                            <div class="feature-badge">
+                                <i class="fas fa-bath"></i> {% if listing.baths and listing.baths != 'N/A' %}{{ listing.baths }} Bath{% if listing.baths != 1 %}s{% endif %}{% else %}N/A{% endif %}
+                            </div>
+                            {% if listing.sqft and listing.sqft != 'N/A' and listing.sqft != 0 %}
+                            <div class="feature-badge">
+                                <i class="fas fa-vector-square"></i> {{ listing.sqft }} ft²
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Building amenities badges -->
+                        <div class="features-list mt-1">
+                            {% if listing.wheelchair_access and listing.wheelchair_access|string|lower in ['true', '1', 'yes', 't', 'y'] %}
+                            <div class="feature-badge">
+                                <i class="fas fa-wheelchair"></i> Accessible
+                            </div>
+                            {% endif %}
+                            
+                            {% if listing.smoke_free and listing.smoke_free|string|lower in ['true', '1', 'yes', 't', 'y'] %}
+                            <div class="feature-badge">
+                                <i class="fas fa-smoking-ban"></i> Smoke-Free
+                            </div>
+                            {% endif %}
+                            
+                            {% if listing.laundry_in_building and listing.laundry_in_building|string|lower in ['true', '1', 'yes', 't', 'y'] %}
+                            <div class="feature-badge">
+                                <i class="fas fa-tshirt"></i> Laundry
+                            </div>
+                            {% endif %}
+                            
+                            {% if listing.pet_friendly and listing.pet_friendly|string|lower in ['true', '1', 'yes', 't', 'y'] %}
+                            <div class="feature-badge">
+                                <i class="fas fa-paw"></i> Pet-Friendly
+                            </div>
+                            {% endif %}
+                            
+                            {% if listing.live_in_super and listing.live_in_super|string|lower in ['true', '1', 'yes', 't', 'y'] %}
+                            <div class="feature-badge">
+                                <i class="fas fa-tools"></i> Super
+                            </div>
+                            {% endif %}
+                            
+                            {% if listing.concierge and listing.concierge|string|lower in ['true', '1', 'yes', 't', 'y'] %}
+                            <div class="feature-badge">
+                                <i class="fas fa-concierge-bell"></i> Concierge
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- View details button -->
+                        <div class="mt-2">
+                            <a href="{{ url_for('listing_detail', listing_id=listing.unit_id) }}" class="btn btn-sm view-details-btn w-100 py-1">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="filter-panel p-5 text-center">
+            <h3>No properties matching your criteria.</h3>
+            <p>Please adjust your filters or <a href="{{ url_for('listings') }}" class="text-primary">view all properties</a>.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // No extra JavaScript needed, using inline handlers in the HTML
+</script>
+{% endblock %}

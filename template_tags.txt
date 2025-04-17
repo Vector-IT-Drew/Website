@@ -1,0 +1,44 @@
+242:                                            <option value="0" {% if request.args.get('beds') == '0' %}selected{% endif %}>Studio</option>
+243:                                            <option value="1" {% if request.args.get('beds') == '1' %}selected{% endif %}>1+ Bed</option>
+244:                                            <option value="2" {% if request.args.get('beds') == '2' %}selected{% endif %}>2+ Beds</option>
+245:                                            <option value="3" {% if request.args.get('beds') == '3' %}selected{% endif %}>3+ Beds</option>
+246:                                            <option value="4" {% if request.args.get('beds') == '4' %}selected{% endif %}>4+ Beds</option>
+253:                                            <option value="1" {% if request.args.get('baths') == '1' %}selected{% endif %}>1+ Bath</option>
+254:                                            <option value="1.5" {% if request.args.get('baths') == '1.5' %}selected{% endif %}>1.5+ Baths</option>
+255:                                            <option value="2" {% if request.args.get('baths') == '2' %}selected{% endif %}>2+ Baths</option>
+256:                                            <option value="3" {% if request.args.get('baths') == '3' %}selected{% endif %}>3+ Baths</option>
+269:                                            <option value="Apartment" {% if request.args.get('property_type') == 'Apartment' %}selected{% endif %}>Apartment</option>
+270:                                            <option value="Condo" {% if request.args.get('property_type') == 'Condo' %}selected{% endif %}>Condo</option>
+271:                                            <option value="Townhouse" {% if request.args.get('property_type') == 'Townhouse' %}selected{% endif %}>Townhouse</option>
+272:                                            <option value="House" {% if request.args.get('property_type') == 'House' %}selected{% endif %}>House</option>
+279:                                            <option value="Upper East Side" {% if request.args.get('neighborhood') == 'Upper East Side' %}selected{% endif %}>Upper East Side</option>
+280:                                            <option value="Upper West Side" {% if request.args.get('neighborhood') == 'Upper West Side' %}selected{% endif %}>Upper West Side</option>
+281:                                            <option value="Chelsea" {% if request.args.get('neighborhood') == 'Chelsea' %}selected{% endif %}>Chelsea</option>
+282:                                            <option value="SoHo" {% if request.args.get('neighborhood') == 'SoHo' %}selected{% endif %}>SoHo</option>
+283:                                            <option value="Tribeca" {% if request.args.get('neighborhood') == 'Tribeca' %}selected{% endif %}>Tribeca</option>
+284:                                            <option value="Midtown" {% if request.args.get('neighborhood') == 'Midtown' %}selected{% endif %}>Midtown</option>
+290:                                            <option value="price_asc" {% if request.args.get('sort') == 'price_asc' %}selected{% endif %}>Price (Low to High)</option>
+291:                                            <option value="price_desc" {% if request.args.get('sort') == 'price_desc' %}selected{% endif %}>Price (High to Low)</option>
+292:                                            <option value="newest" {% if request.args.get('sort') == 'newest' %}selected{% endif %}>Newest</option>
+293:                                            <option value="size_desc" {% if request.args.get('sort') == 'size_desc' %}selected{% endif %}>Largest</option>
+321:                <h2 class="h4 mb-0">{% if listings %}{{ listings|length }} Properties{% else %}No Properties{% endif %} Available</h2>
+331:        {% if listings %}
+333:            {% for listing in listings %}
+342:                            {% if listing.floor %}
+344:                            {% endif %}
+345:                            {% if listing.exposure %}
+347:                            {% endif %}
+374:                            {{ listing.address }}{% if listing.unit %}, {{ listing.unit }}{% endif %}, {{ listing.city }}
+380:                                <i class="fas fa-bed"></i> {{ listing.beds }} Bed{% if listing.beds != 1 %}s{% endif %}
+383:                                <i class="fas fa-bath"></i> {{ listing.baths }} Bath{% if listing.baths != 1 %}s{% endif %}
+388:                            {% if listing.pets_policy %}
+392:                            {% endif %}
+396:                        {% if listing.neighborhood %}
+397:                            {% if listing.neighborhood %}
+401:                            {% endif %}
+411:            {% endfor %}
+427:        {% endif %}
+450:        {% if listings %}
+451:            {% for listing in listings %}
+457:            {% endfor %}
+458:        {% endif %}

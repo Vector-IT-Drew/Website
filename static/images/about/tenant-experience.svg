@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <style>
+    .background { fill: #080e1b; }
+    .foreground { fill: #0b1527; }
+    .accent { fill: #2a7fff; }
+    .text { fill: #ffffff; font-family: sans-serif; }
+    .line { stroke: #2a7fff; stroke-width: 2; fill: none; }
+    .icon { fill: #ffffff; }
+  </style>
+  
+  <!-- Background -->
+  <rect class="background" x="0" y="0" width="800" height="600"/>
+  
+  <!-- Apartment Floor Plan -->
+  <rect class="foreground" x="100" y="100" width="600" height="400" rx="10" ry="10"/>
+  
+  <!-- Rooms -->
+  <!-- Living Room -->
+  <rect class="foreground" x="150" y="150" width="250" height="200" stroke="#2a7fff" stroke-width="2" fill="#0b1527"/>
+  <text class="text" x="275" y="250" text-anchor="middle" font-size="14">Living Room</text>
+  
+  <!-- Kitchen -->
+  <rect class="foreground" x="400" y="150" width="150" height="100" stroke="#2a7fff" stroke-width="2" fill="#0b1527"/>
+  <text class="text" x="475" y="200" text-anchor="middle" font-size="14">Kitchen</text>
+  
+  <!-- Bedroom -->
+  <rect class="foreground" x="400" y="250" width="200" height="150" stroke="#2a7fff" stroke-width="2" fill="#0b1527"/>
+  <text class="text" x="500" y="325" text-anchor="middle" font-size="14">Bedroom</text>
+  
+  <!-- Bathroom -->
+  <rect class="foreground" x="600" y="250" width="50" height="100" stroke="#2a7fff" stroke-width="2" fill="#0b1527"/>
+  <text class="text" x="625" y="300" text-anchor="middle" font-size="10">Bath</text>
+  
+  <!-- Door -->
+  <line x1="150" y1="250" x2="130" y2="250" stroke="#2a7fff" stroke-width="2"/>
+  <path d="M150,220 A30,30 0 0,0 130,250" stroke="#2a7fff" stroke-width="2" fill="none"/>
+  
+  <!-- Windows -->
+  <rect x="250" y="150" width="50" height="5" fill="#2a7fff"/>
+  <rect x="400" y="150" width="50" height="5" fill="#2a7fff"/>
+  <rect x="500" y="250" width="5" height="50" fill="#2a7fff"/>
+  
+  <!-- Furniture -->
+  <!-- Couch -->
+  <rect x="200" y="300" width="100" height="30" rx="5" ry="5" fill="#132340"/>
+  
+  <!-- Table -->
+  <circle cx="250" cy="230" r="20" fill="#132340"/>
+  
+  <!-- Bed -->
+  <rect x="450" y="320" width="100" height="60" rx="5" ry="5" fill="#132340"/>
+  
+  <!-- Icons -->
+  <!-- Calendar -->
+  <g transform="translate(170, 400) scale(0.5)">
+    <rect x="10" y="10" width="60" height="60" rx="5" ry="5" class="icon"/>
+    <line x1="10" y1="25" x2="70" y2="25" stroke="#2a7fff" stroke-width="2"/>
+    <line x1="25" y1="10" x2="25" y2="20" stroke="#2a7fff" stroke-width="2"/>
+    <line x1="55" y1="10" x2="55" y2="20" stroke="#2a7fff" stroke-width="2"/>
+    <text x="40" y="50" text-anchor="middle" class="text" font-size="20">15</text>
+  </g>
+  <text class="text" x="170" y="450" text-anchor="middle" font-size="12">Schedule</text>
+  
+  <!-- House -->
+  <g transform="translate(270, 400) scale(0.5)">
+    <polygon points="40,10 10,30 10,70 70,70 70,30" class="icon"/>
+    <rect x="30" y="50" width="20" height="20" fill="#080e1b"/>
+  </g>
+  <text class="text" x="270" y="450" text-anchor="middle" font-size="12">Tours</text>
+  
+  <!-- Document -->
+  <g transform="translate(370, 400) scale(0.5)">
+    <rect x="20" y="10" width="40" height="60" rx="5" ry="5" class="icon"/>
+    <line x1="30" y1="25" x2="50" y2="25" stroke="#2a7fff" stroke-width="2"/>
+    <line x1="30" y1="35" x2="50" y2="35" stroke="#2a7fff" stroke-width="2"/>
+    <line x1="30" y1="45" x2="50" y2="45" stroke="#2a7fff" stroke-width="2"/>
+  </g>
+  <text class="text" x="370" y="450" text-anchor="middle" font-size="12">Lease</text>
+  
+  <!-- Check -->
+  <g transform="translate(470, 400) scale(0.5)">
+    <circle cx="40" cy="40" r="30" class="icon"/>
+    <polyline points="25,40 35,50 55,30" stroke="#2a7fff" stroke-width="3" fill="none"/>
+  </g>
+  <text class="text" x="470" y="450" text-anchor="middle" font-size="12">Approved</text>
+  
+  <!-- Key -->
+  <g transform="translate(570, 400) scale(0.5)">
+    <circle cx="30" cy="40" r="15" class="icon"/>
+    <rect x="30" y="35" width="30" height="10" class="icon"/>
+    <rect x="50" y="30" width="5" height="20" fill="#080e1b"/>
+    <rect x="60" y="30" width="5" height="20" fill="#080e1b"/>
+  </g>
+  <text class="text" x="570" y="450" text-anchor="middle" font-size="12">Move In</text>
+  
+  <!-- Process Flow -->
+  <line x1="195" y1="420" x2="245" y2="420" stroke="#2a7fff" stroke-width="1"/>
+  <line x1="295" y1="420" x2="345" y2="420" stroke="#2a7fff" stroke-width="1"/>
+  <line x1="395" y1="420" x2="445" y2="420" stroke="#2a7fff" stroke-width="1"/>
+  <line x1="495" y1="420" x2="545" y2="420" stroke="#2a7fff" stroke-width="1"/>
+</svg>

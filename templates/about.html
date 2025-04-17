@@ -1,0 +1,290 @@
+{% extends 'base.html' %}
+
+{% block title %}About Us - Vector New York{% endblock %}
+
+{% block content %}
+<!-- Main Hero Section -->
+<section class="about-hero position-relative" style="height: 100vh; background-color: var(--primary-dark);">
+    <div class="position-absolute w-100 h-100 top-20 start-0" style="background-image: url('{{ url_for('static', filename='images/about/nyc-skyline-2.png') }}'); background-size: cover; background-position: bottom; opacity: 1;"></div>
+    
+    <div class="container h-100 d-flex align-items-start position-relative" style="padding-top: 11%;">
+        <div class="row w-100">
+            <div class="col-lg-10 mx-auto text-center">
+                <h1 class="display-2 fw-bold text-white mb-4" style="letter-spacing: -0.5px;">About Vector New York</h1>
+                <hr class="mx-auto opacity-25 mt-4 mb-0" style="width: 50px; height: 3px; background-color: var(--accent);"></hr>
+            </div>
+        </div>
+    </div>
+    
+    <div class="position-absolute bottom-0 w-100" style="height: 100px; background: linear-gradient(to top, var(--primary), transparent);"></div>
+</section>
+<!-- Introduction Section -->
+<section class="py-5" style="background-color: var(--primary);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-10 col-lg-11">
+                <div class="intro-subtitle mb-5 text-center">
+                    <h2 class="h3 text-white fw-light fst-italic">New York Leasing Reimagined—Where Happy Tenants and Successful Owners Go Hand-in-Hand</h2>
+                </div>
+                
+                <div class="row align-items-center mb-4">
+                    <div class="col-lg-7">
+                        <div class="intro-text">
+                            <p class="text-white mb-4 fs-5 lh-lg">
+                                At Vector New York, we believe great leasing starts with great living. Since 2021, we've built one of the city's most trusted and innovative residential leasing operations, representing more than 15,000 homes across every corner of New York—from iconic high-rise towers and design-forward boutique buildings to charming walk-ups and thoughtfully managed affordable housing.
+                            </p>
+                            <p class="text-white mb-4 fs-5 lh-lg">
+                                We're not just here to fill apartments—we're here to help people find homes they can thrive in. Because when tenants love where they live, everything else falls into place.
+                            </p>
+                            <hr class="mx-auto opacity-25 mt-4 mb-4" style="width: 50%; height: 1px; background-color: var(--accent);">
+                        </div>
+                    </div>
+                    <div class="col-lg-5">
+                        <div class="intro-image px-4">
+                            <img src="{{ url_for('static', filename='images/about/tech_blue.png') }}" alt="Modern Real Estate Technology" class="img-fluid rounded">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <h3 class="h4 text-white mb-4">Technology Meets Hospitality</h3>
+                        <p class="text-white fs-5 lh-lg">
+                            We're not a traditional brokerage. Instead, we operate like a dedicated leasing department for owners and property managers—powered by automation, real-time data tracking, and a department-based approach that replaces the outdated "jack-of-all-trades" agent model.
+                        </p>
+                        <p class="text-white fs-5 lh-lg">
+                            This allows us to move fast, stay transparent, and deliver consistent results at scale—keeping buildings full and tenants satisfied.
+                        </p>
+                        <hr class="mx-auto opacity-25 mt-4 mb-4" style="width: 50%; height: 1px; background-color: var(--accent);">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Content Divider -->
+<div class="py-2" style="background-color: var(--primary-dark);"></div>
+
+<!-- Stats Bar -->
+<section class="py-4" style="background-color: var(--primary-dark);">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-3 col-6 mb-3 mb-md-0">
+                <div class="stat-counter mb-1">
+                    <span class="display-5 fw-bold" style="color: var(--accent);">15,000+</span>
+                </div>
+                <p class="mb-0 text-white-50">Units Managed</p>
+            </div>
+            <div class="col-md-3 col-6 mb-3 mb-md-0">
+                <div class="stat-counter mb-1">
+                    <span class="display-5 fw-bold" style="color: var(--accent);">500+</span>
+                </div>
+                <p class="mb-0 text-white-50">Properties</p>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-counter mb-1">
+                    <span class="display-5 fw-bold" style="color: var(--accent);">2021</span>
+                </div>
+                <p class="mb-0 text-white-50">Est. Year</p>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-counter mb-1">
+                    <span class="display-5 fw-bold" style="color: var(--accent);">You</span>
+                </div>
+                <p class="mb-0 text-white-50">Our Focus</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Content Divider -->
+<div class="py-2" style="background-color: var(--primary-dark);"></div>
+
+<!-- Better Experience Section -->
+<section class="py-5" style="background-color: var(--primary);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-10 col-lg-11">
+                <h2 class="display-5 fw-bold text-white mb-5">A Better Leasing Experience for Everyone</h2>
+                
+                <div class="row align-items-center">
+                    <div class="col-lg-5 order-lg-1 order-2 mt-5 mt-lg-0">
+                        <div class="experience-image px-4">
+                            <img src="{{ url_for('static', filename='images/about/3d-floor-plans-blue.png') }}" alt="3D Floor Plan Visualization" class="img-fluid rounded">
+                        </div>
+                    </div>
+                    <div class="col-lg-7 order-lg-2 order-1">
+                        <p class="text-white mb-4 fs-5 lh-lg">
+                            Whether you're a renter hoping for a streamlined, supportive path to your next apartment—or an owner looking to optimize performance across a portfolio—we make the process easy, thoughtful, and effective for all parties.
+                        </p>
+                        <ul class="text-white fs-5 lh-lg mb-4">
+                            <li>Quick and responsive scheduling</li>
+                            <li>Modern visuals and listing design that respect your time and taste</li>
+                            <li>Clear communication from first inquiry to lease signing</li>
+                        </ul>
+                        <p class="text-white fs-5 lh-lg">
+                            Our in-house creative team ensures every listing is showcased at its best—from luxury-focused, AI-enhanced staging to dynamic video tours to clear, representative descriptions that help renters imagine daily life both inside the apartment and throughout the building—because every apartment deserves to shine, and every renter deserves to feel confident in what they're shopping for.
+                        </p>
+                        <hr class="mx-auto opacity-25 mt-4 mb-4" style="width: 50%; height: 1px; background-color: var(--accent);">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Content Divider -->
+<div class="py-2" style="background-color: var(--primary-dark);"></div>
+
+<!-- Precision Section -->
+<section class="py-5" style="background-color: var(--primary);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-10 col-lg-11">
+                <h2 class="display-5 fw-bold text-white mb-5">Built for Scale. Tuned for People.</h2>
+                
+                <div class="row align-items-center">
+                    <div class="col-lg-7">
+                        <p class="text-white mb-4 fs-5 lh-lg">
+                            We track every phase of the leasing journey—monitoring listing engagement, response rates, tour feedback, time-to-lease, and lease outcomes—to continuously improve both the renter and owner experience.
+                        </p>
+                        <p class="text-white mb-4 fs-5 lh-lg">
+                            For owners, this means unmatched visibility, lower vacancy, and actionable insights that go beyond marketing. For tenants, it means faster answers, less stress, and homes that match both budget and lifestyle.
+                        </p>
+                        <p class="text-white mb-4 fs-5 lh-lg">
+                            At Vector New York, we're proving that technology, transparency, and a little humanity can transform the rental experience—for everyone.
+                        </p>
+                    </div>
+                    <div class="col-lg-5">
+                        <div class="analytics-image px-4">
+                            <img src="{{ url_for('static', filename='images/about/reporting_color.png') }}" alt="Data-driven Reporting" class="img-fluid rounded">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action Section -->
+<section class="py-5" style="background-color: var(--primary-dark);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <div class="col-lg-10 mx-auto">
+                    <h2 class="h3 fw-bold text-white mb-4">Browse our curated selection of premium properties or let our Vector Assistant help you find your perfect match.</h2>
+                </div>
+                <div class="mt-5">
+                    <a href="{{ url_for('listings') }}" class="btn btn-primary btn-lg px-5 me-4 rounded-pill">Browse Listings</a>
+                    <button type="button" class="btn btn-outline-light btn-lg px-5 rounded-pill" data-bs-toggle="modal" data-bs-target="#vectorAssistantModal">Chat with Vector Assistant</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Clean Typography Styles */
+    .display-2 {
+        font-weight: 700;
+        letter-spacing: -0.03em;
+    }
+    
+    .display-5 {
+        font-weight: 700;
+        letter-spacing: -0.02em;
+    }
+    
+    p {
+        font-weight: 400;
+        letter-spacing: 0;
+    }
+    
+    /* Section Styling */
+    section {
+        position: relative;
+    }
+    
+    /* Hero Section */
+    .about-hero {
+        position: relative;
+    }
+    
+    /* Image Styling */
+    .intro-image img,
+    .experience-image img,
+    .analytics-image img {
+        transition: transform 0.5s ease;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+    
+    .intro-image:hover img,
+    .experience-image:hover img,
+    .analytics-image:hover img {
+        transform: scale(1.02);
+    }
+    
+    /* Button Styling - Similar to Serhant.com */
+    .btn {
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        padding: 0.75rem 2rem;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+    }
+    
+    .rounded-pill {
+        border-radius: 50px !important;
+    }
+    
+    .btn-primary {
+        background-color: var(--accent);
+        border-color: var(--accent);
+        box-shadow: 0 4px 15px rgba(42, 127, 255, 0.3);
+    }
+    
+    .btn-primary:hover {
+        background-color: #1e5bb8;
+        border-color: #1e5bb8;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(42, 127, 255, 0.4);
+    }
+    
+    .btn-outline-light {
+        border-width: 2px;
+        box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+    }
+    
+    .btn-outline-light:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 255, 255, 0.15);
+    }
+    
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+        .about-hero {
+            height: 40vh !important;
+        }
+        
+        .display-2 {
+            font-size: 2.5rem;
+        }
+        
+        .display-5 {
+            font-size: 1.8rem;
+        }
+        
+        .fs-5 {
+            font-size: 1.1rem !important;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<!-- No custom scripts needed - using Bootstrap's built-in modal functionality with data-bs-toggle and data-bs-target attributes -->
+{% endblock %}

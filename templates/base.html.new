@@ -1,0 +1,11 @@
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('about') }}">ABOUT US</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('investor_services') }}">INVESTOR SERVICES</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('listings') }}">LISTINGS</a>
+                    </li>
+                </ul>

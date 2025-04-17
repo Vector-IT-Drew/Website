@@ -1,0 +1,57 @@
+# Change these:
+
+1. First image in Challenges Section (around line 336):
+From:
+<img src="https://images.unsplash.com/photo-1556741533-6e6a62bd8b49?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Traditional real estate challenges" class="img-fluid rounded mb-3">
+
+To:
+<img src="https://images.unsplash.com/photo-1556741533-6e6a62bd8b49?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80" alt="Traditional real estate challenges" class="img-fluid rounded mb-2" style="max-width: 90%;">
+
+2. Banner image in Workflow Section (around line 379):
+From:
+<div class="position-relative mb-5" style="height: 200px; background: url('https://images.unsplash.com/photo-1556155092-490a1ba16284?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80') center/cover no-repeat; border-radius: 10px;">
+
+To:
+<div class="position-relative mb-4" style="height: 150px; background: url('https://images.unsplash.com/photo-1556155092-490a1ba16284?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80') center/cover no-repeat; border-radius: 10px;">
+
+3. Update the content-section class (around line 48):
+From:
+.content-section.active {
+    height: auto;
+    padding: 2rem;
+    margin-top: 2rem;
+    margin-bottom: 3rem;
+}
+
+To:
+.content-section.active {
+    height: auto;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+4. Update the icon size (around line 38):
+From: 
+.service-icon {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: rgba(42, 127, 255, 0.1);
+    margin-bottom: 1rem;
+}
+
+To:
+.service-icon {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: rgba(42, 127, 255, 0.1);
+    margin-bottom: 0.75rem;
+}

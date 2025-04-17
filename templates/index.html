@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block title %}Vector New York - Revolutionizing Real Estate{% endblock %}
+
+{% block content %}
+<section id="hero-section" class="hero-section text-white position-relative" style="height: 100vh; width: 100%; background-image: url('{{ url_for('static', filename='images/nyc-skyline.png') }}'); background-size: 100% auto; background-position: center; background-repeat: no-repeat;">
+    <div class="mask d-flex align-items-center justify-content-center" style="background-color: rgba(11, 21, 39, 0.0); height: 100%;">
+        <div class="text-center text-white" style="max-width: 800px; padding: 2rem; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);">
+            <div class="mb-2">
+                <img src="{{ url_for('static', filename='images/Vector Icon.png') }}" alt="Vector Icon" height="120" class="mb-2">
+            </div>
+            <div class="mb-2">
+                <img src="{{ url_for('static', filename='images/Vector Text.png') }}" alt="Vector Text" height="60">
+            </div>
+            <p class="lead mb-3" style="font-weight: 300; font-size: 1.5rem; max-width: 600px; margin: 0 auto; letter-spacing: 1px;">
+                Leasing Simplified
+            </p>
+            <div class="mt-5 pt-5">
+                <a href="#content-section" class="text-white scroll-down-link">
+                    <i class="fas fa-chevron-down fa-2x"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Content Section (for scrolling) -->
+<div id="content-section"></div>
+
+<!-- Information Cards Section -->
+<section class="py-5">
+    <div class="container py-5">
+        <div class="text-center mb-5">
+            <h2 class="fw-light mb-3">Experience the Vector Difference</h2>
+            <p class="text-muted">Find your perfect home in New York with our cutting-edge approach</p>
+        </div>
+        <div class="row g-4 justify-content-center">
+            <!-- Card 1 (Vector Assistant) - Opens chat modal -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 border-0 shadow-sm rounded-4 card-hover" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#vectorAssistantModal">
+                    <div class="card-img-top overflow-hidden d-flex justify-content-center align-items-center p-3 rounded-top-4" style="height: 250px; background-color: rgba(11, 21, 39, 0.03);">
+                        <img src="{{ url_for('static', filename='images/ai-assistant-galaxy.png') }}" alt="AI Assistant" class="img-fluid rounded-3" style="max-height: 100%; width: auto;">
+                    </div>
+                    <div class="card-body text-center p-4">
+                        <h5 class="card-title mb-3">Let Your Preferences Lead The Way</h5>
+                        <p class="card-text text-muted">The Vector Assistant helps you focus your apartment search using real data—not sales tactics. Share what matters to you, and discover homes that truly fit your lifestyle and budget. Smart, unbiased, and built to simplify your search.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Card 2 (Apply Now in middle) - Links to listings page -->
+            <div class="col-lg-4 col-md-6">
+                <a href="{{ url_for('listings') }}" class="text-decoration-none">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 card-hover" style="cursor: pointer;">
+                        <div class="card-img-top overflow-hidden d-flex justify-content-center align-items-center p-3 rounded-top-4" style="height: 250px; background-color: rgba(11, 21, 39, 0.03);">
+                            <img src="{{ url_for('static', filename='images/application-blue-glow.png') }}" alt="A Smarter Way To Search And Sign" class="img-fluid rounded-3" style="max-height: 100%; width: auto;">
+                        </div>
+                        <div class="card-body text-center p-4">
+                            <h5 class="card-title mb-3">A Smarter Way To Search And Sign</h5>
+                            <p class="card-text text-muted">Finding an apartment shouldn't feel like a full-time job. With Vector, technology takes the lead—We've removed the clutter and focused on what matters, so you can go from "I like this place" to "I just signed" without the usual leasing circus.</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            
+            <!-- Card 3 (Virtual Tours) - Opens modal with more info -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 border-0 shadow-sm rounded-4 card-hover" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#virtualToursModal">
+                    <div class="card-img-top overflow-hidden d-flex justify-content-center align-items-center p-3 rounded-top-4" style="height: 250px; background-color: rgba(11, 21, 39, 0.03);">
+                        <img src="{{ url_for('static', filename='images/ai-headset-galaxy.png') }}" alt="Tour From Anywhere, Decide Faster" class="img-fluid rounded-3" style="max-height: 100%; width: auto;">
+                    </div>
+                    <div class="card-body text-center p-4">
+                        <h5 class="card-title mb-3">Tour From Anywhere, Decide Faster</h5>
+                        <p class="card-text text-muted">Explore apartments on your schedule with immersive virtual tours—whether it's a 3D walkthrough, detailed floorplan, or high-quality video. Vector puts you in control with flexible options and self-scheduling for in-person visits.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Virtual Tours Modal -->
+<div class="modal fade" id="virtualToursModal" tabindex="-1" aria-labelledby="virtualToursModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark text-white border-0">
+            <div class="modal-header border-bottom border-secondary">
+                <h5 class="modal-title" id="virtualToursModalLabel">Tour From Anywhere, Decide Faster</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-5 mb-4 mb-md-0">
+                        <div class="d-flex justify-content-center align-items-center h-100">
+                            <img src="{{ url_for('static', filename='images/ai-headset-galaxy.png') }}" alt="Tour From Anywhere, Decide Faster" class="img-fluid rounded-3" style="max-height: 250px;">
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                        <h4>Tour From Anywhere, Decide Faster</h4>
+                        <p>Explore apartments on your schedule with immersive virtual tours—whether it's a 3D walkthrough, detailed floorplan, or high-quality video. Vector puts you in control with flexible options and self-scheduling for in-person visits. Most renters make decisions faster after touring virtually, and now you can too.</p>
+                        
+                        <h5 class="mt-4">Features:</h5>
+                        <ul class="list-group list-group-flush bg-transparent mb-4">
+                            <li class="list-group-item bg-transparent text-white border-secondary"><i class="fas fa-check-circle text-info me-2"></i> 360° room-by-room exploration</li>
+                            <li class="list-group-item bg-transparent text-white border-secondary"><i class="fas fa-check-circle text-info me-2"></i> Interactive floor plans</li>
+                            <li class="list-group-item bg-transparent text-white border-secondary"><i class="fas fa-check-circle text-info me-2"></i> Measurement tools for room dimensions</li>
+                            <li class="list-group-item bg-transparent text-white border-secondary"><i class="fas fa-check-circle text-info me-2"></i> View at your own pace, any time</li>
+                            <li class="list-group-item bg-transparent text-white border-secondary"><i class="fas fa-check-circle text-info me-2"></i> Compatible with VR headsets for enhanced experience</li>
+                        </ul>
+                        
+                        <p class="mt-3">Available for all our premium listings. Look for the <span class="badge bg-info"><i class="fas fa-vr-cardboard me-1"></i> Virtual Tour</span> badge on property listings.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-top border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <a href="{{ url_for('listings') }}" class="btn btn-primary">Browse Listings</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

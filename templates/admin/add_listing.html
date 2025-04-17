@@ -1,0 +1,359 @@
+{% extends 'base.html' %}
+
+{% block title %}Add New Listing | Properties{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('admin_dashboard') }}">Admin Dashboard</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Add New Listing</li>
+            </ol>
+        </nav>
+
+        <div class="card">
+            <div class="card-header">
+                <h2>Add New Listing</h2>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('add_listing') }}">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h4>Basic Information</h4>
+                            <hr>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.title.id }}" class="form-label">Title</label>
+                                {{ form.title(class="form-control") }}
+                                {% if form.title.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.title.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.property_type.id }}" class="form-label">Property Type</label>
+                                {{ form.property_type(class="form-control") }}
+                                {% if form.property_type.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.property_type.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h4>Location</h4>
+                            <hr>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.address.id }}" class="form-label">Address</label>
+                                {{ form.address(class="form-control") }}
+                                {% if form.address.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.address.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.unit.id }}" class="form-label">Unit/Apt # (optional)</label>
+                                {{ form.unit(class="form-control") }}
+                                {% if form.unit.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.unit.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="{{ form.city.id }}" class="form-label">City</label>
+                                {{ form.city(class="form-control") }}
+                                {% if form.city.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.city.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="{{ form.state.id }}" class="form-label">State</label>
+                                {{ form.state(class="form-control") }}
+                                {% if form.state.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.state.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="{{ form.zip_code.id }}" class="form-label">ZIP Code</label>
+                                {{ form.zip_code(class="form-control") }}
+                                {% if form.zip_code.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.zip_code.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h4>Property Details</h4>
+                            <hr>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label for="{{ form.price.id }}" class="form-label">Price ($)</label>
+                                {{ form.price(class="form-control", placeholder="e.g. 500000") }}
+                                {% if form.price.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.price.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label for="{{ form.beds.id }}" class="form-label">Bedrooms</label>
+                                {{ form.beds(class="form-control", placeholder="e.g. 2") }}
+                                {% if form.beds.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.beds.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label for="{{ form.baths.id }}" class="form-label">Bathrooms</label>
+                                {{ form.baths(class="form-control", placeholder="e.g. 2.5") }}
+                                {% if form.baths.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.baths.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label for="{{ form.sq_ft.id }}" class="form-label">Square Footage</label>
+                                {{ form.sq_ft(class="form-control", placeholder="e.g. 1000") }}
+                                {% if form.sq_ft.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.sq_ft.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Building Information -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h4>Building Information</h4>
+                            <hr>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label for="{{ form.floor.id }}" class="form-label">Floor</label>
+                                {{ form.floor(class="form-control", placeholder="e.g. 5 or PH") }}
+                                {% if form.floor.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.floor.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label for="{{ form.total_floors.id }}" class="form-label">Total Floors in Building</label>
+                                {{ form.total_floors(class="form-control", placeholder="e.g. 20") }}
+                                {% if form.total_floors.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.total_floors.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label for="{{ form.exposure.id }}" class="form-label">Exposure</label>
+                                {{ form.exposure(class="form-control") }}
+                                {% if form.exposure.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.exposure.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label for="{{ form.neighborhood.id }}" class="form-label">Neighborhood</label>
+                                {{ form.neighborhood(class="form-control", placeholder="e.g. Chelsea") }}
+                                {% if form.neighborhood.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.neighborhood.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.pets_policy.id }}" class="form-label">Pets Policy</label>
+                                {{ form.pets_policy(class="form-control") }}
+                                {% if form.pets_policy.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.pets_policy.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.availability_date.id }}" class="form-label">Available From</label>
+                                {{ form.availability_date(class="form-control", type="date") }}
+                                {% if form.availability_date.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.availability_date.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label for="{{ form.building_amenities.id }}" class="form-label">Building Amenities</label>
+                                <div class="form-text mb-2">List one amenity per line</div>
+                                {{ form.building_amenities(class="form-control", rows=4, placeholder="e.g. Doorman\nRoof Deck\nGym\nLaundry Room") }}
+                                {% if form.building_amenities.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.building_amenities.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label for="{{ form.description.id }}" class="form-label">Description</label>
+                                {{ form.description(class="form-control", rows=5) }}
+                                {% if form.description.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.description.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label for="{{ form.features.id }}" class="form-label">Features (one per line)</label>
+                                {{ form.features(class="form-control", rows=4, placeholder="Hardwood Floors\nStainless Steel Appliances\nIn-unit Laundry") }}
+                                {% if form.features.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.features.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">Enter each feature on a new line.</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h4>Contact Information</h4>
+                            <hr>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.contact_email.id }}" class="form-label">Contact Email</label>
+                                {{ form.contact_email(class="form-control") }}
+                                {% if form.contact_email.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.contact_email.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.contact_phone.id }}" class="form-label">Contact Phone</label>
+                                {{ form.contact_phone(class="form-control") }}
+                                {% if form.contact_phone.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.contact_phone.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Cancel</a>
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

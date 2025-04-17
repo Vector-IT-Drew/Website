@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <style>
+    .building { fill: #0b1527; }
+    .window { fill: rgba(255, 255, 255, 0.2); }
+    .window-lit { fill: rgba(255, 255, 200, 0.3); }
+    .accent { fill: #2a7fff; }
+    .background { fill: #080e1b; }
+    .foreground { fill: #132340; }
+  </style>
+  
+  <!-- Background -->
+  <rect class="background" x="0" y="0" width="800" height="600"/>
+  
+  <!-- Luxury Building -->
+  <rect class="building" x="150" y="50" width="500" height="500"/>
+  
+  <!-- Windows Grid -->
+  <!-- Row 1 -->
+  <rect class="window" x="180" y="80" width="60" height="80"/>
+  <rect class="window-lit" x="260" y="80" width="60" height="80"/>
+  <rect class="window" x="340" y="80" width="60" height="80"/>
+  <rect class="window-lit" x="420" y="80" width="60" height="80"/>
+  <rect class="window" x="500" y="80" width="60" height="80"/>
+  
+  <!-- Row 2 -->
+  <rect class="window-lit" x="180" y="180" width="60" height="80"/>
+  <rect class="window" x="260" y="180" width="60" height="80"/>
+  <rect class="window-lit" x="340" y="180" width="60" height="80"/>
+  <rect class="window" x="420" y="180" width="60" height="80"/>
+  <rect class="window-lit" x="500" y="180" width="60" height="80"/>
+  
+  <!-- Row 3 -->
+  <rect class="window" x="180" y="280" width="60" height="80"/>
+  <rect class="window-lit" x="260" y="280" width="60" height="80"/>
+  <rect class="window" x="340" y="280" width="60" height="80"/>
+  <rect class="window-lit" x="420" y="280" width="60" height="80"/>
+  <rect class="window" x="500" y="280" width="60" height="80"/>
+  
+  <!-- Row 4 -->
+  <rect class="window-lit" x="180" y="380" width="60" height="80"/>
+  <rect class="window" x="260" y="380" width="60" height="80"/>
+  <rect class="window-lit" x="340" y="380" width="60" height="80"/>
+  <rect class="window" x="420" y="380" width="60" height="80"/>
+  <rect class="window-lit" x="500" y="380" width="60" height="80"/>
+  
+  <!-- Building Entrance -->
+  <rect class="foreground" x="320" y="460" width="100" height="90"/>
+  <rect class="accent" x="370" y="460" width="2" height="90"/>
+  
+  <!-- Accent Elements -->
+  <rect class="accent" x="150" y="50" width="500" height="2"/>
+  <rect class="accent" x="150" y="50" width="2" height="500"/>
+  <rect class="accent" x="648" y="50" width="2" height="500"/>
+</svg>

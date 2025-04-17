@@ -1,0 +1,1398 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if listing.address %}{{ listing.address }} #{{ listing.unit }}{% else %}Property Detail{% endif %} | Vector NY{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --gallery-height: 500px;
+        --secondary-gallery-height: 245px;
+    }
+    
+    /* Image Gallery */
+    .property-gallery {
+        position: relative;
+        border-radius: 4px;
+        overflow: hidden; 
+        height: var(--gallery-height);
+        background-color: rgba(255, 255, 255, 0.02);
+    }
+    
+    .property-gallery-main {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+    }
+    
+    /* Gallery Modal Styles */
+    .gallery-thumbnail-item {
+        transition: all 0.2s ease;
+        border: 2px solid transparent;
+        cursor: pointer;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+    
+    .gallery-thumbnail-item:hover {
+        transform: translateY(-2px);
+    }
+    
+    .gallery-thumbnail-item.active-thumbnail {
+        border: 2px solid var(--accent);
+        transform: scale(1.05);
+    }
+    
+    .gallery-thumbnail-item img {
+        transition: all 0.2s ease;
+    }
+    
+    .gallery-thumbnail-item.active-thumbnail img {
+        opacity: 1;
+    }
+    
+    .gallery-thumbnail-item:not(.active-thumbnail) img {
+        opacity: 0.7;
+    }
+    
+    .gallery-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 4px;
+        height: var(--gallery-height);
+    }
+    
+    .gallery-main {
+        overflow: hidden;
+        border-radius: 4px 0 0 4px;
+        position: relative;
+    }
+    
+    .gallery-sidebar {
+        display: grid;
+        grid-template-rows: 1fr 1fr;
+        gap: 4px;
+    }
+    
+    .gallery-item {
+        position: relative;
+        overflow: hidden;
+        border-radius: 0 4px 0 0;
+    }
+    
+    .gallery-item:last-child {
+        border-radius: 0 0 4px 0;
+    }
+    
+    .gallery-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+    
+    .gallery-item:hover .gallery-img,
+    .gallery-main:hover .gallery-img {
+        transform: scale(1.05);
+    }
+    
+    .gallery-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(0deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0) 50%);
+        transition: opacity 0.3s ease;
+        opacity: 0;
+    }
+    
+    .gallery-item:hover .gallery-overlay,
+    .gallery-main:hover .gallery-overlay {
+        opacity: 1;
+    }
+    
+    .view-all-photos {
+        position: absolute;
+        bottom: 15px;
+        right: 15px;
+        background-color: rgba(0, 0, 0, 0.8);
+        color: white;
+        border-radius: 4px;
+        padding: 8px 16px;
+        font-size: 14px;
+        z-index: 10;
+        border: none;
+    }
+    
+    /* Property details */
+    .property-title {
+        font-size: 2.25rem;
+        font-weight: 700;
+        line-height: 1.2;
+    }
+    
+    .property-address {
+        font-size: 1.2rem;
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 0.5rem;
+    }
+    
+    .property-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 24px;
+        margin: 24px 0;
+    }
+    
+    .meta-item {
+        display: flex;
+        align-items: center;
+    }
+    
+    .meta-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: rgba(42, 127, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 12px;
+    }
+    
+    .meta-icon i {
+        color: var(--accent);
+        font-size: 1.2rem;
+    }
+    
+    .meta-label {
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.5);
+        margin-bottom: 0;
+    }
+    
+    .meta-value {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 0;
+        line-height: 1;
+    }
+    
+    .property-price {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--accent);
+    }
+    
+    .property-price-secondary {
+        font-size: 1rem;
+        color: rgba(255, 255, 255, 0.5);
+    }
+    
+    .detail-section {
+        margin-bottom: 32px;
+    }
+    
+    .detail-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--accent);
+    }
+    
+    .detail-text {
+        line-height: 1.6;
+        font-size: 1rem;
+        color: rgba(255, 255, 255, 0.8);
+    }
+    
+    .amenity-item {
+        display: flex;
+        align-items: center;
+        padding: 6px 10px; /* Smaller padding */
+        background-color: rgba(255, 255, 255, 0.03);
+        border-radius: 4px;
+        margin-bottom: 6px; /* Smaller margin */
+    }
+    
+    .amenity-icon {
+        width: 28px; /* Smaller icon container */
+        height: 28px; /* Smaller icon container */
+        border-radius: 50%;
+        background-color: rgba(42, 127, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 10px; /* Smaller margin */
+        flex-shrink: 0;
+    }
+    
+    .amenity-icon i {
+        color: var(--accent);
+        font-size: 0.9rem; /* Smaller icon size */
+    }
+    
+    .contact-card {
+        background-color: rgba(255, 255, 255, 0.03);
+        border-radius: 8px;
+        padding: 24px;
+        position: sticky;
+        top: 24px;
+    }
+    
+    .btn-apply {
+        background-color: var(--accent);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 16px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-apply:hover {
+        background-color: #1e5bb8;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(42, 127, 255, 0.3);
+    }
+    
+    .btn-secondary-action {
+        background-color: rgba(255, 255, 255, 0.05);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 12px;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-secondary-action:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .virtual-tour-badge {
+        position: absolute;
+        bottom: 15px;
+        left: 15px;
+        background-color: rgba(42, 127, 255, 0.8);
+        color: white;
+        border-radius: 4px;
+        padding: 8px 12px;
+        font-size: 14px;
+        font-weight: 500;
+        z-index: 10;
+    }
+    
+    .property-status-badge {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background-color: rgba(42, 127, 255, 0.8);
+        color: white;
+        border-radius: 4px;
+        padding: 8px 12px;
+        font-size: 14px;
+        font-weight: 500;
+        z-index: 10;
+    }
+    
+    .property-type-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background-color: rgba(0, 0, 0, 0.6);
+        color: white;
+        border-radius: 4px;
+        padding: 8px 12px;
+        font-size: 14px;
+        font-weight: 500;
+        z-index: 10;
+    }
+    
+    .neighborhood-badge {
+        background-color: rgba(255, 255, 255, 0.05);
+        color: white;
+        border-radius: 4px;
+        padding: 6px 12px;
+        font-size: 14px;
+        font-weight: 500;
+        display: inline-block;
+        margin-right: 8px;
+    }
+    
+    .feature-list {
+        columns: 2;
+        column-gap: 24px; /* Smaller column gap */
+    }
+    
+    .feature-item {
+        margin-bottom: 8px; /* Smaller bottom margin */
+        break-inside: avoid;
+    }
+    
+    /* Media queries for responsiveness */
+    @media (max-width: 991.98px) {
+        .gallery-grid {
+            grid-template-columns: 1fr;
+            grid-template-rows: 2fr 1fr;
+        }
+        
+        .gallery-main {
+            border-radius: 4px 4px 0 0;
+        }
+        
+        .gallery-sidebar {
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr;
+        }
+        
+        .gallery-item:first-child {
+            border-radius: 0 0 0 4px;
+        }
+        
+        .gallery-item:last-child {
+            border-radius: 0 0 4px 0;
+        }
+        
+        .property-meta {
+            gap: 16px;
+        }
+        
+        .feature-list {
+            columns: 1;
+        }
+    }
+    
+    @media (max-width: 767.98px) {
+        :root {
+            --gallery-height: 400px;
+        }
+        
+        .property-title {
+            font-size: 1.75rem;
+        }
+        
+        .property-price {
+            font-size: 1.75rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+    <!-- Back to listings link -->
+    <div class="mb-3">
+        <a href="{{ url_for('listings') }}" class="text-white text-decoration-none">
+            <i class="fas fa-arrow-left me-2"></i> Back to Listings
+        </a>
+    </div>
+    
+    <!-- Property Gallery -->
+    <div class="property-gallery mb-4">
+        {% set has_images = false %}
+        
+        <!-- If we have images -->
+        {% if listing.unit_images %}
+            {% if listing.unit_images is string and listing.unit_images.startswith('http') %}
+                <!-- Single image -->
+                <div class="gallery-grid">
+                    <div class="gallery-main">
+                        <img src="{{ listing.unit_images }}" alt="{{ listing.address }}" class="gallery-img">
+                        <div class="gallery-overlay"></div>
+                    </div>
+                    <div class="gallery-sidebar" style="background-color: rgba(0, 0, 0, 0.5); display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                        <div style="text-align: center; padding: 20px;">
+                            <i class="fas fa-camera fa-3x mb-3" style="color: rgba(255, 255, 255, 0.5);"></i>
+                            <p class="text-white-50">Additional property photos<br>coming soon</p>
+                        </div>
+                    </div>
+                </div>
+                {% set has_images = true %}
+            {% elif listing.unit_images is string and listing.unit_images != '[]' %}
+                {% set images = listing.unit_images|replace('\"', '"')|from_json %}
+                {% if images and images|length > 0 %}
+                    <div class="gallery-grid">
+                        <div class="gallery-main">
+                            <img src="{{ images[0] }}" alt="{{ listing.address }}" class="gallery-img">
+                            <div class="gallery-overlay"></div>
+                        </div>
+                        <div class="gallery-sidebar" {% if images|length == 1 %}style="display: flex; flex-direction: column; justify-content: center; align-items: center; background-color: rgba(0, 0, 0, 0.1);"{% endif %}>
+                            {% if images|length > 1 %}
+                                <div class="gallery-item">
+                                    <img src="{{ images[1] }}" alt="{{ listing.address }}" class="gallery-img">
+                                    <div class="gallery-overlay"></div>
+                                </div>
+                                
+                                {% if images|length > 2 %}
+                                <div class="gallery-item">
+                                    <img src="{{ images[2] }}" alt="{{ listing.address }}" class="gallery-img">
+                                    <div class="gallery-overlay"></div>
+                                </div>
+                                {% endif %}
+                            {% else %}
+                                <div style="text-align: center; padding: 20px;">
+                                    <i class="fas fa-camera fa-3x mb-3" style="color: rgba(255, 255, 255, 0.3);"></i>
+                                    <p class="text-white-50">More photos coming soon</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% set has_images = true %}
+                {% endif %}
+            {% elif listing.unit_images is iterable and listing.unit_images is not string and listing.unit_images|length > 0 %}
+                <div class="gallery-grid">
+                    <div class="gallery-main">
+                        <img src="{{ listing.unit_images[0] }}" alt="{{ listing.address }}" class="gallery-img">
+                        <div class="gallery-overlay"></div>
+                    </div>
+                    <div class="gallery-sidebar" {% if listing.unit_images|length == 1 %}style="display: flex; flex-direction: column; justify-content: center; align-items: center; background-color: rgba(0, 0, 0, 0.1);"{% endif %}>
+                        {% if listing.unit_images|length > 1 %}
+                            <div class="gallery-item">
+                                <img src="{{ listing.unit_images[1] }}" alt="{{ listing.address }}" class="gallery-img">
+                                <div class="gallery-overlay"></div>
+                            </div>
+                            
+                            {% if listing.unit_images|length > 2 %}
+                            <div class="gallery-item">
+                                <img src="{{ listing.unit_images[2] }}" alt="{{ listing.address }}" class="gallery-img">
+                                <div class="gallery-overlay"></div>
+                            </div>
+                            {% endif %}
+                        {% else %}
+                            <div style="text-align: center; padding: 20px;">
+                                <i class="fas fa-camera fa-3x mb-3" style="color: rgba(255, 255, 255, 0.3);"></i>
+                                <p class="text-white-50">More photos coming soon</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% set has_images = true %}
+            {% endif %}
+        {% endif %}
+        
+        <!-- Fallback if no images -->
+        {% if not has_images %}
+            <div class="gallery-grid">
+                <div class="gallery-main" style="background: linear-gradient(135deg, var(--primary) 0%, #1a3a68 100%);">
+                    <div class="d-flex justify-content-center align-items-center h-100">
+                        <div style="text-align: center;">
+                            <i class="fas fa-building fa-5x text-white opacity-25 mb-3"></i>
+                            <p class="text-white-50">No images available for this property</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="gallery-sidebar" style="display: flex; flex-direction: column; justify-content: center; align-items: center; background-color: rgba(0, 0, 0, 0.1);">
+                    <div style="text-align: center; padding: 20px;">
+                        <i class="fas fa-camera fa-3x mb-3" style="color: rgba(255, 255, 255, 0.3);"></i>
+                        <p class="text-white-50">Property photos coming soon</p>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        
+        <!-- Floor Plan Badge -->
+        <div class="virtual-tour-badge" id="floorplan-badge" style="cursor: pointer;">
+            <i class="fas fa-map me-2"></i>Floor Plan
+        </div>
+        
+        <!-- Property Status Badge -->
+        <div class="property-status-badge" style="font-size: 0.8rem; padding: 2px 5px; background-color: rgba(0,0,0,0.2); border-radius: 3px;">
+            {% if listing.move_out %}
+                {% if listing.move_out == "09/09/1999" %}
+                    Available Now
+                {% else %}
+                    {{ listing.move_out}}
+                {% endif %}
+            {% else %}
+                Available Now
+            {% endif %}
+        </div>
+        
+        <!-- Property Type Badge -->
+        <div class="property-type-badge">
+            <i class="fas fa-home me-1"></i> {{ listing.property_type if listing.property_type else 'Apartment' }}
+        </div>
+        
+        <!-- View All Photos Button -->
+        <button class="view-all-photos">
+            <i class="fas fa-th me-2"></i> View All Photos
+        </button>
+    </div>
+    
+    <!-- Property Header -->
+    <div class="mb-4">
+        <div class="row align-items-end">
+            <div class="col-lg-8">
+                <div class="mb-3">
+                    {% if listing.neighborhood %}
+                        <span class="neighborhood-badge">
+                            <i class="fas fa-map-marker-alt me-1"></i> {{ listing.neighborhood }}
+                        </span>
+                    {% endif %}
+                    {% if listing.borough %}
+                        <span class="neighborhood-badge">
+                            <i class="fas fa-city me-1"></i> {{ listing.borough }}
+                        </span>
+                    {% endif %}
+                </div>
+                
+                <h1 class="property-title mb-2">
+                    {% if listing.building_name %}
+                        {{ listing.building_name }}
+                    {% else %}
+                        {{ listing.address }}
+                    {% endif %}
+                    {% if listing.unit %}
+                        <span style="color: var(--accent);">#{{ listing.unit }}</span>
+                    {% endif %}
+                </h1>
+                
+                <p class="property-address">
+                    {{ listing.address }}{% if listing.zip_code %}, {{ listing.zip_code }}{% endif %}
+                </p>
+            </div>
+            
+            <div class="col-lg-4 text-lg-end">
+                <h2 class="property-price mb-0">
+                    {% if listing.actual_rent is none or listing.actual_rent == 'N/A' or not listing.actual_rent or listing.actual_rent is undefined %}
+                        Price on request
+                    {% else %}
+                        ${{ "{:,}".format(listing.actual_rent)|replace(',', ',') }}
+                    {% endif %}
+                </h2>
+                <p class="property-price-secondary mb-0">per month</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Property Meta Information -->
+    <div class="property-meta mb-5">
+        {% if listing.beds is defined and listing.beds|string not in ['N/A', 'NA', '-', ''] %}
+        <div class="meta-item">
+            <div class="meta-icon">
+                <i class="fas fa-bed"></i>
+            </div>
+            <div>
+                <p class="meta-label">Bedrooms</p>
+                <p class="meta-value">{{ 'Studio' if listing.beds|string in ['0', '0.0'] else listing.beds }}</p>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if listing.baths is defined and listing.baths and listing.baths|string not in ['0', '0.0', 'N/A', 'NA', '-', ''] %}
+        <div class="meta-item">
+            <div class="meta-icon">
+                <i class="fas fa-bath"></i>
+            </div>
+            <div>
+                <p class="meta-label">Bathrooms</p>
+                <p class="meta-value">{{ listing.baths }}</p>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if listing.sqft %}
+        <div class="meta-item">
+            <div class="meta-icon">
+                <i class="fas fa-ruler-combined"></i>
+            </div>
+            <div>
+                <p class="meta-label">Square Feet</p>
+                <p class="meta-value">{{ "{:,}".format(listing.sqft) }}</p>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if listing.floor_num or listing.floor and (listing.floor_num|string not in ['0', '0.0', 'N/A', 'NA', '-', ''] or listing.floor|string not in ['0', '0.0', 'N/A', 'NA', '-', '']) %}
+        <div class="meta-item">
+            <div class="meta-icon">
+                <i class="fas fa-level-up-alt"></i>
+            </div>
+            <div>
+                <p class="meta-label">Floor</p>
+                <p class="meta-value">{{ listing.floor_num if listing.floor_num and listing.floor_num|string not in ['0', 'N/A', 'NA', '-', ''] else listing.floor }}</p>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if listing.exposure is defined and listing.exposure and listing.exposure|string not in ['0', 'N/A', 'NA', '-', ''] %}
+        <div class="meta-item">
+            <div class="meta-icon">
+                <i class="fas fa-compass"></i>
+            </div>
+            <div>
+                <p class="meta-label">Exposure</p>
+                <p class="meta-value">{{ listing.exposure }}</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    <div class="row">
+        <!-- Left Column: Property Details -->
+        <div class="col-lg-8">
+            <!-- Property Description -->
+            <div class="detail-section">
+                <h3 class="detail-title">About This Property</h3>
+                {% if listing.description %}
+                    <div class="detail-text">
+                        {% if listing.description is string %}
+                            {{ listing.description | markdown | safe }}
+                        {% else %}
+                            {{ listing.description | safe }}
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <div class="detail-text">
+                        <p>This exceptional {% if listing.beds %}{{ listing.beds }}-bedroom{% endif %} {% if listing.baths %}{{ listing.baths }}-bathroom{% endif %} residence is located in {% if listing.neighborhood %}{{ listing.neighborhood }}{% else %}{{ listing.borough if listing.borough else 'New York' }}{% endif %}. 
+                        
+                        {% if listing.actual_rent is defined and listing.actual_rent and listing.actual_rent != 0 %}Offered at ${{ "{:,}".format(listing.actual_rent) }} per month, this {% endif %}property features spacious rooms with modern finishes throughout.
+                        
+                        {% if listing.sqft is defined and listing.sqft and listing.sqft > 0 %}With {{ "{:,}".format(listing.sqft) }} square feet of living space, {% endif %}this home provides comfort and style in one of New York's most desirable locations.</p>
+                        
+                        <p>Contact us today to schedule a viewing of this exclusive Vector property.</p>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Unit Amenities -->
+            {% if (listing.unit_amenities and listing.unit_amenities|length > 0) or 
+                  (listing.floor_type) or
+                  (listing.countertop_type) or
+                  (listing.dishwasher) or 
+                  (listing.laundry_in_unit) %}
+            <div class="detail-section">
+                <h3 class="detail-title">Unit Amenities</h3>
+                <div class="feature-list">
+                    {% if listing.unit_amenities and listing.unit_amenities|length > 0 %}
+                        {% for amenity in listing.unit_amenities %}
+                            {% if amenity and amenity|string not in ['0', '0.0', 'N/A', 'NA', '-', ''] %}
+                            <div class="feature-item">
+                                <div class="amenity-item">
+                                    <div class="amenity-icon">
+                                        {% if 'central' in amenity|lower and 'air' in amenity|lower %}
+                                            <i class="fas fa-wind"></i>
+                                        {% elif 'dishwasher' in amenity|lower %}
+                                            <i class="fas fa-utensils"></i>
+                                        {% elif 'microwave' in amenity|lower %}
+                                            <i class="fas fa-radiation-alt"></i>
+                                        {% elif 'washer' in amenity|lower or 'dryer' in amenity|lower or 'laundry' in amenity|lower %}
+                                            <i class="fas fa-tshirt"></i>
+                                        {% elif 'balcony' in amenity|lower or 'terrace' in amenity|lower %}
+                                            <i class="fas fa-sun"></i>
+                                        {% elif 'fireplace' in amenity|lower %}
+                                            <i class="fas fa-fire"></i>
+                                        {% elif 'hardwood' in amenity|lower %}
+                                            <i class="fas fa-border-all"></i>
+                                        {% elif 'window' in amenity|lower %}
+                                            <i class="far fa-window-maximize"></i>
+                                        {% elif 'closet' in amenity|lower or 'storage' in amenity|lower %}
+                                            <i class="fas fa-archive"></i>
+                                        {% else %}
+                                            <i class="fas fa-check"></i>
+                                        {% endif %}
+                                    </div>
+                                    <span>{{ amenity }}</span>
+                                </div>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                    
+                    <!-- Additional unit features from specific fields -->
+                    {% if listing.floor_type %}
+                    <div class="feature-item">
+                        <div class="amenity-item">
+                            <div class="amenity-icon">
+                                <i class="fas fa-border-all"></i>
+                            </div>
+                            <span>{{ listing.floor_type }} Flooring</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if listing.countertop_type %}
+                    <div class="feature-item">
+                        <div class="amenity-item">
+                            <div class="amenity-icon">
+                                <i class="fas fa-th-large"></i>
+                            </div>
+                            <span>{{ listing.countertop_type }} Countertops</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if listing.dishwasher %}
+                    <div class="feature-item">
+                        <div class="amenity-item">
+                            <div class="amenity-icon">
+                                <i class="fas fa-utensils"></i>
+                            </div>
+                            <span>Dishwasher</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if listing.laundry_in_unit  %}
+                    <div class="feature-item">
+                        <div class="amenity-item">
+                            <div class="amenity-icon">
+                                <i class="fas fa-tshirt"></i>
+                            </div>
+                            <span>In-Unit Laundry</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Building Amenities -->
+            <div class="detail-section">
+                <h3 class="detail-title">Building Amenities</h3>
+                {% if (listing.building_amenities and listing.building_amenities|length > 0) or 
+                      (listing.elevator) or 
+                      (listing.wheelchair_access) or 
+                      (listing.smoke_free) or 
+                      (listing.laundry_in_building) or
+                      (listing.live_in_super) or
+                      (listing.concierge) %}
+                    <div class="feature-list">
+                        {% if listing.building_amenities and listing.building_amenities|length > 0 %}
+                            {% for amenity in listing.building_amenities %}
+                                {% if amenity and amenity|string not in ['0', '0.0', 'N/A', 'NA', '-', ''] %}
+                                <div class="feature-item">
+                                    <div class="amenity-item">
+                                        <div class="amenity-icon">
+                                            {% if 'pool' in amenity|lower %}
+                                                <i class="fas fa-swimming-pool"></i>
+                                            {% elif 'gym' in amenity|lower or 'fitness' in amenity|lower %}
+                                                <i class="fas fa-dumbbell"></i>
+                                            {% elif 'door' in amenity|lower or 'concierge' in amenity|lower %}
+                                                <i class="fas fa-user-shield"></i>
+                                            {% elif 'lounge' in amenity|lower %}
+                                                <i class="fas fa-couch"></i>
+                                            {% elif 'sauna' in amenity|lower %}
+                                                <i class="fas fa-hot-tub"></i>
+                                            {% elif 'children' in amenity|lower or 'play' in amenity|lower %}
+                                                <i class="fas fa-child"></i>
+                                            {% elif 'locker' in amenity|lower %}
+                                                <i class="fas fa-lock"></i>
+                                            {% elif 'storage' in amenity|lower and 'bike' not in amenity|lower %}
+                                                <i class="fas fa-box"></i>
+                                            {% elif 'bike' in amenity|lower %}
+                                                <i class="fas fa-bicycle"></i>
+                                            {% elif 'garage' in amenity|lower or 'parking' in amenity|lower %}
+                                                <i class="fas fa-car"></i>
+                                            {% elif 'court' in amenity|lower or 'padel' in amenity|lower or 'tennis' in amenity|lower %}
+                                                <i class="fas fa-table-tennis"></i>
+                                            {% elif 'roof' in amenity|lower or 'terrace' in amenity|lower %}
+                                                <i class="fas fa-umbrella-beach"></i>
+                                            {% elif 'garden' in amenity|lower or 'outdoor' in amenity|lower %}
+                                                <i class="fas fa-tree"></i>
+                                            {% elif 'laundry' in amenity|lower or 'washer' in amenity|lower %}
+                                                <i class="fas fa-tshirt"></i>
+                                            {% elif 'elevator' in amenity|lower %}
+                                                <i class="fas fa-arrow-alt-circle-up"></i>
+                                            {% elif 'wifi' in amenity|lower or 'internet' in amenity|lower %}
+                                                <i class="fas fa-wifi"></i>
+                                            {% elif 'doorman' in amenity|lower or 'security' in amenity|lower %}
+                                                <i class="fas fa-user-shield"></i>
+                                            {% elif 'cinema' in amenity|lower or 'theater' in amenity|lower or 'media' in amenity|lower %}
+                                                <i class="fas fa-film"></i>
+                                            {% elif 'conference' in amenity|lower or 'business' in amenity|lower %}
+                                                <i class="fas fa-briefcase"></i>
+                                            {% elif 'pet' in amenity|lower or 'dog' in amenity|lower %}
+                                                <i class="fas fa-paw"></i>
+                                            {% else %}
+                                                <i class="fas fa-check"></i>
+                                            {% endif %}
+                                        </div>
+                                        <span>{{ amenity }}</span>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                        
+                        <!-- Additional building features from specific fields -->
+                        {% if listing.elevator %}
+                        <div class="feature-item">
+                            <div class="amenity-item">
+                                <div class="amenity-icon">
+                                    <i class="fas fa-arrow-alt-circle-up"></i>
+                                </div>
+                                <span>Elevator Access</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if listing.wheelchair_access %}
+                        <div class="feature-item">
+                            <div class="amenity-item">
+                                <div class="amenity-icon">
+                                    <i class="fas fa-wheelchair"></i>
+                                </div>
+                                <span>Wheelchair Accessible</span>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if listing.smoke_free %}
+                        <div class="feature-item">
+                            <div class="amenity-item">
+                                <div class="amenity-icon">
+                                    <i class="fas fa-smoking-ban"></i>
+                                </div>
+                                <span>Smoke-Free Environment</span>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if listing.laundry_in_building %}
+                        <div class="feature-item">
+                            <div class="amenity-item">
+                                <div class="amenity-icon">
+                                    <i class="fas fa-tshirt"></i>
+                                </div>
+                                <span>Laundry in Building</span>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if listing.live_in_super %}
+                        <div class="feature-item">
+                            <div class="amenity-item">
+                                <div class="amenity-icon">
+                                    <i class="fas fa-user-tie"></i>
+                                </div>
+                                <span>Live-in Super</span>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if listing.concierge %}
+                        <div class="feature-item">
+                            <div class="amenity-item">
+                                <div class="amenity-icon">
+                                    <i class="fas fa-concierge-bell"></i>
+                                </div>
+                                <span>Concierge Service</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Additional Information -->
+            <div class="detail-section">
+                <h3 class="detail-title">Additional Information</h3>
+                <div class="row g-2">
+                    <div class="col-md-6">
+                        <div class="amenity-item">
+                            <div class="amenity-icon">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div>
+                                <span class="text-white-50">Availability:</span>
+                                <div class="fw-semibold">
+                                    {% if listing.move_out %}
+                                        {% if listing.move_out == "09/09/1999" %}
+                                            Available Now
+                                        {% else %}
+                                            {{ listing.move_out}}
+                                        {% endif %}
+                                    {% else %}
+                                        Available Now
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if listing.lease_type %}
+                    <div class="col-md-6">
+                        <div class="amenity-item">
+                            <div class="amenity-icon">
+                                <i class="fas fa-file-contract"></i>
+                            </div>
+                            <div>
+                                <span class="text-white-50">Lease Type:</span>
+                                <div class="fw-semibold">{{ listing.lease_type }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="col-md-6">
+                        <div class="amenity-item">
+                            <div class="amenity-icon">
+                                <i class="fas fa-paw"></i>
+                            </div>
+                            <div>
+                                <span class="text-white-50">Pet Policy:</span>
+                                <div class="fw-semibold">
+                                    {% if listing.pets_policy == 1 %}
+                                        Pets Allowed
+                                    {% else %}
+                                        No Pets Allowed
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if listing.lease_term %}
+                    <div class="col-md-6">
+                        <div class="amenity-item">
+                            <div class="amenity-icon">
+                                <i class="fas fa-file-signature"></i>
+                            </div>
+                            <div>
+                                <span class="text-white-50">Lease Term:</span>
+                                <div class="fw-semibold">{{ listing.lease_term }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Location Map -->
+            <div class="detail-section">
+                <h3 class="detail-title">Location</h3>
+                <div class="location-map rounded overflow-hidden" style="height: 300px; position: relative;">
+                    <!-- Use actual latitude and longitude from the listing data -->
+                    {% if listing.latitude and listing.longitude %}
+                        <iframe id="osm-map" width="100%" height="100%" frameborder="0" 
+                                src="https://www.openstreetmap.org/export/embed.html?bbox={{ (listing.longitude - 0.001)|float }}%2C{{ (listing.latitude - 0.001)|float }}%2C{{ (listing.longitude + 0.001)|float }}%2C{{ (listing.latitude + 0.001)|float }}&amp;layer=mapnik&amp;marker={{ listing.latitude }}%2C{{ listing.longitude }}&amp;zoom=18" 
+                                style="border: none; border-radius: 4px;">
+                        </iframe>
+                    {% else %}
+                       
+                    {% endif %}
+                    <div class="position-absolute" style="bottom: 15px; right: 15px; z-index: 5;">
+                        <a href="https://www.google.com/maps/search/?api=1&query={{ (listing.full_address if listing.full_address else listing.address) | urlencode }}" target="_blank" class="btn btn-sm text-white px-3 py-1" style="background-color: rgba(42, 127, 255, 0.8); border-radius: 4px;">
+                            <i class="fas fa-external-link-alt me-2"></i>View on Google Maps
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="neighborhood-info mt-3">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="amenity-item">
+                                <div class="amenity-icon">
+                                    <i class="fas fa-map-marked-alt"></i>
+                                </div>
+                                <div>
+                                    <span class="text-white-50">Neighborhood:</span>
+                                    <div class="fw-semibold">{{ listing.neighborhood if listing.neighborhood and listing.neighborhood != '0' else 'N/A' }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="amenity-item">
+                                <div class="amenity-icon">
+                                    <i class="fas fa-city"></i>
+                                </div>
+                                <div>
+                                    <span class="text-white-50">Borough:</span>
+                                    <div class="fw-semibold">{{ listing.borough if listing.borough else 'Manhattan' }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Column: Contact Card -->
+        <div class="col-lg-4">
+            <div class="contact-card">
+                <div class="text-center mb-4">
+                    <h3 class="fw-bold mb-3">Interested in this property?</h3>
+                    <p class="text-white-50 mb-0">Schedule a viewing to see this property</p>
+                </div>
+                
+                <div class="d-grid gap-3 mb-4">
+                    <a href="https://us-east1-vector-main-app.cloudfunctions.net/Main/get_tour_form?email_address={{ listing.portfolio_email }}" target="_blank" class="btn btn-secondary-action">
+                        <i class="fas fa-calendar-alt me-2"></i> Schedule a Viewing
+                    </a>
+                </div>
+                
+                <div class="text-center mb-4" style="padding-top: 10px; padding-bottom: 10px; border-top: 1px solid rgba(255, 255, 255, 0.1); border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                    <p class="text-white-50 mb-2">Share this listing</p>
+                    <div class="d-flex justify-content-center gap-3">
+                        <a href="#" class="text-white" style="font-size: 1.2rem;"><i class="fab fa-youtube"></i></a>
+                        <!-- <a href="#" class="text-white" style="font-size: 1.2rem;"><i class="fab fa-instagram"></i></a> -->
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <p class="mb-2 text-white-50">Contact a leasing agent</p>
+                    <h4 class="fw-bold mb-1">Vector New York</h4>
+                    <p class="mb-3">
+                        <a href="tel:+12125551234" class="text-white text-decoration-none">
+                            <i class="fas fa-phone-alt me-2" style="color: var(--accent);"></i> (212) 555-1234
+                        </a>
+                    </p>
+                    <button class="btn btn-secondary-action w-100" data-bs-toggle="modal" data-bs-target="#contactAgentModal">
+                        <i class="fas fa-envelope me-2"></i> Email Agent
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Photo Gallery Modal -->
+<div class="modal fade" id="photoGalleryModal" tabindex="-1" aria-labelledby="photoGalleryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content" style="background-color: var(--primary-dark); border: none; border-radius: 8px;">
+            <div class="modal-header border-0">
+                <h5 class="modal-title" id="photoGalleryModalLabel">{{ listing.address }} #{{ listing.unit }} - Photo Gallery</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Main image display -->
+                <div class="text-center mb-4">
+                    <img id="galleryMainImage" src="" class="img-fluid rounded" style="max-height: 60vh; object-fit: contain;" alt="Property Image">
+                </div>
+                
+                <!-- Thumbnails carousel -->
+                <div class="gallery-thumbnails d-flex flex-wrap justify-content-center gap-2">
+                    {% if listing.unit_images and listing.unit_images|length > 0 %}
+                        {% for image in listing.unit_images %}
+                            {% if image and image|string not in ['0', '0.0', 'N/A', 'NA', '-', ''] %}
+                            <div class="gallery-thumbnail-item" data-index="{{ loop.index0 }}">
+                                <img src="{{ image }}" class="img-thumbnail" style="width: 100px; height: 75px; object-fit: cover; cursor: pointer;" alt="Thumbnail {{ loop.index }}">
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center p-5">
+                            <p class="text-muted">No additional images available</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="modal-footer border-0 justify-content-between">
+                <div>
+                    <button type="button" class="btn btn-outline-light" id="prevImage">
+                        <i class="fas fa-chevron-left me-1"></i> Previous
+                    </button>
+                    <button type="button" class="btn btn-outline-light" id="nextImage">
+                        Next <i class="fas fa-chevron-right ms-1"></i>
+                    </button>
+                </div>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="background-color: rgba(255, 255, 255, 0.1); border: none;">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Schedule Viewing Modal removed as we now link directly to external form -->
+<!-- Floor Plan Modal -->
+<div class="modal fade" id="floorPlanModal" tabindex="-1" aria-labelledby="floorPlanModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content" style="background-color: var(--primary-dark); border: none; border-radius: 8px;">
+            <div class="modal-header border-0">
+                <h5 class="modal-title" id="floorPlanModalLabel">{{ listing.address }} #{{ listing.unit }} - Floor Plan</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                {% if listing.floorplan and listing.floorplan|string not in ['0', '0.0', 'N/A', 'NA', '-', ''] %}
+                    <!-- For Google Drive files, we'll use an embedded preview instead of an image -->
+                    {% if 'drive.google.com' in listing.floorplan %}
+                        <script>
+                            // Function to convert Google Drive share link to download link 
+                            // (as requested, we'll use this function first, then use the fileId for preview)
+
+                            
+                            function convertToDownloadLink(shareLink) {
+                                const fileIdMatch = shareLink.match(/\/file\/d\/(.+?)\//);
+                                if (!fileIdMatch) {
+                                    console.error("Invalid Google Drive link");
+                                    return { fileId: null, downloadUrl: null };
+                                }
+                                const fileId = fileIdMatch[1];
+                                const downloadUrl = `https://drive.google.com/file/d/${fileId}/preview`;
+                                return { fileId, downloadUrl };
+                            }
+                            
+                            // Convert the link first as requested
+                            const { fileId, downloadUrl } = convertToDownloadLink("{{ listing.floorplan }}");
+                            console.log("Google Drive file ID:", fileId);
+                            console.log("Download URL:", downloadUrl);
+                            
+                            if (fileId) {
+                                // For display purposes, we'll use the preview URL which works better in iframes
+                                const previewUrl = `https://drive.google.com/file/d/${fileId}/preview`;
+                                console.log("Preview URL:", previewUrl);
+                                
+                                // Create an iframe with Google Drive preview
+                                document.write(`
+                                    <iframe src="${previewUrl}" 
+                                            width="100%" 
+                                            height="500" 
+                                            frameborder="0" 
+                                            style="border-radius: 8px;" 
+                                            allowfullscreen>
+                                    </iframe>
+                                `);
+                                
+                                // Also add a download button that uses the download URL
+                                document.write(`
+                                    <div class="mt-3">
+                                        <a href="${downloadUrl}" target="_blank" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-download me-2"></i>Download Floor Plan
+                                        </a>
+                                    </div>
+                                `);
+                            } else {
+                                // Fallback for invalid Google Drive URLs
+                                document.write(`
+                                    <div class="text-center p-4">
+                                        <p class="mb-3">Floor plan is available on Google Drive</p>
+                                        <a href="{{ listing.floorplan }}" target="_blank" class="btn btn-primary">
+                                            <i class="fas fa-external-link-alt me-2"></i>View Floor Plan
+                                        </a>
+                                    </div>
+                                `);
+                            }
+                        </script>
+                    {% elif 'dropbox.com' in listing.floorplan %}
+                        <!-- For Dropbox files -->
+                        <div class="text-center p-4">
+                            <p class="mb-3">Floor plan is available on Dropbox</p>
+                            <a href="{{ listing.floorplan }}" target="_blank" class="btn btn-primary">
+                                <i class="fas fa-external-link-alt me-2"></i>View Floor Plan
+                            </a>
+                        </div>
+                    {% else %}
+                        <!-- For direct image URLs -->
+                        <img src="{{ listing.floorplan }}" class="img-fluid rounded" alt="Floor Plan" style="max-height: 80vh;">
+                    {% endif %}
+                {% else %}
+                    <div class="p-5">
+                        <p class="text-muted">No floor plan available for this property</p>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="background-color: rgba(255, 255, 255, 0.1); border: none;">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Contact Agent Modal -->
+<div class="modal fade" id="contactAgentModal" tabindex="-1" aria-labelledby="contactAgentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="background-color: var(--primary-dark); border: none; border-radius: 8px;">
+            <div class="modal-header border-0">
+                <h5 class="modal-title" id="contactAgentModalLabel">Contact Agent</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-3">Send a message about {{ listing.address }}, Unit {{ listing.unit }}</p>
+                <form id="contactAgentForm">
+                    <div class="mb-3">
+                        <label for="contactName" class="form-label">Your Name</label>
+                        <input type="text" class="form-control" id="contactName" required 
+                               style="background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: white;">
+                    </div>
+                    <div class="mb-3">
+                        <label for="contactEmail" class="form-label">Your Email</label>
+                        <input type="email" class="form-control" id="contactEmail" required 
+                               style="background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: white;">
+                    </div>
+                    <div class="mb-3">
+                        <label for="contactPhone" class="form-label">Your Phone</label>
+                        <input type="tel" class="form-control" id="contactPhone" 
+                               style="background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: white;">
+                    </div>
+                    <div class="mb-3">
+                        <label for="contactMessage" class="form-label">Message</label>
+                        <textarea class="form-control" id="contactMessage" rows="4" required
+                                  style="background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: white;">I'm interested in {{ listing.address }}, Unit {{ listing.unit }} and would like more information.</textarea>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="contactConsent" required>
+                        <label class="form-check-label" for="contactConsent">I agree to be contacted about this property</label>
+                    </div>
+                    <input type="hidden" id="portfolioEmail" value="{{ listing.portfolio_email }}">
+                </form>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="background-color: rgba(255, 255, 255, 0.1); border: none;">Cancel</button>
+                <button type="button" class="btn btn-primary" id="sendContactForm" style="background-color: var(--accent); border: none;">Send Message</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Function to convert Google Drive share link to direct download link
+    function convertToDownloadLink(shareLink) {
+        const fileIdMatch = shareLink.match(/\/file\/d\/(.+?)\//);
+        if (!fileIdMatch) {
+            console.error("Invalid Google Drive link");
+            return null;
+        }
+        const fileId = fileIdMatch[1];
+        return `https://drive.google.com/uc?export=download&id=${fileId}`;
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize the modals
+        const photoGalleryModal = new bootstrap.Modal(document.getElementById('photoGalleryModal'));
+        const floorPlanModal = new bootstrap.Modal(document.getElementById('floorPlanModal'));
+        
+        // Get all the unit images
+        const unitImages = [
+            {% if listing.unit_images and listing.unit_images|length > 0 %}
+                {% for image in listing.unit_images %}
+                    {% if image and image|string not in ['0', '0.0', 'N/A', 'NA', '-', ''] %}
+                        "{{ image }}",
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        ];
+        
+        // Global variables for the gallery
+        let currentImageIndex = 0;
+        const galleryMainImage = document.getElementById('galleryMainImage');
+        const prevImageBtn = document.getElementById('prevImage');
+        const nextImageBtn = document.getElementById('nextImage');
+        
+        // Function to update the main image
+        function updateMainImage(index) {
+            if (unitImages.length > 0) {
+                currentImageIndex = index;
+                galleryMainImage.src = unitImages[currentImageIndex];
+                
+                // Update active thumbnail
+                document.querySelectorAll('.gallery-thumbnail-item').forEach(item => {
+                    item.classList.remove('active-thumbnail');
+                });
+                const activeThumbnail = document.querySelector(`.gallery-thumbnail-item[data-index="${currentImageIndex}"]`);
+                if (activeThumbnail) {
+                    activeThumbnail.classList.add('active-thumbnail');
+                }
+                
+                // Enable/disable prev/next buttons
+                prevImageBtn.disabled = currentImageIndex === 0;
+                nextImageBtn.disabled = currentImageIndex === unitImages.length - 1;
+            }
+        }
+        
+        // Previous image button
+        if (prevImageBtn) {
+            prevImageBtn.addEventListener('click', function() {
+                if (currentImageIndex > 0) {
+                    updateMainImage(currentImageIndex - 1);
+                }
+            });
+        }
+        
+        // Next image button
+        if (nextImageBtn) {
+            nextImageBtn.addEventListener('click', function() {
+                if (currentImageIndex < unitImages.length - 1) {
+                    updateMainImage(currentImageIndex + 1);
+                }
+            });
+        }
+        
+        // Thumbnail click handlers
+        document.querySelectorAll('.gallery-thumbnail-item').forEach(thumbnail => {
+            thumbnail.addEventListener('click', function() {
+                const index = parseInt(this.getAttribute('data-index'));
+                updateMainImage(index);
+            });
+        });
+        
+        // Handle view all photos button
+        const viewAllBtn = document.querySelector('.view-all-photos');
+        if (viewAllBtn) {
+            viewAllBtn.addEventListener('click', function() {
+                // Initialize the gallery with the first image
+                if (unitImages.length > 0) {
+                    updateMainImage(0);
+                    photoGalleryModal.show();
+                } else {
+                    alert('No photos available for this property.');
+                }
+            });
+        }
+        
+        // Contact Agent form handling
+        const contactAgentModal = new bootstrap.Modal(document.getElementById('contactAgentModal'));
+        const sendContactFormBtn = document.getElementById('sendContactForm');
+        const contactAgentForm = document.getElementById('contactAgentForm');
+        
+        if (sendContactFormBtn) {
+            sendContactFormBtn.addEventListener('click', function() {
+                if (contactAgentForm.checkValidity()) {
+                    const name = document.getElementById('contactName').value;
+                    const email = document.getElementById('contactEmail').value;
+                    const phone = document.getElementById('contactPhone').value;
+                    const message = document.getElementById('contactMessage').value;
+                    const portfolioEmail = document.getElementById('portfolioEmail').value;
+                    
+                    // Create the mailto link with the form data
+                    const subject = encodeURIComponent(`Inquiry about ${document.title}`);
+                    const body = encodeURIComponent(
+                        `Name: ${name}\n` +
+                        `Email: ${email}\n` +
+                        `Phone: ${phone}\n\n` +
+                        `Message:\n${message}`
+                    );
+                    
+                    // Open email client with the form data
+                    window.location.href = `mailto:${portfolioEmail}?subject=${subject}&body=${body}`;
+                    
+                    // Hide the modal after sending
+                    contactAgentModal.hide();
+                    
+                    // Show confirmation message
+                    alert('Thank you! Your message has been sent to the listing agent.');
+                } else {
+                    // Show validation errors
+                    contactAgentForm.reportValidity();
+                }
+            });
+        }
+        
+        // Schedule viewing form submission is now handled by external form
+        
+        // Floor Plan badge click handler
+        const floorPlanBadge = document.getElementById('floorplan-badge');
+        if (floorPlanBadge) {
+            floorPlanBadge.addEventListener('click', function() {
+                floorPlanModal.show();
+            });
+        }
+        
+        // Add keyboard navigation for the gallery
+        document.addEventListener('keydown', function(e) {
+            if (document.getElementById('photoGalleryModal').classList.contains('show')) {
+                if (e.key === 'ArrowLeft' && !prevImageBtn.disabled) {
+                    prevImageBtn.click();
+                } else if (e.key === 'ArrowRight' && !nextImageBtn.disabled) {
+                    nextImageBtn.click();
+                } else if (e.key === 'Escape') {
+                    photoGalleryModal.hide();
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}
