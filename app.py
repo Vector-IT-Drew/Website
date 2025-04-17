@@ -131,16 +131,16 @@ def listings():
     sort_option = request.args.get('sort', 'price_asc')
 
     # Map the sort options to SQL ORDER BY clauses to send to the API
-    sort_sql = None
+    sort_sql = ''
     if sort_option == 'price_asc':
-        sort_sql = "ORDER BY actual_rent ASC"
+        sort_sql = "ORDER BY d.`actual_rent ASC"
     elif sort_option == 'price_desc':
-        sort_sql = "ORDER BY actual_rent DESC"
+        sort_sql = "ORDER BY d.actual_rent DESC"
     elif sort_option == 'newest':
         # You could add a date-based sorting here if the API supports it
-        sort_sql = "ORDER BY expiry DESC"
+        sort_sql = "ORDER BY d.expiry DESC"
     elif sort_option == 'size_desc':
-        sort_sql = "ORDER BY sqft DESC"
+        sort_sql = "ORDER BY u.sqft DESC"
 
     # Get filtered and sorted listings from database/API
     listings_data = get_all_listings(address=address,
