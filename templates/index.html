@@ -7,28 +7,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-<!-- Font installation for Manderley Regular -->
-<style>
-    @font-face {
-        font-family: 'Manderley Regular';
-        src: url('{{ url_for('static', filename='fonts/Manderley Regular.ttf') }}') format('truetype');
-        font-weight: normal;
-        font-style: normal;
-        font-display: fallback;
-    }
-    
-    .manderley-heading {
-        font-family: 'Manderley Regular', 'Cormorant Garamond', serif;
-    }
-    
-    /* Mobile adjustments */
-    @media (max-width: 768px) {
-        .hero-section {
-            height: 40vh !important;
-        }
-    }
-</style>
 {% endblock %}
 
 {% block content %}
@@ -46,9 +24,10 @@
                     <div class="mb-2">
                         <img src="{{ url_for('static', filename='images/Vector Text.png') }}" alt="Vector Text" height="60">
                     </div>
-                    <p class="lead mb-3" style="font-family: 'Manderley Regular'; font-weight: 300; font-size: 1.5rem; max-width: 600px; margin: 0 auto; letter-spacing: 1px;">
+                    <p class="lead mb-3" style="font-family: 'Manderley Regular', serif; font-weight: 300; font-size: 1.5rem; max-width: 600px; margin: 0 auto; letter-spacing: 1px; margin-top: 20px;">
                         Leasing Simplified
                     </p>
+                    
                     <div class="mt-5 pt-5">
                         <a href="#content-section" class="text-white scroll-down-link">
                             <i class="fas fa-chevron-down fa-2x"></i>

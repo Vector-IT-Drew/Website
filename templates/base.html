@@ -161,6 +161,47 @@
             fill: var(--primary);
             stroke: var(--accent);
         }
+
+        @font-face {
+            font-family: 'Manderley Regular';
+            src: url('{{ url_for('static', filename='fonts/Manderley Regular.ttf') }}') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: fallback;
+        }
+
+        @font-face {
+            font-family: 'DIN';
+            src: url('{{ url_for('static', filename='fonts/DIN1451-36breit.ttf') }}') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: fallback;
+        }
+        @font-face {
+            font-family: 'Desolator-Light';
+            src: url('{{ url_for('static', filename='fonts/Desolator-Light.otf') }}') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: fallback;
+        }
+        @font-face {
+            font-family: 'Desolator-Bold';
+            src: url('{{ url_for('static', filename='fonts/Desolator-Bold.otf') }}') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: fallback;
+        }
+        
+        .manderley-heading {
+            font-family: 'Manderley Regular', 'Cormorant Garamond', serif;
+        }
+        
+        /* Mobile adjustments */
+        @media (max-width: 768px) {
+            .hero-section {
+                height: 40vh !important;
+            }
+        }
     </style>
 </head>
 <body>
