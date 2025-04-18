@@ -6,7 +6,7 @@
     --primary-light: #132543;
     --accent: #2970e6;
     --accent-light: #4286f5;
-    --text-light: #e0e6f0;
+    --text-light: #eef1f6;
     --text-muted: #a0a8b8;
     --highlight: #64b5f6; /* Changed from orange to light blue */
     --highlight-light: #90caf9;
@@ -17,6 +17,12 @@
 body {
     background-color: var(--primary);
     color: var(--text-light);
+}
+
+.text-white-50, 
+.text-secondary,
+.text-light-50 {
+    color: rgba(255, 255, 255, 0.8) !important;
 }
 
 /* Navbar styling */
@@ -62,6 +68,7 @@ body {
     padding: 0.5rem 1rem;
     margin: 0 0.2rem;
     display: inline-block;
+    color: rgb(224, 224, 224);
 }
 
 .nav-link:after {
