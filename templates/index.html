@@ -74,20 +74,9 @@
     
     /* Mobile optimizations */
     @media (max-width: 768px) {
-        .hero-section {
-            background-color: #040d17 !important;
-            background-image: none !important;
-            background: #040d17 !important; /* Additional override */
-        }
-        
-        /* Ensure overlay works on mobile too */
-        .hero-section::before {
-            background-color: rgba(4, 13, 23, 0.3); /* Keep same as desktop */
-            z-index: 1;
-        }
-        
+       
         .skyline-image {
-            width: 170% !important;
+            width: 270% !important;
             z-index: 0 !important; /* Force correct stacking */
             position: fixed !important; /* Try fixed positioning for iOS */
             bottom: 0 !important;
