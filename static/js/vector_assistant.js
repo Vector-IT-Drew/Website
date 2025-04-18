@@ -3,19 +3,21 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeChat();
     
     // Start the chat automatically when the page loads
-    fetch('/chat', {
+    fetch('/start_chat', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({})
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+    })
     .then(data => {
         console.log("Chat session initialized");
-        console.log("FULL RESPONSE DATA:", JSON.stringify(data));
-        console.log("show_listings flag:", data.show_listings);
-        console.log("listings array:", data.listings ? data.listings.length : 0);
     })
     .catch(error => {
         console.error('Error starting chat:', error);
