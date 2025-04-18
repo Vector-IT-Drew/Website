@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeChat();
     
     // Start the chat automatically when the page loads
-    fetch('https://dash-production-b25c.up.railway.app/start-chat', {
+    fetch('/chat', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
             showTypingIndicator(true);
             
             // Send an empty message to get initial response from the API
-            fetch('https://dash-production-b25c.up.railway.app/chat', {
+            fetch('/chat', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -112,13 +112,14 @@ document.addEventListener('DOMContentLoaded', function() {
         // Show typing indicator
         showTypingIndicator(true);
         
-        // Start a new chat session - update URL to point to Railway
-        fetch('https://dash-production-b25c.up.railway.app/start-chat', {
+        // Start a new chat session
+        fetch('/start_chat', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             },
-            body: JSON.stringify({})
+            credentials: 'include' // Include cookies for session management
         })
         .then(response => {
             if (!response.ok) {
@@ -204,13 +205,15 @@ document.addEventListener('DOMContentLoaded', function() {
         
         console.log("Sending message to server:", userMessage);
         
-        // Send message to server with explicit timeout and error handling - update URL to point to Railway
-        fetch('https://dash-production-b25c.up.railway.app/chat', {
+        // Send message to server with explicit timeout and error handling
+        fetch('/chat', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Accept': 'application/json'
             },
             body: JSON.stringify({ message: userMessage }),
+            credentials: 'include' // Include cookies for session management
         })
         .then(response => {
             if (!response.ok) {
