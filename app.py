@@ -64,6 +64,8 @@ def admin_required(f):
 # Routes
 @app.route('/')
 def index():
+    # Clear any existing session data on page load
+    session.clear()
     """Display homepage with featured listings"""
     # Get all listings from the API without any filters
     all_listings = get_all_listings()
@@ -202,15 +204,25 @@ def server_error(e):
 @app.route('/start_chat', methods=['POST'])
 def start_chat():
     """Initialize chat session with Vector Assistant"""
+    # Clear all existing chat data
+    session.clear()
+    
     # Initialize session variables for chat
     session['chat_history'] = []
+    
+    # Add the welcome message to chat history
+    welcome_message = "Hi there! I'm Vector Assistant, your personal NYC apartment hunting guide. Let's start with the basics - how many bedrooms are you looking for in your new apartment?"
+    session['chat_history'].append({'role': 'assistant', 'message': welcome_message})
+    
+    # Initialize empty preferences
     session['chat_preferences'] = {}
-
-    # Reset the API session to start fresh
-    global api_session
-    api_session = requests.Session()
-
-    return jsonify({'status': 'success'})
+    
+    # Don't initialize the backend chat yet - we'll do that when the user responds
+    
+    return jsonify({
+        'status': 'success',
+        'initial_message': welcome_message
+    })
 
 
 @app.route('/chat', methods=['POST'])
@@ -232,9 +244,30 @@ def chat():
     # Add user message to history
     session['chat_history'].append({'role': 'user', 'message': user_message})
 
+    # Check if this is the first user message (after welcome)
+    is_first_message = len(session['chat_history']) <= 2
+
     try:
+        # If this is the first message, initialize the backend chat
+        if is_first_message:
+            try:
+                # Reset the API session to start fresh
+                global api_session
+                api_session = requests.Session()
+                
+                # Initialize the backend chat
+                start_url = "http://dash-production-b25c.up.railway.app/start-chat"
+                api_session.post(
+                    start_url,
+                    headers={'Content-Type': 'application/json'},
+                    timeout=10
+                )
+                print("Backend chat initialized")
+            except Exception as e:
+                logging.error(f"Error initializing backend chat: {str(e)}")
+
         # Send message to external API
-        api_url = "https://dash-production-b25c.up.railway.app/chat"
+        api_url = "http://dash-production-b25c.up.railway.app/chat"
         
         # Include preferences from previous interactions if they exist
         payload = {'message': user_message}
@@ -248,30 +281,26 @@ def chat():
             'Accept': 'application/json'
         }
         
-        # Log what we're sending
-        print(f"Sending to {api_url} with payload: {json.dumps(payload)}")
+        # Log only that we're sending a message, not the full payload
+        print(f"Sending message to API: {api_url}")
         
         # Call the external API using session to maintain cookies and state
-        # Make sure to include the headers and properly serialize the JSON
         response = api_session.post(
             api_url, 
-            data=json.dumps(payload),  # Properly serialize the JSON
-            headers=headers,           # Include the headers
-            timeout=10                 # Add a timeout
+            data=json.dumps(payload),
+            headers=headers,
+            timeout=10
         )
         
-        # Log the response
+        # Log only the status code, not the response content
         print(f"Response status: {response.status_code}")
-        print(f"Response content: {response.text[:200]}...")
         
         # Parse the JSON response
         api_data = response.json()
 
         # Extract response message
-        assistant_message = api_data.get(
-            'message',
-            "I'm sorry, I'm having trouble processing your request right now."
-        )
+        assistant_message = api_data.get('response', api_data.get('message', 
+            "I'm sorry, I'm having trouble processing your request right now."))
 
         # Store preferences if provided by the API
         if 'preferences' in api_data:
@@ -290,18 +319,38 @@ def chat():
         if len(session['chat_history']) > 20:
             session['chat_history'] = session['chat_history'][-20:]
 
+        # Debug the response
+        print(f"API response keys: {api_data.keys()}")
+        print(f"Listings in response: {len(api_data.get('listings', []))}")
+        print(f"Show listings flag: {api_data.get('preferences', {}).get('show_listings', False)}")
+
         return jsonify({
             'response': assistant_message,
-            'alternative_listings': [],
-            'listing_count': listing_count
+            'listings': api_data.get('listings', []),
+            'listing_count': listing_count,
+            'show_listings': api_data.get('show_listings', api_data.get('preferences', {}).get('show_listings', False))
         })
 
+    except requests.exceptions.Timeout:
+        # Handle timeout specifically
+        logging.error("Timeout connecting to recommendation API")
+        fallback_response = (
+            "I'm sorry, our recommendation system is taking longer than expected to respond. "
+            "Please try again in a moment."
+        )
+        
+        # Add fallback response to history
+        session['chat_history'].append({
+            'role': 'assistant',
+            'message': fallback_response
+        })
+        
+        return jsonify({'response': fallback_response, 'listings': []})
+        
     except Exception as e:
-        # Log the error with detailed information
-        import traceback
+        # Log the error with detailed information but limit traceback
         logging.error(f"Error communicating with recommendation API: {str(e)}")
-        logging.error(f"Traceback: {traceback.format_exc()}")
-
+        
         # Fallback to basic response
         fallback_response = (
             "I'm sorry, I'm having trouble connecting to our recommendation system right now. "
@@ -319,16 +368,45 @@ def chat():
 
 @app.route('/reset_chat', methods=['POST'])
 def reset_chat():
-    """Reset the chat session"""
-    # Clear Flask session data
-    session.pop('chat_history', None)
-    session.pop('chat_preferences', None)
-
-    # Reset the API session to clear cookies
-    global api_session
-    api_session = requests.Session()
-
-    return jsonify({'status': 'success'})
+    """Reset the chat session and start a new one"""
+    # Clear all existing chat data
+    session.clear()
+    
+    try:
+        # Reset the API session to start fresh
+        global api_session
+        api_session = requests.Session()
+        
+        # Call the backend to reset and start a new chat
+        start_url = "http://dash-production-b25c.up.railway.app/start-chat"
+        response = api_session.post(
+            start_url,
+            headers={'Content-Type': 'application/json'},
+            timeout=10
+        )
+        
+        # Get the welcome message from the response
+        welcome_data = response.json()
+        welcome_message = welcome_data.get('message', "Welcome! How many bedrooms are you looking for?")
+        
+        # Initialize new session
+        session['chat_history'] = []
+        session['chat_preferences'] = {}
+        
+        # Add welcome message to history
+        session['chat_history'].append({'role': 'assistant', 'message': welcome_message})
+        
+        return jsonify({
+            'status': 'success',
+            'welcome_message': welcome_message
+        })
+        
+    except Exception as e:
+        logging.error(f"Error resetting chat: {str(e)}")
+        return jsonify({
+            'status': 'error',
+            'message': "There was an error resetting the chat. Please try again."
+        })
 
 
 # Helper functions for the chat functionality
@@ -618,3 +696,13 @@ def apply(listing_id):
 def about():
     """About Us page for Vector New York"""
     return render_template('about.html')
+
+# Add this to ensure session is cleared when browser is closed
+@app.before_request
+def clear_session_on_new_visit():
+    # Check if this is a new browser session
+    if 'visited' not in session:
+        # Clear any existing session data
+        session.clear()
+        # Set visited flag
+        session['visited'] = True
