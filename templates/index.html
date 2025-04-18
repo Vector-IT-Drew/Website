@@ -9,24 +9,28 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
+    /* Hero section styling */
+    .hero-section {
+        height: 100vh;
+        background-color: #040d17;
+        margin-top: -10px;
+        position: relative;
+        overflow: hidden;
+        background-image: none !important;
+    }
+    
+    .skyline-image {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+        object-position: bottom;
+    }
+    
     /* Mobile optimizations */
     @media (max-width: 768px) {
-        .hero-section {
-            height: 80vh !important;
-        }
-        
-        .hero-icon {
-            height: 90px !important;
-        }
-        
-        .hero-text {
-            height: 45px !important;
-        }
-        
-        .hero-tagline {
-            font-size: 1.2rem !important;
-            margin-top: 15px !important;
-        }
         
         .section-heading {
             font-size: 2rem !important;
@@ -49,27 +53,15 @@
         }
     }
     
-    /* Small phones */
-    @media (max-width: 576px) {
-        .hero-section {
-            height: 70vh !important;
-        }
-        
-        .hero-icon {
-            height: 70px !important;
-        }
-        
-        .hero-text {
-            height: 35px !important;
-        }
-    }
+  
 </style>
 {% endblock %}
 
 {% block content %}
-<!-- Main Hero Section - Structured like about.html -->
-<section class="hero-section position-relative" style="height: 100vh; background-color: var(--primary-dark); margin-top: -10px;">
-    <div class="position-absolute w-100 h-100 top-0 start-0" style="background-image: url('{{ url_for('static', filename='images/nyc-skyline (2).png') }}'); background-size: cover; background-position: center bottom; opacity: 1;"></div>
+<!-- Main Hero Section - Using img instead of background -->
+<section class="hero-section">
+    <!-- Skyline image at bottom -->
+    <img src="{{ url_for('static', filename='images/nyc-skyline (2).png') }}" alt="NYC Skyline" class="skyline-image">
     
     <div class="container h-100 position-relative" style="padding-top: 6%;">
         <div class="row justify-content-center">
@@ -84,7 +76,7 @@
                     <p class="lead mb-3 hero-tagline" style="font-family: 'Manderley Regular', serif; font-weight: 300; font-size: 1.5rem; max-width: 600px; margin: 0 auto; letter-spacing: 1px; margin-top: 20px;">
                         Leasing Simplified
                     </p>
-              
+                   
                     <div class="mt-5 pt-5">
                         <a href="#content-section" class="text-white scroll-down-link">
                             <i class="fas fa-chevron-down fa-2x"></i>
@@ -95,7 +87,7 @@
         </div>
     </div>
     
-    <div class="position-absolute bottom-0 w-100" style="height: 100px; background: linear-gradient(to top, var(--primary), transparent);"></div>
+    <div class="position-absolute bottom-0 w-100" style="height: 100px; background: linear-gradient(to top, var(--primary), transparent); z-index: 1;"></div>
 </section>
 
 <!-- Content Section (for scrolling) -->

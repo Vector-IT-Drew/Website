@@ -200,12 +200,11 @@ body {
 }
 
 .nyc-skyline-bg {
-    background-image: url('../images/marblebackground-low-profile.png');
     background-size: 100% 60%;
     background-position: top center;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    background-color: #0b1527;
+    background-color: #040d17;
     position: relative;
 }
 
