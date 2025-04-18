@@ -117,9 +117,15 @@ document.addEventListener('DOMContentLoaded', function() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
-            }
+            },
+            body: JSON.stringify({})
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
             console.log("Chat session initialized");
             
@@ -198,22 +204,26 @@ document.addEventListener('DOMContentLoaded', function() {
         
         console.log("Sending message to server:", userMessage);
         
-        // Send message to server
+        // Send message to server with explicit timeout and error handling
         fetch('/chat', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                message: userMessage
-            })
+            body: JSON.stringify({ message: userMessage }),
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
             console.log("FULL RESPONSE DATA:", JSON.stringify(data));
             console.log("show_listings flag:", data.show_listings);
             console.log("listings array:", data.listings ? data.listings.length : 0);
             console.log("Received response from server:", data);
+            
             // Hide typing indicator
             showTypingIndicator(false);
             
@@ -249,13 +259,13 @@ document.addEventListener('DOMContentLoaded', function() {
                            "lastMessage:", lastMessage ? "exists" : "null");
             }
             
-            // Scroll to bottom of chat with a slight delay to ensure content is fully rendered
+            // Scroll to bottom of chat
             scrollChatToBottom(100);
         })
         .catch(error => {
             console.error('Error sending message:', error);
             showTypingIndicator(false);
-            addMessage("I'm sorry, I encountered an error connecting to our recommendation system. Please try again later or contact our support team for assistance. Error: " + error, 'assistant');
+            addMessage("I'm sorry, there was an error processing your request. Please try again later.", 'assistant');
             scrollChatToBottom(100);
         });
     }
