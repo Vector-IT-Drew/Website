@@ -7,6 +7,63 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+    /* Mobile optimizations */
+    @media (max-width: 768px) {
+        .hero-section {
+            height: 80vh !important;
+        }
+        
+        .hero-icon {
+            height: 90px !important;
+        }
+        
+        .hero-text {
+            height: 45px !important;
+        }
+        
+        .hero-tagline {
+            font-size: 1.2rem !important;
+            margin-top: 15px !important;
+        }
+        
+        .section-heading {
+            font-size: 2rem !important;
+        }
+        
+        .section-subheading {
+            font-size: 1rem !important;
+        }
+        
+        .card-title {
+            font-size: 1.1rem !important;
+        }
+        
+        .card-text {
+            font-size: 0.9rem !important;
+        }
+        
+        .card-img-container {
+            height: 200px !important;
+        }
+    }
+    
+    /* Small phones */
+    @media (max-width: 576px) {
+        .hero-section {
+            height: 70vh !important;
+        }
+        
+        .hero-icon {
+            height: 70px !important;
+        }
+        
+        .hero-text {
+            height: 35px !important;
+        }
+    }
+</style>
 {% endblock %}
 
 {% block content %}
@@ -19,15 +76,15 @@
             <div class="col-lg-8 text-center">
                 <div class="d-flex flex-column align-items-center">
                     <div class="mb-2">
-                        <img src="{{ url_for('static', filename='images/Vector Icon.png') }}" alt="Vector Icon" height="120" class="mb-2">
+                        <img src="{{ url_for('static', filename='images/Vector Icon.png') }}" alt="Vector Icon" height="120" class="mb-2 hero-icon">
                     </div>
                     <div class="mb-2">
-                        <img src="{{ url_for('static', filename='images/Vector Text.png') }}" alt="Vector Text" height="60">
+                        <img src="{{ url_for('static', filename='images/Vector Text.png') }}" alt="Vector Text" height="60" class="hero-text">
                     </div>
-                    <p class="lead mb-3" style="font-family: 'Manderley Regular', serif; font-weight: 300; font-size: 1.5rem; max-width: 600px; margin: 0 auto; letter-spacing: 1px; margin-top: 30px;">
+                    <p class="lead mb-3 hero-tagline" style="font-family: 'Manderley Regular', serif; font-weight: 300; font-size: 1.5rem; max-width: 600px; margin: 0 auto; letter-spacing: 1px; margin-top: 20px;">
                         Leasing Simplified
                     </p>
-                    
+              
                     <div class="mt-5 pt-5">
                         <a href="#content-section" class="text-white scroll-down-link">
                             <i class="fas fa-chevron-down fa-2x"></i>
@@ -48,8 +105,8 @@
 <section class="py-5">
     <div class="container py-5">
         <div class="text-center mb-5">
-            <h2 class="manderley-heading fw-light mb-3" style="font-size: 2.5rem;">Experience the Vector Difference</h2>
-            <p class="manderley-heading text-muted" style="font-size: 1.2em;">Find your perfect home in New York with our cutting-edge approach</p>
+            <h2 class="manderley-heading fw-light mb-3 section-heading" style="font-size: 2.5rem;">Experience the Vector Difference</h2>
+            <p class="manderley-heading text-muted section-subheading" style="font-size: 1.2em;">Find your perfect home in New York with our cutting-edge approach</p>
         </div>
         <div class="row g-4 justify-content-center">
             <!-- Card 1 (Vector Assistant) - Opens chat modal -->
