@@ -70,6 +70,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 payload.preferences = preferences;
             }
             
+            console.log("Sending to Railway API:", payload);
+            
             // Call Railway.app API directly
             const response = await fetch(`${RAILWAY_API_URL}/chat`, {
                 method: 'POST',
@@ -86,6 +88,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             const data = await response.json();
+            console.log("Received from Railway API:", data);
             
             // Store updated preferences
             if (data.preferences) {
@@ -131,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function() {
     vectorAssistantModal.addEventListener('shown.bs.modal', function() {
         // Only initialize if chat is empty
         if (chatMessages.children.length === 0) {
-            addMessage('assistant', 'Hi there! I'm Vector Assistant. How can I help you find your perfect NYC apartment today?');
+            addMessage('assistant', "Hi there! I'm Vector Assistant. How can I help you find your perfect NYC apartment today?");
         }
         
         // Focus on input field
@@ -140,7 +143,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Handle form submission
     chatForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
+        e.preventDefault(); // Prevent the form from submitting normally
         
         const message = userMessageInput.value.trim();
         if (!message) return;
