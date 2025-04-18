@@ -262,6 +262,7 @@ def chat():
                 api_session.post(
                     start_url,
                     headers={'Content-Type': 'application/json'},
+                    data=json.dumps({}),  # Send empty JSON object
                     timeout=10
                 )
                 print("Backend chat initialized")
