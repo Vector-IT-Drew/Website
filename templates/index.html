@@ -47,6 +47,7 @@
         object-fit: cover;
         object-position: bottom;
         z-index: 0;
+        filter: brightness(0.8) contrast(1.1); /* Add filter to match background */
     }
     
     /* Ensure content appears above overlay */
@@ -70,7 +71,21 @@
         
         /* Ensure overlay works on mobile too */
         .hero-section::before {
-            background-color: rgba(4, 13, 23, 0.4); /* Slightly darker for mobile */
+            background-color: rgba(4, 13, 23, 0.5); /* Darker for mobile */
+            z-index: 1;
+        }
+        
+        .skyline-image {
+            width: 170% !important;
+            filter: brightness(0.7) contrast(1.2); /* Darker filter for mobile */
+        }
+        
+        /* Make sure the gradient overlay is visible and above the image */
+        .hero-section .position-absolute.bottom-0.w-100 {
+            background: linear-gradient(to top, #040d17, transparent) !important;
+            height: 120px !important;
+            opacity: 1 !important;
+            z-index: 2;
         }
         
         .section-heading {
@@ -91,9 +106,6 @@
         
         .card-img-container {
             height: 200px !important;
-        }
-        .skyline-image{
-            width: 170% !important;
         }
     }
     
