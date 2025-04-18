@@ -284,7 +284,9 @@ def chat():
         }
         
         # Log only that we're sending a message, not the full payload
-        print(f"Sending message to API: {api_url}")
+        print(f"Request method: POST")
+        print(f"Request headers: {headers}")
+        print(f"Request payload: {json.dumps(payload)}")
         
         # Call the external API using session to maintain cookies and state
         response = api_session.post(
@@ -296,6 +298,8 @@ def chat():
         
         # Log only the status code, not the response content
         print(f"Response status: {response.status_code}")
+        print(f"Response headers: {dict(response.headers)}")
+        print(f"Response content: {response.text[:200]}...")
         
         # Parse the JSON response
         api_data = response.json()
