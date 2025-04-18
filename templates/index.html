@@ -63,29 +63,8 @@
     /* Mobile optimizations */
     @media (max-width: 768px) {
        
-        .skyline-image {
-            width: 270% !important;
-            z-index: 0 !important; /* Force correct stacking */
-            position: fixed !important; /* Try fixed positioning for iOS */
-            bottom: 0 !important;
-        }
-        
-        /* Make sure the gradient overlay is visible and above the image */
-        .hero-section .position-absolute.bottom-0.w-100 {
-            background: linear-gradient(to top, #040d17, transparent) !important;
-            height: 120px !important;
-            opacity: 1 !important;
-            z-index: 2 !important; /* Force correct stacking */
-            position: fixed !important; /* Try fixed positioning for iOS */
-            bottom: 0 !important;
-        }
-        
-        /* Force content above everything else on iOS */
-        .hero-section .container {
-            z-index: 999 !important;
-            position: relative !important;
-        }
-        
+      
+       
         .section-heading {
             font-size: 1.2rem !important;
         }
@@ -141,7 +120,7 @@
         </div>
     </div>
     
-    <div class="position-absolute bottom-0 w-100" style="height: 100px; background: linear-gradient(to top, var(--primary), transparent); z-index: 1;"></div>
+    <!-- <div class="position-absolute bottom-0 w-100" style="height: 100px; background: linear-gradient(to top, var(--primary), transparent); z-index: 1;"></div> -->
 </section>
 
 <!-- Content Section (for scrolling) -->
