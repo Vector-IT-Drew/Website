@@ -480,7 +480,7 @@ def get_all_listings(address=None,
                 listings.append(listing)
             # We don't need to log all listings
 
-            logger.error(listings)
+            
             return listings
         else:
             logger.error(
