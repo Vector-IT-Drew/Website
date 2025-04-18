@@ -9,6 +9,8 @@ from forms import LoginForm, ListingForm, ApplicationForm
 from database import get_listing, get_all_listings, filter_listings_by_budget, filter_listings_by_bedrooms, filter_listings_by_location
 from functools import wraps
 import markdown2
+from dotenv import load_dotenv
+load_dotenv()
 
 # Initialize requests session for API calls to maintain cookies and state
 api_session = requests.Session()

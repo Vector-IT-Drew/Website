@@ -205,21 +205,31 @@ document.addEventListener('DOMContentLoaded', function() {
         // Show typing indicator
         showTypingIndicator(true);
         
-        console.log("Sending message to server:", userMessage);
+        console.log("Preparing to send message to server:", userMessage);
+        console.log("HTTP Method: POST");
         
-        // Send message to server with explicit timeout and error handling
-        fetch('/chat', {
+        // Create the request options with explicit method
+        const requestOptions = {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Accept': 'application/json'
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest' // Add this to help servers identify AJAX requests
             },
             body: JSON.stringify({ message: userMessage }),
             credentials: 'include' // Include cookies for session management
-        })
+        };
+        
+        console.log("Request options:", JSON.stringify(requestOptions));
+        
+        // Send message to server with explicit timeout and error handling
+        fetch('/chat', requestOptions)
         .then(response => {
+            console.log("Response status:", response.status);
+            console.log("Response headers:", JSON.stringify([...response.headers.entries()]));
+            
             if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
+                throw new Error(`HTTP error! Status: ${response.status}, StatusText: ${response.statusText}`);
             }
             return response.json();
         })
@@ -227,7 +237,6 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log("FULL RESPONSE DATA:", JSON.stringify(data));
             console.log("show_listings flag:", data.show_listings);
             console.log("listings array:", data.listings ? data.listings.length : 0);
-            console.log("Received response from server:", data);
             
             // Hide typing indicator
             showTypingIndicator(false);
@@ -269,8 +278,9 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(error => {
             console.error('Error sending message:', error);
+            console.error('Error details:', error.stack);
             showTypingIndicator(false);
-            addMessage("I'm sorry, there was an error processing your request. Please try again later.", 'assistant');
+            addMessage("I'm sorry, there was an error processing your request. Please try again later. (Error: " + error.message + ")", 'assistant');
             scrollChatToBottom(100);
         });
     }
