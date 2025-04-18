@@ -221,8 +221,7 @@ def chat():
 
     if not user_message:
         return jsonify({
-            'response':
-            "I'm sorry, I didn't receive a message. How can I help you?"
+            'response': "I'm sorry, I didn't receive a message. How can I help you?"
         })
 
     # Initialize chat history if not exists
@@ -236,21 +235,43 @@ def chat():
     try:
         # Send message to external API
         api_url = "https://dash-production-b25c.up.railway.app/chat"
-
+        
         # Include preferences from previous interactions if they exist
         payload = {'message': user_message}
-
+        
         if 'chat_preferences' in session and session['chat_preferences']:
             payload['preferences'] = session['chat_preferences']
-
+        
+        # IMPORTANT: Set the correct headers
+        headers = {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }
+        
+        # Log what we're sending
+        print(f"Sending to {api_url} with payload: {json.dumps(payload)}")
+        
         # Call the external API using session to maintain cookies and state
-        response = api_session.post(api_url, json=payload)
+        # Make sure to include the headers and properly serialize the JSON
+        response = api_session.post(
+            api_url, 
+            data=json.dumps(payload),  # Properly serialize the JSON
+            headers=headers,           # Include the headers
+            timeout=10                 # Add a timeout
+        )
+        
+        # Log the response
+        print(f"Response status: {response.status_code}")
+        print(f"Response content: {response.text[:200]}...")
+        
+        # Parse the JSON response
         api_data = response.json()
 
         # Extract response message
         assistant_message = api_data.get(
             'message',
-            "I'm sorry, I'm having trouble processing your request right now.")
+            "I'm sorry, I'm having trouble processing your request right now."
+        )
 
         # Store preferences if provided by the API
         if 'preferences' in api_data:
@@ -271,14 +292,15 @@ def chat():
 
         return jsonify({
             'response': assistant_message,
-            'alternative_listings':
-            [],  # No alternative listings in the new API
+            'alternative_listings': [],
             'listing_count': listing_count
         })
 
     except Exception as e:
-        # Log the error
+        # Log the error with detailed information
+        import traceback
         logging.error(f"Error communicating with recommendation API: {str(e)}")
+        logging.error(f"Traceback: {traceback.format_exc()}")
 
         # Fallback to basic response
         fallback_response = (
