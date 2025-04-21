@@ -67,14 +67,9 @@ def admin_required(f):
 @app.route('/')
 def index():
     # Clear any existing session data on page load
+    logging.debug("Accessing the homepage")
     session.clear()
-    """Display homepage with featured listings"""
-    # Get all listings from the API without any filters
-    # all_listings = get_all_listings()
 
-    # # Select up to 6 featured listings for the homepage
-    # featured_listings = all_listings[:6] if len(
-    #     all_listings) >= 6 else all_listings
 
     return render_template('index.html', listings=[])
 
