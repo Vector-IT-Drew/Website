@@ -72,11 +72,11 @@ def index():
     # Get all listings from the API without any filters
     all_listings = get_all_listings()
 
-    # Select up to 6 featured listings for the homepage
-    featured_listings = all_listings[:6] if len(
-        all_listings) >= 6 else all_listings
+    # # Select up to 6 featured listings for the homepage
+    # featured_listings = all_listings[:6] if len(
+    #     all_listings) >= 6 else all_listings
 
-    return render_template('index.html', listings=featured_listings)
+    return render_template('index.html', listings=[])
 
 
 @app.route('/investor-services')
