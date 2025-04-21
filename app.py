@@ -70,8 +70,8 @@ def index():
     logging.debug("Accessing the homepage")
     session.clear()
 
-
-    return render_template('index.html', listings=[])
+    logging.debug("Returning Homepage")
+    return render_template('index.html')
 
 
 @app.route('/investor-services')
@@ -153,7 +153,6 @@ def listings():
                                      sort=sort_option)
 
     return render_template('listings.html', listings=listings_data)
-
 
 @app.route('/listings/<listing_id>')
 def listing_detail(listing_id):
