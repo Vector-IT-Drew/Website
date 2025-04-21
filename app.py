@@ -70,7 +70,7 @@ def index():
     session.clear()
     """Display homepage with featured listings"""
     # Get all listings from the API without any filters
-    all_listings = get_all_listings()
+    # all_listings = get_all_listings()
 
     # # Select up to 6 featured listings for the homepage
     # featured_listings = all_listings[:6] if len(
