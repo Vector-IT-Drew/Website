@@ -214,9 +214,9 @@
                         <img src="{{ url_for('static', filename='images/Vector Text.png') }}" alt="Vector Text" height="25">
                     </h5>
                     <p class="text-muted">Revolutionizing real estate through automation and data-driven insights. Enhancing the leasing experience with our streamlined approach.</p>
-                    <div class="d-flex gap-3 mt-4">
-                        <a href="#" class="text-muted"><i class="fab fa-youtube fa-lg"></i></a>
-                    </div>
+                        <div class="d-flex gap-3 mt-4">
+                            <a href="https://www.youtube.com/@VectorNewYork/shorts" class="text-muted" target="_blank" rel="noopener noreferrer"><i class="fab fa-youtube fa-lg"></i></a>
+                        </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <h6 class="text-uppercase mb-4" style="letter-spacing: 1px;">Navigation</h6>
