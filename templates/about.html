@@ -187,7 +187,7 @@
                 </div>
                 <div class="mt-5">
                     <a href="{{ url_for('listings') }}" class="btn btn-primary btn-lg px-5 me-4 rounded-pill">Browse Listings</a>
-                    <button type="button" class="btn btn-outline-light btn-lg px-5 rounded-pill" data-bs-toggle="modal" data-bs-target="#vectorAssistantModal">Chat with Vector Assistant</button>
+                    <a href="#" class="btn btn-assistant btn-lg px-5 rounded-pill" style="background-color: rgba(255, 255, 255, 0.1); color: white;" data-bs-toggle="modal" data-bs-target="#vectorAssistantModal">Chat with Vector Assistant</a>
                 </div>
             </div>
         </div>
@@ -270,6 +270,20 @@
     }
     
     .btn-outline-light:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 255, 255, 0.15);
+    }
+    
+    .btn-assistant {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-color: transparent;
+        color: white;
+        box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+    }
+    
+    .btn-assistant:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+        color: white;
         transform: translateY(-2px);
         box-shadow: 0 6px 20px rgba(255, 255, 255, 0.15);
     }
