@@ -244,32 +244,20 @@
                                 <div>
                                     <label class="filter-title">Price Range</label>
                                     
-                                    <!-- Import the range selector script -->
-                                    <script src="https://cdn.jsdelivr.net/gh/maxshuty/accessible-web-components@latest/dist/simpleRange.min.js"></script>
-                                    
                                     <!-- Custom price range display -->
                                     <div class="mb-2" id="priceRangeDisplay" style="font-weight: 500; text-align: center; color: white;">
-                                        Price Range: Loading...
+                                        Price Range: ${{ "{:,}".format(request.args.get('min_price', 2000)|int) }} - ${{ "{:,}".format(request.args.get('max_price', 25000)|int) }}
                                     </div>
                                     
-                                    <!-- Range selector component -->
-                                    <range-selector
-                                        id="priceRangeSelector"
-                                        min-label="Min"
-                                        max-label="Max"
-                                        min-range="650"
-                                        max-range="25000"
-                                        current-min="{{ request.args.get('min_price', 2000) }}"
-                                        current-max="{{ request.args.get('max_price', 25000) }}"
-                                      
-                                        slider-color="#1e2d42"
-                                        prefix="$"
-                                        step="100"
-                                        event-name-to-emit-on-change="price-range-changed"
-                                        format-with-commas
-                                        hide-label
-                                        hide-legend
-                                    />
+                                    <!-- Simple HTML5 range inputs -->
+                                    <div class="price-range-container">
+                                        <input type="range" id="min-price-slider" class="range-slider" 
+                                               min="700" max="25000" step="100" 
+                                               value="{{ request.args.get('min_price', 650) }}">
+                                        <input type="range" id="max-price-slider" class="range-slider" 
+                                               min="700" max="25000" step="100" 
+                                               value="{{ request.args.get('max_price', 25000) }}">
+                                    </div>
                                     
                                     <!-- Hidden inputs for form submission -->
                                     <input type="hidden" name="min_price" id="min-price-input" value="{{ request.args.get('min_price', 2000) }}">
@@ -277,169 +265,97 @@
                                     
                                     <script>
                                     document.addEventListener('DOMContentLoaded', function() {
-                                        const priceRangeSelector = document.getElementById('priceRangeSelector');
+                                        const minSlider = document.getElementById('min-price-slider');
+                                        const maxSlider = document.getElementById('max-price-slider');
                                         const minInput = document.getElementById('min-price-input');
                                         const maxInput = document.getElementById('max-price-input');
+                                        const priceRangeDisplay = document.getElementById('priceRangeDisplay');
                                         const findPropertiesForm = document.querySelector('.filter-panel form');
-
-                                        // Get values from URL parameters or use defaults
-                                        let currentMinPrice = {{ request.args.get('min_price', 600) }};
-                                        let currentMaxPrice = {{ request.args.get('max_price', 25000) }};
-                                        
-                                        // Round values to nearest 100 (min down, max up)
-                                        currentMinPrice = Math.floor(currentMinPrice / 100) * 100;
-                                        currentMaxPrice = Math.ceil(currentMaxPrice / 100) * 100;
-                                        
-                                        // Force update the hidden inputs with the rounded values
-                                        minInput.value = currentMinPrice;
-                                        maxInput.value = currentMaxPrice;
                                         
                                         // Format price with $ and commas for display
                                         function formatPrice(price) {
                                             return '$' + price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
                                         }
                                         
-                                        // Force update the range selector immediately
-                                        if (priceRangeSelector && priceRangeSelector.shadowRoot) {
-                                            // Give the component time to initialize
-                                            setTimeout(function() {
-                                                try {
-                                                    // Set the min and max knob positions to match URL values
-                                                    const minSlider = priceRangeSelector.shadowRoot.querySelector('#minRangeSlider');
-                                                    const maxSlider = priceRangeSelector.shadowRoot.querySelector('#maxRangeSlider');
-                                                    
-                                                    // Try to update the display text elements too
-                                                    const minDisplay = priceRangeSelector.shadowRoot.querySelector('.range-min-value');
-                                                    const maxDisplay = priceRangeSelector.shadowRoot.querySelector('.range-max-value');
-                                                    
-                                                    if (minDisplay && maxDisplay) {
-                                                        minDisplay.textContent = formatPrice(currentMinPrice);
-                                                        maxDisplay.textContent = formatPrice(currentMaxPrice);
-                                                    }
-                                                    
-                                                    if (minSlider && maxSlider) {
-                                                        minSlider.value = currentMinPrice;
-                                                        maxSlider.value = currentMaxPrice;
-                                                        
-                                                        // Trigger change events to update the display
-                                                        minSlider.dispatchEvent(new Event('input'));
-                                                        maxSlider.dispatchEvent(new Event('change'));
-                                                        maxSlider.dispatchEvent(new Event('input'));
-                                                        maxSlider.dispatchEvent(new Event('change'));
-                                                        
-                                                        // Add additional event listeners to ensure updates when dragging beyond limits
-                                                        // Handle mouse and touch events for both sliders
-                                                        ['mouseup', 'touchend'].forEach(function(eventType) {
-                                                            minSlider.addEventListener(eventType, function() {
-                                                                // Ensure values are rounded properly
-                                                                currentMinPrice = roundPriceToNearest100(minSlider.value, false);
-                                                                minInput.value = currentMinPrice;
-                                                                
-                                                                // Update the custom price range display
-                                                                if (priceRangeDisplay) {
-                                                                    priceRangeDisplay.textContent = 'Price Range: ' + formatPrice(currentMinPrice) + ' - ' + formatPrice(currentMaxPrice);
-                                                                }
-                                                            });
-                                                            
-                                                            maxSlider.addEventListener(eventType, function() {
-                                                                // Ensure values are rounded properly
-                                                                currentMaxPrice = roundPriceToNearest100(maxSlider.value, true);
-                                                                maxInput.value = currentMaxPrice;
-                                                                
-                                                                // Update the custom price range display
-                                                                if (priceRangeDisplay) {
-                                                                    priceRangeDisplay.textContent = 'Price Range: ' + formatPrice(currentMinPrice) + ' - ' + formatPrice(currentMaxPrice);
-                                                                }
-                                                            });
-                                                        });
-                                                    }
-                                                } catch (e) {
-                                                    console.error('Error setting slider values:', e);
-                                                }
-                                            }, 100);
-                                        }
-
-                                        // Get the custom price range display
-                                        const priceRangeDisplay = document.getElementById('priceRangeDisplay');
-                                        
-                                        // Update price range display with the initial values
-                                        if (priceRangeDisplay) {
-                                            priceRangeDisplay.textContent = 'Price Range: ' + formatPrice(currentMinPrice) + ' - ' + formatPrice(currentMaxPrice);
-                                        }
-                                        
-                                        // Function to round the values to nearest 100
-                                        function roundPriceToNearest100(value, roundUp = false) {
-                                            if (roundUp) {
-                                                // Round up to the nearest 100
-                                                return Math.ceil(value / 100) * 100;
-                                            } else {
-                                                // Round down to the nearest 100
-                                                return Math.floor(value / 100) * 100;
-                                            }
-                                        }
-                                        
-                                        // Listen for the standard change event from the slider component
-                                        document.addEventListener('price-range-changed', (e) => {
-                                            // Round min price down to nearest 100
-                                            currentMinPrice = roundPriceToNearest100(e.detail.minRangeValue, false);
-                                            minInput.value = currentMinPrice;
-                                            console.log('Min price changed:', currentMinPrice);
+                                        // Update price display and hidden inputs
+                                        function updatePriceDisplay() {
+                                            const minPrice = parseInt(minSlider.value);
+                                            const maxPrice = parseInt(maxSlider.value);
                                             
-                                            // Round max price up to nearest 100
-                                            currentMaxPrice = roundPriceToNearest100(e.detail.maxRangeValue, true);
-                                            maxInput.value = currentMaxPrice;
-                                            console.log('Max price changed:', currentMaxPrice);
+                                            // Update hidden inputs
+                                            minInput.value = minPrice;
+                                            maxInput.value = maxPrice;
                                             
-                                            // Update the custom price range display
-                                            if (priceRangeDisplay) {
-                                                priceRangeDisplay.textContent = 'Price Range: ' + formatPrice(currentMinPrice) + ' - ' + formatPrice(currentMaxPrice);
+                                            // Update display
+                                            priceRangeDisplay.textContent = 'Price Range: ' + formatPrice(minPrice) + ' - ' + formatPrice(maxPrice);
+                                        }
+                                        
+                                        // Add input event listeners for live updates while dragging
+                                        minSlider.addEventListener('input', function() {
+                                            // Ensure min doesn't exceed max
+                                            if (parseInt(minSlider.value) > parseInt(maxSlider.value)) {
+                                                minSlider.value = maxSlider.value;
                                             }
+                                            updatePriceDisplay();
                                         });
                                         
-                                        // Also listen to input events for live updates while dragging
-                                        // Set a small timeout to allow the component to initialize
-                                        setTimeout(function() {
-                                            try {
-                                                const minSlider = priceRangeSelector.shadowRoot.querySelector('#minRangeSlider');
-                                                const maxSlider = priceRangeSelector.shadowRoot.querySelector('#maxRangeSlider');
-                                                
-                                                if (minSlider) {
-                                                    minSlider.addEventListener('input', function() {
-                                                        // Round min price down to nearest 100
-                                                        const newMinPrice = roundPriceToNearest100(parseFloat(minSlider.value), false);
-                                                        
-                                                        // Update the custom price range display in real-time
-                                                        if (priceRangeDisplay) {
-                                                            priceRangeDisplay.textContent = 'Price Range: ' + formatPrice(newMinPrice) + ' - ' + formatPrice(currentMaxPrice);
-                                                        }
-                                                    });
-                                                }
-                                                
-                                                if (maxSlider) {
-                                                    maxSlider.addEventListener('input', function() {
-                                                        // Round max price up to nearest 100
-                                                        const newMaxPrice = roundPriceToNearest100(parseFloat(maxSlider.value), true);
-                                                        
-                                                        // Update the custom price range display in real-time
-                                                        if (priceRangeDisplay) {
-                                                            priceRangeDisplay.textContent = 'Price Range: ' + formatPrice(currentMinPrice) + ' - ' + formatPrice(newMaxPrice);
-                                                        }
-                                                    });
-                                                }
-                                            } catch (e) {
-                                                console.error('Error setting up live update handlers:', e);
+                                        maxSlider.addEventListener('input', function() {
+                                            // Ensure max doesn't go below min
+                                            if (parseInt(maxSlider.value) < parseInt(minSlider.value)) {
+                                                maxSlider.value = minSlider.value;
                                             }
-                                        }, 500);
+                                            updatePriceDisplay();
+                                        });
+                                        
+                                        // Initialize display
+                                        updatePriceDisplay();
                                         
                                         // Make sure values are synchronized before form submission
                                         findPropertiesForm.addEventListener('submit', function(event) {
-                                            // Use our tracked values
-                                            minInput.value = currentMinPrice;
-                                            maxInput.value = currentMaxPrice;
-                                            console.log('Form submitting with price range:', minInput.value, '-', maxInput.value);
+                                            minInput.value = minSlider.value;
+                                            maxInput.value = maxSlider.value;
                                         });
                                     });
                                     </script>
+                                    
+                                    <style>
+                                    .price-range-container {
+                                        position: relative;
+                                        height: 40px;
+                                        margin: 0 10px;
+                                    }
+                                    
+                                    .range-slider {
+                                        -webkit-appearance: none;
+                                        position: absolute;
+                                        width: 100%;
+                                        height: 6px;
+                                        border-radius: 3px;
+                                        background: rgba(255, 255, 255, 0.1);
+                                        outline: none;
+                                        pointer-events: none;
+                                    }
+                                    
+                                    .range-slider::-webkit-slider-thumb {
+                                        -webkit-appearance: none;
+                                        appearance: none;
+                                        width: 16px;
+                                        height: 16px;
+                                        border-radius: 50%;
+                                        background: var(--accent);
+                                        cursor: pointer;
+                                        pointer-events: auto;
+                                    }
+                                    
+                                    .range-slider::-moz-range-thumb {
+                                        width: 16px;
+                                        height: 16px;
+                                        border-radius: 50%;
+                                        background: var(--accent);
+                                        cursor: pointer;
+                                        pointer-events: auto;
+                                    }
+                                    </style>
                                 </div>
                             </div>
                             
@@ -466,12 +382,15 @@
                                 </select>
                             </div>
                             
-                            <!-- Third Row: Search Button -->
+                            <!-- Third Row: Search Button and Reset Filters link -->
                             <div class="col-12 mt-2 mb-3">
-                                <div class="d-flex justify-content-start">
+                                <div class="d-flex justify-content-between align-items-center">
                                     <button type="submit" class="btn btn-primary px-5">
                                         <i class="fas fa-search me-2"></i>Find Properties
                                     </button>
+                                    <a href="{{ url_for('listings') }}" class="text-muted small text-decoration-none reset-filters">
+                                        Reset Filters
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -489,11 +408,6 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
                 <h2 class="h4 mb-0">{% if listings %}{{ listings|length }} Properties{% else %}No Properties{% endif %} Available</h2>
-            </div>
-            <div>
-                <a href="{{ url_for('listings') }}" class="text-muted small text-decoration-none reset-filters">
-                    Reset Filters
-                </a>
             </div>
         </div>
         
