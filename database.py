@@ -6,8 +6,8 @@ from flask import current_app
 
 
 # API endpoints for listings
-LISTINGS_API_ENDPOINT = current_app.config['DASH_SERVICES_ENDPOINT'] + "/get_filtered_listings"
-LISTING_DETAIL_API_ENDPOINT = current_app.config['DASH_SERVICES_ENDPOINT'] + "/get_listing"
+LISTINGS_API_ENDPOINT = "https://dash-production-b25c.up.railway.app" + "/get_filtered_listings"
+LISTING_DETAIL_API_ENDPOINT = "https://dash-production-b25c.up.railway.app" + "/get_listing"
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)

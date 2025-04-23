@@ -22,8 +22,7 @@ logging.basicConfig(level=logging.DEBUG)
 app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", "dev-secret-key")
 
-app.config['DASH_SERVICES_ENDPOINT'] = 'https://dash-production-b25c.up.railway.app'
-
+DASH_SERVICES_ENDPOINT = 'https://dash-production-b25c.up.railway.app'
 
 @app.template_filter('markdown')
 def markdown_filter(text):
@@ -79,7 +78,7 @@ def index():
 @app.route('/investor-services')
 def investor_services():
     """Display investor services page"""
-    return render_template('investor_services.html')
+    return render_template('investor_services.html', DASH_SERVICES_ENDPOINT=DASH_SERVICES_ENDPOINT)
 
 
 @app.route('/listings')
@@ -154,7 +153,7 @@ def listings():
                                      available=available,
                                      sort=sort_option)
 
-    return render_template('listings.html', listings=listings_data)
+    return render_template('listings.html', listings=listings_data, , DASH_SERVICES_ENDPOINT=DASH_SERVICES_ENDPOINT)
 
 @app.route('/listings/<listing_id>')
 def listing_detail(listing_id):
@@ -163,8 +162,7 @@ def listing_detail(listing_id):
     if not listing:
         flash('Listing not found', 'danger')
         return redirect(url_for('index'))
-    return render_template('listing.html', listing=listing)
-
+    return render_template('listing.html', listing=listing, DASH_SERVICES_ENDPOINT=DASH_SERVICES_ENDPOINT)
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
@@ -177,7 +175,7 @@ def contact():
             'success')
         return redirect(url_for('contact'))
 
-    return render_template('contact.html')
+    return render_template('contact.html', DASH_SERVICES_ENDPOINT=DASH_SERVICES_ENDPOINT   )
 
 
 @app.route('/admin')
