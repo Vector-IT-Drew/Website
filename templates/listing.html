@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}{% if listing.address %}{{ listing.address }} #{{ listing.unit }}{% else %}Property Detail{% endif %} | Vector NY{% endblock %}
-
+{% include 'contact_form.html' %}
 {% block extra_css %}
 <style>
     :root {
@@ -1118,7 +1118,7 @@
 </div>
 
 <!-- Contact Agent Modal -->
-<div class="modal fade" id="contactAgentModal" tabindex="-1" aria-labelledby="contactAgentModalLabel" aria-hidden="true">
+<!-- <div class="modal fade" id="contactAgentModal" tabindex="-1" aria-labelledby="contactAgentModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content" style="background-color: var(--primary-dark); border: none; border-radius: 8px;">
             <div class="modal-header border-0">
@@ -1161,7 +1161,9 @@
             </div>
         </div>
     </div>
-</div>
+</div> -->
+
+
 {% endblock %}
 
 {% block extra_js %}

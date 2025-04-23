@@ -9,8 +9,6 @@
     }
     
     html {
-        scroll-behavior: smooth;
-        scroll-snap-type: y mandatory;
         overflow-y: scroll;
         height: 100%;
     }
@@ -20,7 +18,6 @@
     }
     
     .snap-section {
-        scroll-snap-align: start;
         min-height: 100vh;
         display: flex;
         flex-direction: column;
@@ -225,220 +222,79 @@
         }
     }
     
+    .modal {
+        z-index: 1050 !important; /* Ensure modal is above the backdrop */
+    }
+    
+    .modal-backdrop {
+        z-index: 1040 !important; /* Ensure backdrop is below the modal */
+    }
+    
     .lifecycle-card {
-        cursor: pointer;
-        transition: all 0.3s ease;
-        border: 1px solid rgba(255, 255, 255, 0.05);
+        background-color: #080e1b;
+        border: 1px solid #2a7fff;
+        border-radius: 5px;
+        overflow: hidden;
     }
-    
     .lifecycle-card:hover {
-        transform: translateY(-5px);
-        background-color: rgba(42, 127, 255, 0.08);
-        border-color: rgba(42, 127, 255, 0.2);
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        background-color: rgba(255, 255, 255, 0.1);
     }
-    
-    .modal-content {
-        border: 1px solid rgba(42, 127, 255, 0.2);
+
+    .learn-more-text {
+        color: #080e1b;
     }
-    
-    .modal-backdrop.show {
-        opacity: 0.8;
+    .col-lg-4.col-md-6 .lifecycle-card:hover .learn-more-text {
+        color: #cbcbcb !important;
+        transition: color 0.2s ease
     }
 </style>
 {% endblock %}
 
+{% include 'contact_form.html' %}
+
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Initialize the service card functionality
-        const serviceCards = document.querySelectorAll('.service-card');
-        const contentSections = document.querySelectorAll('.content-section');
-        
-        // Make the first one active by default
-        if(serviceCards.length > 0 && contentSections.length > 0) {
-            serviceCards[0].classList.add('active');
-            contentSections[0].classList.add('active');
-            
-            serviceCards.forEach(function(card, index) {
-                card.addEventListener('click', function() {
-                    // Remove active class from all cards and sections
-                    serviceCards.forEach(c => c.classList.remove('active'));
-                    contentSections.forEach(section => section.classList.remove('active'));
-                    
-                    // Add active class to clicked card and corresponding section
-                    this.classList.add('active');
-                    contentSections[index].classList.add('active');
-                });
-            });
-        }
-        
-        // Handle section navigation dots
-        const sections = document.querySelectorAll('.snap-section');
-        const dots = document.querySelectorAll('.section-dot');
-        
-        // Update active dot based on scroll position
-        function updateActiveDot() {
-            const scrollPosition = window.scrollY;
-            const windowHeight = window.innerHeight;
-            
-            sections.forEach((section, index) => {
-                const sectionTop = section.offsetTop;
-                const sectionHeight = section.offsetHeight;
-                
-                // If more than half of the section is visible, activate the corresponding dot
-                if (scrollPosition >= sectionTop - windowHeight / 2 && 
-                    scrollPosition < sectionTop + sectionHeight - windowHeight / 2) {
-                    dots.forEach(dot => dot.classList.remove('active'));
-                    if (dots[index]) {
-                        dots[index].classList.add('active');
-                    }
-                }
-            });
-        }
-        
-        // Add click event to dots for navigation
-        dots.forEach((dot, index) => {
-            dot.addEventListener('click', () => {
-                window.scrollTo({
-                    top: sections[index].offsetTop,
-                    behavior: 'smooth'
-                });
-            });
-        });
-        
-        // Set initial active dot and update on scroll
-        updateActiveDot();
-        window.addEventListener('scroll', updateActiveDot);
-        
-        // Handle scroll down indicator click
-        const scrollDownIndicators = document.querySelectorAll('.scroll-down-indicator');
-        scrollDownIndicators.forEach((indicator, index) => {
-            indicator.addEventListener('click', () => {
-                const nextSection = sections[index + 1];
-                if (nextSection) {
-                    window.scrollTo({
-                        top: nextSection.offsetTop,
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        });
-        
-        // Dynamic Lifecycle Modal handling
-        const lifecycleModal = document.getElementById('lifecycleModal');
-        const contactAgentModal = new bootstrap.Modal(document.getElementById('contactAgentModal'));
+        // Lifecycle card click handler
         const lifecycleCards = document.querySelectorAll('.lifecycle-card');
-        
+        const modalElement = document.getElementById('lifecycleModal');
+        const bootstrapModal = new bootstrap.Modal(modalElement);
+
         lifecycleCards.forEach(card => {
-            card.addEventListener('click', function() {
+            card.addEventListener('click', function(event) {
+                event.preventDefault(); // Prevent default behavior that might cause scrolling
+                
                 const title = this.getAttribute('data-title');
                 const icon = this.getAttribute('data-icon');
                 const description = this.getAttribute('data-description');
                 
                 // Update modal content
-                const modalTitle = lifecycleModal.querySelector('.modal-title span');
-                const modalTitleIcon = lifecycleModal.querySelector('.modal-title i');
-                const modalIcon = lifecycleModal.querySelector('.modal-body .icon-container i');
-                const modalDescription = lifecycleModal.querySelector('.modal-body p');
+                const modalTitle = modalElement.querySelector('.modal-title span');
+                const modalTitleIcon = modalElement.querySelector('.modal-title i');
+                const modalIcon = modalElement.querySelector('.modal-body .icon-container i');
+                const modalDescription = modalElement.querySelector('.modal-body p');
                 
                 modalTitle.textContent = title;
                 modalTitleIcon.className = `fas fa-${icon} me-2`;
                 modalIcon.className = `fas fa-${icon} fa-3x`;
                 modalDescription.textContent = description;
                 
-                // Update service type for contact form
-                document.getElementById('serviceType').value = title;
-                document.getElementById('contactMessage').value = `I'm interested in learning more about your ${title} service.`;
+                // Show the modal using Bootstrap's modal method
+                bootstrapModal.show();
             });
         });
-        
-        // Contact Agent form handling
-        const sendContactFormBtn = document.getElementById('sendContactForm');
-        const contactAgentForm = document.getElementById('contactAgentForm');
-        
-        if (sendContactFormBtn) {
-            sendContactFormBtn.addEventListener('click', function() {
-                if (contactAgentForm.checkValidity()) {
-                    const name = document.getElementById('contactName').value;
-                    const email = document.getElementById('contactEmail').value;
-                    const phone = document.getElementById('contactPhone').value;
-                    const message = document.getElementById('contactMessage').value;
-                    const portfolioEmail = document.getElementById('portfolioEmail').value;
-                    const serviceType = document.getElementById('serviceType').value;
-                    
-                    // Create the email data
-                    const subject = `Inquiry about ${serviceType} Service`;
-                    const msg = `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\n\nMessage:\n${message}`;
-                    
-                    // Show loading state
-                    sendContactFormBtn.disabled = true;
-                    sendContactFormBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Sending...';
-                    
-                    // Call the notify endpoint
-                    fetch('http://192.168.86.16:5003/notify', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            sender: 'it@vectorny.com',
-                            recipients: ["investor.services@vectorny.com"],
-                            cc: [],
-                            subject: subject,
-                            msg: msg
-                        })
-                    })
-                    .then(response => {
-                        console.log('Response status:', response.status);
-                        return response.json();
-                    })
-                    .then(data => {
-                        // Log the data to see what we're getting
-                        console.log('Response data:', data);
-                        
-                        // Hide the modal after sending
-                        contactAgentModal.hide();
-                        
-                        // Show confirmation message with response data
-                        if (data && data.status === "success") {
-                            console.log('Success condition met, showing success message');
-                            // Simple success message without trying to stringify null data
-                            alert(`Thank you! Your message has been sent successfully.`);
-                        } else {
-                            console.log('Success condition NOT met, showing error message');
-                            console.log('data:', data);
-                            console.log('data.status:', data ? data.status : 'data is null');
-                            alert(`There was an issue sending your message. Please try again later.`);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error in fetch:', error);
-                        alert('There was an error sending your message. Please try again later.');
-                    })
-                    .finally(() => {
-                        // Reset button state
-                        sendContactFormBtn.disabled = false;
-                        sendContactFormBtn.innerHTML = 'Send Message';
-                    });
-                } else {
-                    // Show validation errors
-                    contactAgentForm.reportValidity();
-                }
-            });
-        }
+
+        // Hide the modal when clicking outside of it
+        modalElement.addEventListener('click', function(event) {
+            if (event.target === modalElement) {
+                bootstrapModal.hide();
+            }
+        });
     });
 </script>
 {% endblock %}
 
 {% block content %}
-<!-- Navigation dots -->
-<div class="nav-section d-none d-md-flex">
-    <a href="#services" class="section-dot active" title="Services"></a>
-    <a href="#approach" class="section-dot" title="Our Approach"></a>
-    <a href="#lifecycle" class="section-dot" title="Lifecycle Management"></a>
-    <a href="#challenges" class="section-dot" title="Challenges We Solve"></a>
-</div>
 
 <!-- Services Section -->
 <section id="services" class="snap-section" style="background-color: var(--primary-dark);">
@@ -631,94 +487,61 @@
             <p class="text-center text-white mb-5" style="max-width: 800px; margin: 0 auto;">Our comprehensive approach to unit lifecycle management ensures optimal performance at every stage, from occupied units to new lease signings.</p>
             
             <div class="row g-4">
-                <!-- Lifecycle cards - dynamically handled by JavaScript -->
                 <div class="col-lg-4 col-md-6">
-                    <div class="card h-100 rounded-0 lifecycle-card" data-bs-toggle="modal" data-bs-target="#lifecycleModal" 
-                         data-title="Occupied" data-icon="check-circle" 
-                         data-img="/static/images/icons/occupied-icon.svg"
-                         data-description="This phase provides a stable record of all currently leased units, offering a clear view with minimal upkeep until movement to the next phase. Any updates, such as tenant requests or lease modifications, are documented to ensure an accurate snapshot until the unit approaches its renewal date.">
-                        <div class="card-body text-center p-3">
-                            <div class="mb-3">
-                                <i class="fas fa-check-circle fa-2x" style="color: var(--accent);"></i>
-                            </div>
-                            <h4 class="m-0" style="font-size: 1.1rem;">Occupied</h4>
-                            <p class="small text-white-50 mt-2">Click to learn more</p>
+                    <div class="lifecycle-card d-flex align-items-center justify-content-between p-3" data-bs-toggle="modal" data-bs-target="#lifecycleModal" data-title="Occupied" data-icon="check-circle" data-description="This phase provides a stable record of all currently leased units, offering a clear view with minimal upkeep until movement to the next phase. Any updates, such as tenant requests or lease modifications, are documented to ensure an accurate snapshot until the unit approaches its renewal date." 
+                        style="cursor: pointer; transition: background-color 0.3s ease;">
+                        
+                            <div class="d-flex align-items-center">
+                            <i class="fas fa-check-circle me-3" style="color: var(--accent);"></i>
+                            <h4 class="m-0" style="font-size: 1.2rem;">Occupied</h4>
                         </div>
+                        <small class="learn-more-text" >Learn More</small>
                     </div>
                 </div>
-                
                 <div class="col-lg-4 col-md-6">
-                    <div class="card h-100 rounded-0 lifecycle-card" data-bs-toggle="modal" data-bs-target="#lifecycleModal" 
-                         data-title="Renewal Process" data-icon="sync-alt" 
-                         data-img="/static/images/icons/renewal-icon.svg"
-                         data-description="Beginning 120 days before lease expiration, we leverage AI-driven tools to initiate early engagement with tenants. This approach accelerates initial outreach and gathers essential information well before lease expiry. By the time a team member steps in for direct negotiation, they're equipped with detailed insights from the data collection.">
-                        <div class="card-body text-center p-3">
-                            <div class="mb-3">
-                                <i class="fas fa-sync-alt fa-2x" style="color: var(--accent);"></i>
-                            </div>
-                            <h4 class="m-0" style="font-size: 1.1rem;">Renewal Process</h4>
-                            <p class="small text-white-50 mt-2">Click to learn more</p>
+                    <div class="lifecycle-card d-flex align-items-center justify-content-between p-3" data-bs-toggle="modal" data-bs-target="#lifecycleModal" data-title="Renewal Process" data-icon="sync-alt" data-description="Beginning 120 days before lease expiration, we leverage AI-driven tools to initiate early engagement with tenants. This approach accelerates initial outreach and gathers essential information well before lease expiry. By the time a team member steps in for direct negotiation, they're equipped with detailed insights from the data collection." 
+                    style="cursor: pointer; transition: background-color 0.3s ease;">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-sync-alt me-3" style="color: var(--accent);"></i>
+                            <h4 class="m-0" style="font-size: 1.2rem;">Renewal Process</h4>
                         </div>
+                        <small class="learn-more-text" >Learn More</small>
                     </div>
                 </div>
-                
                 <div class="col-lg-4 col-md-6">
-                    <div class="card h-100 rounded-0 lifecycle-card" data-bs-toggle="modal" data-bs-target="#lifecycleModal" 
-                         data-title="Pre-Lease" data-icon="calendar-check" 
-                         data-img="/static/images/icons/pre-lease-icon.svg"
-                         data-description="A unit enters the Pre-Lease phase when a non-renewal decision is confirmed. This proactive stage enables our leasing team to list the apartment, push targeted marketing, and channel inquiries, minimizing any lapse in tenancy. We coordinate showings with the current tenant and leverage high-quality media for maximum visibility.">
-                        <div class="card-body text-center p-3">
-                            <div class="mb-3">
-                                <i class="fas fa-calendar-check fa-2x" style="color: var(--accent);"></i>
-                            </div>
-                            <h4 class="m-0" style="font-size: 1.1rem;">Pre-Lease</h4>
-                            <p class="small text-white-50 mt-2">Click to learn more</p>
+                    <div class="lifecycle-card d-flex align-items-center justify-content-between p-3" data-bs-toggle="modal" data-bs-target="#lifecycleModal" data-title="Pre-Lease" data-icon="calendar-check" data-description="A unit enters the Pre-Lease phase when a non-renewal decision is confirmed. This proactive stage enables our leasing team to list the apartment, push targeted marketing, and channel inquiries, minimizing any lapse in tenancy. We coordinate showings with the current tenant and leverage high-quality media for maximum visibility." style="cursor: pointer; transition: background-color 0.3s ease;">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-calendar-check me-3" style="color: var(--accent);"></i>
+                            <h4 class="m-0" style="font-size: 1.2rem;">Pre-Lease</h4>
                         </div>
+                        <small class="learn-more-text" >Learn More</small>
                     </div>
                 </div>
-                
                 <div class="col-lg-4 col-md-6">
-                    <div class="card h-100 rounded-0 lifecycle-card" data-bs-toggle="modal" data-bs-target="#lifecycleModal" 
-                         data-title="Vacant" data-icon="home" 
-                         data-img="/static/images/icons/vacant-icon.svg"
-                         data-description="If pre-leasing doesn't yield a tenant by lease-end, the unit enters the Vacant phase. Here, we prioritize swift yet strategic action, analyzing market trends to position the unit competitively. Weekly team reviews assess pricing, potential renovations, and other enhancements to make the apartment attractive to new tenants.">
-                        <div class="card-body text-center p-3">
-                            <div class="mb-3">
-                                <i class="fas fa-home fa-2x" style="color: var(--accent);"></i>
-                            </div>
-                            <h4 class="m-0" style="font-size: 1.1rem;">Vacant</h4>
-                            <p class="small text-white-50 mt-2">Click to learn more</p>
+                    <div class="lifecycle-card d-flex align-items-center justify-content-between p-3" data-bs-toggle="modal" data-bs-target="#lifecycleModal" data-title="Vacant" data-icon="home" data-description="If pre-leasing doesn't yield a tenant by lease-end, the unit enters the Vacant phase. Here, we prioritize swift yet strategic action, analyzing market trends to position the unit competitively. Weekly team reviews assess pricing, potential renovations, and other enhancements to make the apartment attractive to new tenants." style="cursor: pointer; transition: background-color 0.3s ease;">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-home me-3" style="color: var(--accent);"></i>
+                            <h4 class="m-0" style="font-size: 1.2rem;">Vacant</h4>
                         </div>
+                        <small class="learn-more-text" >Learn More</small>
                     </div>
                 </div>
-                
                 <div class="col-lg-4 col-md-6">
-                    <div class="card h-100 rounded-0 lifecycle-card" data-bs-toggle="modal" data-bs-target="#lifecycleModal" 
-                         data-title="Active Deal" data-icon="handshake" 
-                         data-img="/static/images/icons/active-deal-icon.svg"
-                         data-description="When an application or good faith deposit is received, the unit moves to Active Deal status. This phase is powered by automation, ensuring smooth progression from application to lease signing. Our deal flow manager, combined with automated lease generation and quality checks, maintains high standards of accuracy and efficiency.">
-                        <div class="card-body text-center p-3">
-                            <div class="mb-3">
-                                <i class="fas fa-handshake fa-2x" style="color: var(--accent);"></i>
-                            </div>
-                            <h4 class="m-0" style="font-size: 1.1rem;">Active Deal</h4>
-                            <p class="small text-white-50 mt-2">Click to learn more</p>
+                    <div class="lifecycle-card d-flex align-items-center justify-content-between p-3" data-bs-toggle="modal" data-bs-target="#lifecycleModal" data-title="Active Deal" data-icon="handshake" data-description="When an application or good faith deposit is received, the unit moves to Active Deal status. This phase is powered by automation, ensuring smooth progression from application to lease signing. Our deal flow manager, combined with automated lease generation and quality checks, maintains high standards of accuracy and efficiency." style="cursor: pointer; transition: background-color 0.3s ease;">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-handshake me-3" style="color: var(--accent);"></i>
+                            <h4 class="m-0" style="font-size: 1.2rem;">Active Deal</h4>
                         </div>
+                        <small class="learn-more-text" >Learn More</small>
                     </div>
                 </div>
-                
                 <div class="col-lg-4 col-md-6">
-                    <div class="card h-100 rounded-0 lifecycle-card" data-bs-toggle="modal" data-bs-target="#lifecycleModal" 
-                         data-title="New Occupancy" data-icon="file-signature" 
-                         data-img="/static/images/icons/new-occupancy-icon.svg"
-                         data-description="This final phase signifies a successful new tenant relationship. The unit transitions to a fully leased status with all documentation complete and move-in coordination organized. Our system prompts property staff for a 30-day check-in to ensure tenant satisfaction, then returns the unit to the stable Occupied phase.">
-                        <div class="card-body text-center p-3">
-                            <div class="mb-3">
-                                <i class="fas fa-file-signature fa-2x" style="color: var(--accent);"></i>
-                            </div>
-                            <h4 class="m-0" style="font-size: 1.1rem;">New Occupancy</h4>
-                            <p class="small text-white-50 mt-2">Click to learn more</p>
+                    <div class="lifecycle-card d-flex align-items-center justify-content-between p-3" data-bs-toggle="modal" data-bs-target="#lifecycleModal" data-title="New Occupancy" data-icon="file-signature" data-description="This final phase signifies a successful new tenant relationship. The unit transitions to a fully leased status with all documentation complete and move-in coordination organized. Our system prompts property staff for a 30-day check-in to ensure tenant satisfaction, then returns the unit to the stable Occupied phase." style="cursor: pointer; transition: background-color 0.3s ease;">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-file-signature me-3" style="color: var(--accent);"></i>
+                            <h4 class="m-0" style="font-size: 1.2rem;">New Occupancy</h4>
                         </div>
+                        <small class="learn-more-text" >Learn More</small>
                     </div>
                 </div>
             </div>
@@ -729,81 +552,6 @@
         <span class="small text-white-50">Scroll Down</span>
     </div>
 </section>
-
-<!-- Dynamic Lifecycle Modal -->
-<div class="modal fade" id="lifecycleModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content" style="background-color: #0b1527; color: white;">
-            <div class="modal-header" style="border-bottom-color: rgba(255,255,255,0.1);">
-                <h5 class="modal-title">
-                    <i class="fas me-2" style="color: var(--accent);"></i><span></span>
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="text-center mb-4">
-                    <div class="icon-container mx-auto" style="width: 80px; height: 80px; background-color: rgba(42, 127, 255, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                        <i class="fas fa-3x" style="color: var(--accent);"></i>
-                    </div>
-                </div>
-                <div class="p-3 light-section">
-                    <p class="mb-0"></p>
-                </div>
-            </div>
-            <div class="modal-footer" style="border-top-color: rgba(255,255,255,0.1);">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#contactAgentModal">Learn More</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Contact Agent Modal -->
-<div class="modal fade" id="contactAgentModal" tabindex="-1" aria-labelledby="contactAgentModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content" style="background-color: #0b1527; color: white;">
-            <div class="modal-header" style="border-bottom-color: rgba(255,255,255,0.1);">
-                <h5 class="modal-title" id="contactAgentModalLabel">Contact Us About Investor Services</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p class="mb-3">Send a message to learn more about our investor services</p>
-                <form id="contactAgentForm">
-                    <div class="mb-3">
-                        <label for="contactName" class="form-label">Your Name</label>
-                        <input type="text" class="form-control" id="contactName" required 
-                               style="background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: white;">
-                    </div>
-                    <div class="mb-3">
-                        <label for="contactEmail" class="form-label">Your Email</label>
-                        <input type="email" class="form-control" id="contactEmail" required 
-                               style="background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: white;">
-                    </div>
-                    <div class="mb-3">
-                        <label for="contactPhone" class="form-label">Your Phone</label>
-                        <input type="tel" class="form-control" id="contactPhone" 
-                               style="background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: white;">
-                    </div>
-                    <div class="mb-3">
-                        <label for="contactMessage" class="form-label">Message</label>
-                        <textarea class="form-control" id="contactMessage" rows="4" required
-                                  style="background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: white;">I'm interested in learning more about your investor services.</textarea>
-                    </div>
-                    <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" id="contactConsent" required>
-                        <label class="form-check-label" for="contactConsent">I agree to be contacted about investor services</label>
-                    </div>
-                    <input type="hidden" id="portfolioEmail" value="it@vectorny.com">
-                    <input type="hidden" id="serviceType" value="investor">
-                </form>
-            </div>
-            <div class="modal-footer" style="border-top-color: rgba(255,255,255,0.1);">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="sendContactForm" style="background-color: var(--accent); border: none;">Send Message</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 <!-- Challenges Section -->
 <section id="challenges" class="snap-section" style="background-color: var(--primary-dark);">
@@ -874,5 +622,33 @@
         </div>
     </div>
 </section>
+
+<!-- Lifecycle Modal -->
+<div class="modal fade" id="lifecycleModal" tabindex="-1" aria-labelledby="lifecycleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="background-color: #0b1527; color: white;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="lifecycleModalLabel">
+                    <i class="fas me-2" style="color: var(--accent);"></i><span></span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-4">
+                    <div class="icon-container mx-auto" style="width: 80px; height: 80px; background-color: rgba(42, 127, 255, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-3x" style="color: var(--accent);"></i>
+                    </div>
+                </div>
+                <div class="p-3 light-section">
+                    <p class="mb-0"></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#contactAgentModal">Learn More</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 {% endblock %}
