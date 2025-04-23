@@ -169,40 +169,6 @@
         color: var(--accent);
     }
     
-    .scroll-down-indicator {
-        position: absolute;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        text-align: center;
-        cursor: pointer;
-        z-index: 10;
-        transition: all 0.3s ease;
-    }
-    
-    .scroll-down-indicator:hover {
-        opacity: 0.8;
-    }
-    
-    .scroll-arrow {
-        width: 30px;
-        height: 30px;
-        margin: 0 auto 5px;
-        position: relative;
-        animation: pulse 2s infinite;
-    }
-    
-    .scroll-arrow::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 12px;
-        height: 12px;
-        border-right: 2px solid white;
-        border-bottom: 2px solid white;
-        transform: translate(-50%, -50%) rotate(45deg);
-    }
     
     @keyframes pulse {
         0% {
@@ -401,10 +367,6 @@
             </div>
         </div>
     </div>
-    <div class="scroll-down-indicator" role="button" tabindex="0">
-        <div class="scroll-arrow"></div>
-        <span class="small text-white-50">Scroll Down</span>
-    </div>
 </section>
 
 <!-- Our Approach Section -->
@@ -472,10 +434,6 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div class="scroll-down-indicator" role="button" tabindex="0">
-        <div class="scroll-arrow"></div>
-        <span class="small text-white-50">Scroll Down</span>
     </div>
 </section>
 
@@ -546,10 +504,6 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div class="scroll-down-indicator" role="button" tabindex="0">
-        <div class="scroll-arrow"></div>
-        <span class="small text-white-50">Scroll Down</span>
     </div>
 </section>
 
