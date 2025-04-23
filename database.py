@@ -285,7 +285,7 @@ def get_listing(listing_id):
                     "concierge":
                     item.get('concierge', ''),
                     "contact_email":
-                    "info@vectorny.com",
+                    "hello@vectorny.com",
                     "contact_phone":
                     "+1 917 675 6696",
                     "pets_policy":
@@ -461,7 +461,7 @@ def get_all_listings(address=None,
                     "concierge":
                     item.get('concierge', ''),
                     "contact_email":
-                    "info@vectorny.com",
+                    "hello@vectorny.com",
                     "contact_phone":
                     "+1 917 675 6696",
                     "pets_policy":

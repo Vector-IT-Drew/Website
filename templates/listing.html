@@ -1274,23 +1274,49 @@
                     const message = document.getElementById('contactMessage').value;
                     const portfolioEmail = document.getElementById('portfolioEmail').value;
                     
-                    // Create the mailto link with the form data
-                    const subject = encodeURIComponent(`Inquiry about ${document.title}`);
-                    const body = encodeURIComponent(
-                        `Name: ${name}\n` +
-                        `Email: ${email}\n` +
-                        `Phone: ${phone}\n\n` +
-                        `Message:\n${message}`
-                    );
+                    // Create the email data
+                    const subject = `Inquiry about ${document.title}`;
+                    const msg = `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\n\nMessage:\n${message}`;
                     
-                    // Open email client with the form data
-                    window.location.href = `mailto:${portfolioEmail}?subject=${subject}&body=${body}`;
+                    // Show loading state
+                    sendContactFormBtn.disabled = true;
+                    sendContactFormBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Sending...';
                     
-                    // Hide the modal after sending
-                    contactAgentModal.hide();
-                    
-                    // Show confirmation message
-                    alert('Thank you! Your message has been sent to the listing agent.');
+                    // Call the notify endpoint
+                    fetch('http://192.168.86.16:5003/notify', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            sender: portfolioEmail,
+                            recipients: [portfolioEmail],
+                            cc: [],
+                            subject: subject,
+                            msg: msg
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Hide the modal after sending
+                        contactAgentModal.hide();
+                        
+                        // Show confirmation message with response data
+                        if (data.status === "success") {
+                            alert(`Thank you! Your message has been sent to the listing agent.\n\nResponse: ${JSON.stringify(data.data)}`);
+                        } else {
+                            alert(`There was an issue sending your message. Please try again later.\n\nResponse: ${JSON.stringify(data)}`);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('There was an error sending your message. Please try again later.');
+                    })
+                    .finally(() => {
+                        // Reset button state
+                        sendContactFormBtn.disabled = false;
+                        sendContactFormBtn.innerHTML = 'Send Message';
+                    });
                 } else {
                     // Show validation errors
                     contactAgentForm.reportValidity();
