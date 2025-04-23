@@ -1117,52 +1117,6 @@
     </div>
 </div>
 
-<!-- Contact Agent Modal -->
-<!-- <div class="modal fade" id="contactAgentModal" tabindex="-1" aria-labelledby="contactAgentModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content" style="background-color: var(--primary-dark); border: none; border-radius: 8px;">
-            <div class="modal-header border-0">
-                <h5 class="modal-title" id="contactAgentModalLabel">Contact Agent</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p class="mb-3">Send a message about {{ listing.address }}, Unit {{ listing.unit }}</p>
-                <form id="contactAgentForm">
-                    <div class="mb-3">
-                        <label for="contactName" class="form-label">Your Name</label>
-                        <input type="text" class="form-control" id="contactName" required 
-                               style="background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: white;">
-                    </div>
-                    <div class="mb-3">
-                        <label for="contactEmail" class="form-label">Your Email</label>
-                        <input type="email" class="form-control" id="contactEmail" required 
-                               style="background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: white;">
-                    </div>
-                    <div class="mb-3">
-                        <label for="contactPhone" class="form-label">Your Phone</label>
-                        <input type="tel" class="form-control" id="contactPhone" 
-                               style="background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: white;">
-                    </div>
-                    <div class="mb-3">
-                        <label for="contactMessage" class="form-label">Message</label>
-                        <textarea class="form-control" id="contactMessage" rows="4" required
-                                  style="background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: white;">I'm interested in {{ listing.address }}, Unit {{ listing.unit }} and would like more information.</textarea>
-                    </div>
-                    <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" id="contactConsent" required>
-                        <label class="form-check-label" for="contactConsent">I agree to be contacted about this property</label>
-                    </div>
-                    <input type="hidden" id="portfolioEmail" value="{{ listing.portfolio_email }}">
-                </form>
-            </div>
-            <div class="modal-footer border-0">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="background-color: rgba(255, 255, 255, 0.1); border: none;">Cancel</button>
-                <button type="button" class="btn btn-primary" id="sendContactForm" style="background-color: var(--accent); border: none;">Send Message</button>
-            </div>
-        </div>
-    </div>
-</div> -->
-
 
 {% endblock %}
 
@@ -1262,69 +1216,6 @@
             });
         }
         
-        // Contact Agent form handling
-        const contactAgentModal = new bootstrap.Modal(document.getElementById('contactAgentModal'));
-        const sendContactFormBtn = document.getElementById('sendContactForm');
-        const contactAgentForm = document.getElementById('contactAgentForm');
-        
-        if (sendContactFormBtn) {
-            sendContactFormBtn.addEventListener('click', function() {
-                if (contactAgentForm.checkValidity()) {
-                    const name = document.getElementById('contactName').value;
-                    const email = document.getElementById('contactEmail').value;
-                    const phone = document.getElementById('contactPhone').value;
-                    const message = document.getElementById('contactMessage').value;
-                    const portfolioEmail = document.getElementById('portfolioEmail').value;
-                    
-                    // Create the email data
-                    const subject = `Inquiry about ${document.title}`;
-                    const msg = `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\n\nMessage:\n${message}`;
-                    
-                    // Show loading state
-                    sendContactFormBtn.disabled = true;
-                    sendContactFormBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Sending...';
-                    
-                    // Call the notify endpoint
-                    fetch('http://192.168.86.16:5003/notify', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            sender: portfolioEmail,
-                            recipients: [portfolioEmail],
-                            cc: [],
-                            subject: subject,
-                            msg: msg
-                        })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        // Hide the modal after sending
-                        contactAgentModal.hide();
-                        
-                        // Show confirmation message with response data
-                        if (data.status === "success") {
-                            alert(`Thank you! Your message has been sent to the listing agent.\n\nResponse: ${JSON.stringify(data.data)}`);
-                        } else {
-                            alert(`There was an issue sending your message. Please try again later.\n\nResponse: ${JSON.stringify(data)}`);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('There was an error sending your message. Please try again later.');
-                    })
-                    .finally(() => {
-                        // Reset button state
-                        sendContactFormBtn.disabled = false;
-                        sendContactFormBtn.innerHTML = 'Send Message';
-                    });
-                } else {
-                    // Show validation errors
-                    contactAgentForm.reportValidity();
-                }
-            });
-        }
         
         // Schedule viewing form submission is now handled by external form
         

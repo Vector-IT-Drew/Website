@@ -86,7 +86,7 @@
                     .then(data => {
                         contactAgentModal.hide();
                         if (data.status === "success") {
-                            alert(`Thank you! Your message has been sent to the listing agent.\n\nResponse: ${JSON.stringify(data.data)}`);
+                            alert(`Thank you! Your message has been sent to the listing agent.`);
                         } else {
                             alert(`There was an issue sending your message. Please try again later.\n\nResponse: ${JSON.stringify(data)}`);
                         }

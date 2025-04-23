@@ -22,6 +22,8 @@ logging.basicConfig(level=logging.DEBUG)
 app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", "dev-secret-key")
 
+app.config['DASH_SERVICES_ENDPOINT'] = 'https://dash-production-b25c.up.railway.app'
+
 
 @app.template_filter('markdown')
 def markdown_filter(text):
