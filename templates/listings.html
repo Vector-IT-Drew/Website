@@ -190,6 +190,43 @@
         color: rgba(255, 255, 255, 0.7);
         margin-top: 0;
     }
+    
+    /* Custom styling for noUiSlider to match your existing design */
+    .noUi-target {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 3px;
+        border: none;
+        box-shadow: none;
+        height: 6px;
+    }
+    
+    .noUi-connect {
+        background: var(--accent); /* Vector blue color */
+    }
+    
+    .noUi-handle {
+        border: none;
+        background: var(--accent);
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        border-radius: 50%;
+        cursor: pointer;
+        width: 16px !important;
+        height: 16px !important;
+        right: -8px !important;
+        top: -5px !important;
+    }
+    
+    .noUi-handle:before, .noUi-handle:after {
+        display: none;
+    }
+    
+    .noUi-tooltip {
+        display: none;
+    }
+    
+    .noUi-active .noUi-tooltip {
+        display: block;
+    }
 </style>
 {% endblock %}
 
@@ -432,7 +469,7 @@
                         
                         <!-- Property type and features badges -->
                         <div class="listing-badges">
-                            <span class="badge bg-primary">{{ listing.property_type }}</span>
+                            <!-- <span class="badge bg-primary">{{ listing.property_type }}</span> -->
                             {% if listing.floor and listing.floor != 0 and listing.floor != '0' %}
                             <span class="badge bg-info">Floor {{ listing.floor }}</span>
                             {% endif %}
