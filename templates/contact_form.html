@@ -69,7 +69,7 @@
                     sendContactFormBtn.disabled = true;
                     sendContactFormBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Sending...';
                     
-                    fetch('http://192.168.86.16:5003/notify', {
+                    fetch('{{ DASH_SERVICES_ENDPOINT }}/notify', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
