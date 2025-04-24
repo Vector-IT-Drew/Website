@@ -153,7 +153,7 @@ def listings():
                                      available=available,
                                      sort=sort_option)
 
-    return render_template('listings.html', listings=listings_data, , DASH_SERVICES_ENDPOINT=DASH_SERVICES_ENDPOINT)
+    return render_template('listings.html', listings=listings_data,  DASH_SERVICES_ENDPOINT=DASH_SERVICES_ENDPOINT)
 
 @app.route('/listings/<listing_id>')
 def listing_detail(listing_id):
