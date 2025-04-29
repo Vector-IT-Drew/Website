@@ -240,29 +240,7 @@
                     <form action="{{ url_for('listings') }}" method="GET">
                         <div class="row">
                             <!-- First Row: Bedroom, Bathroom, Neighborhood side by side -->
-                            <div class="col-md-2 mb-3">
-                                <label class="filter-title">Bedrooms</label>
-                                <select name="beds" id="beds" class="form-select">
-                                    <option value="">Any</option>
-                                    <option value="0" {% if request.args.get('beds') == '0' %}selected{% endif %}>Studio</option>
-                                    <option value="1" {% if request.args.get('beds') == '1' %}selected{% endif %}>1+ Bed</option>
-                                    <option value="2" {% if request.args.get('beds') == '2' %}selected{% endif %}>2+ Beds</option>
-                                    <option value="3" {% if request.args.get('beds') == '3' %}selected{% endif %}>3+ Beds</option>
-                                    <option value="4" {% if request.args.get('beds') == '4' %}selected{% endif %}>4+ Beds</option>
-                                </select>
-                            </div>
-                            
-                            <div class="col-md-2 mb-3">
-                                <label class="filter-title">Bathrooms</label>
-                                <select name="baths" id="baths" class="form-select">
-                                    <option value="">Any</option>
-                                    <option value="1" {% if request.args.get('baths') == '1' %}selected{% endif %}>1+ Bath</option>
-                                    <option value="1.5" {% if request.args.get('baths') == '1.5' %}selected{% endif %}>1.5+ Baths</option>
-                                    <option value="2" {% if request.args.get('baths') == '2' %}selected{% endif %}>2+ Baths</option>
-                                    <option value="3" {% if request.args.get('baths') == '3' %}selected{% endif %}>3+ Baths</option>
-                                </select>
-                            </div>
-                            
+
                             <div class="col-md-4 mb-3">
                                 <label class="filter-title">Neighborhood</label>
                                 <select name="neighborhood" id="neighborhood" class="form-select">
@@ -287,6 +265,31 @@
                                 </select>
                             </div>
                             
+                            <div class="col-md-2 mb-3">
+                                <label class="filter-title">Bedrooms</label>
+                                <select name="beds" id="beds" class="form-select">
+                                    <option value="">Any</option>
+                                    <option value="0" {% if request.args.get('beds') == '0' %}selected{% endif %}>Studio</option>
+                                    <option value="1" {% if request.args.get('beds') == '1' %}selected{% endif %}>1+ Bed</option>
+                                    <option value="2" {% if request.args.get('beds') == '2' %}selected{% endif %}>2+ Beds</option>
+                                    <option value="3" {% if request.args.get('beds') == '3' %}selected{% endif %}>3+ Beds</option>
+                                    <option value="4" {% if request.args.get('beds') == '4' %}selected{% endif %}>4+ Beds</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-2 mb-3">
+                                <label class="filter-title">Bathrooms</label>
+                                <select name="baths" id="baths" class="form-select">
+                                    <option value="">Any</option>
+                                    <option value="1" {% if request.args.get('baths') == '1' %}selected{% endif %}>1+ Bath</option>
+                                    <option value="1.5" {% if request.args.get('baths') == '1.5' %}selected{% endif %}>1.5+ Baths</option>
+                                    <option value="2" {% if request.args.get('baths') == '2' %}selected{% endif %}>2+ Baths</option>
+                                    <option value="3" {% if request.args.get('baths') == '3' %}selected{% endif %}>3+ Baths</option>
+                                </select>
+                            </div>
+                            
+                            
+                            
                             <!-- Second Row: Price Range, Availability and Sort By side by side -->
                             <div class="col-md-4 mb-3">
                                 <div>
@@ -294,7 +297,7 @@
                                     
                                     <!-- Custom price range display -->
                                     <div class="mb-2" id="priceRangeDisplay" style="font-weight: 500; text-align: center; color: white;">
-                                        Price Range: ${{ "{:,}".format(request.args.get('min_price', 2000)|int) }} - ${{ "{:,}".format(request.args.get('max_price', 25000)|int) }}
+                                        Price Range: ${{ "{:,}".format(request.args.get('min_price', 700)|int) }} - ${{ "{:,}".format(request.args.get('max_price', 25000)|int) }}
                                     </div>
                                     
                                     <!-- Simple HTML5 range inputs -->
