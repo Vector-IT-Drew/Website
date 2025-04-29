@@ -267,12 +267,23 @@
                                 <label class="filter-title">Neighborhood</label>
                                 <select name="neighborhood" id="neighborhood" class="form-select">
                                     <option value="">Any</option>
-                                    <option value="Upper East Side" {% if request.args.get('neighborhood') == 'Upper East Side' %}selected{% endif %}>Upper East Side</option>
-                                    <option value="Upper West Side" {% if request.args.get('neighborhood') == 'Upper West Side' %}selected{% endif %}>Upper West Side</option>
-                                    <option value="Chelsea" {% if request.args.get('neighborhood') == 'Chelsea' %}selected{% endif %}>Chelsea</option>
-                                    <option value="SoHo" {% if request.args.get('neighborhood') == 'SoHo' %}selected{% endif %}>SoHo</option>
-                                    <option value="Tribeca" {% if request.args.get('neighborhood') == 'Tribeca' %}selected{% endif %}>Tribeca</option>
-                                    <option value="Midtown" {% if request.args.get('neighborhood') == 'Midtown' %}selected{% endif %}>Midtown</option>
+                                    {% for neighborhood in unique_neighborhoods %}
+                                        <option value="{{ neighborhood }}" {% if request.args.get('neighborhood') == neighborhood %}selected{% endif %}>
+                                            {{ neighborhood }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-4 mb-3">
+                                <label class="filter-title">Address</label>
+                                <select name="address" id="address" class="form-select">
+                                    <option value="">Any</option>
+                                    {% for address in unique_addresses %}
+                                        <option value="{{ address }}" {% if request.args.get('address') == address %}selected{% endif %}>
+                                            {{ address }}
+                                        </option>
+                                    {% endfor %}
                                 </select>
                             </div>
                             

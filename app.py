@@ -24,6 +24,8 @@ app.secret_key = os.environ.get("SESSION_SECRET", "dev-secret-key")
 
 DASH_SERVICES_ENDPOINT = 'https://dash-production-b25c.up.railway.app'
 
+UNIQUE_VALUES_API_ENDPOINT = "https://dash-production-b25c.up.railway.app" + "/unique-values"
+
 @app.template_filter('markdown')
 def markdown_filter(text):
     return markdown2.markdown(text)
@@ -89,6 +91,15 @@ def about():
 @app.route('/listings')
 def listings():
     """Display all available listings with advanced filtering and sorting"""
+    # Fetch unique neighborhoods and addresses
+    try:
+        response = requests.get(UNIQUE_VALUES_API_ENDPOINT)
+        unique_values = response.json()
+        print("Unique values response:", unique_values)  # Debugging line
+    except Exception as e:
+        unique_values = {"unique_neighborhoods": [], "unique_addresses": []}
+        print(f"Error fetching unique values: {e}")
+
     # Extract filter parameters from the request
     address = request.args.get('address')
     unit = request.args.get('unit')
@@ -130,35 +141,26 @@ def listings():
     elif availability == 'coming_soon':
         available = False
 
-    # We removed the property_type filter as requested
-
     # Determine sort option and map to SQL ORDER BY clause
     sort_option = request.args.get('sort', 'price_asc')
-
-    # # Map the sort options to SQL ORDER BY clauses to send to the API
-    # sort_sql = ''
-    # if sort_option == 'price_asc':
-    #     sort_sql = "ORDER BY d.`actual_rent ASC"
-    # elif sort_option == 'price_desc':
-    #     sort_sql = "ORDER BY d.actual_rent DESC"
-    # elif sort_option == 'newest':
-    #     # You could add a date-based sorting here if the API supports it
-    #     sort_sql = "ORDER BY d.expiry DESC"
-    # elif sort_option == 'size_desc':
-    #     sort_sql = "ORDER BY u.sqft DESC"
 
     # Get filtered and sorted listings from database/API
     listings_data = get_all_listings(address=address,
                                      unit=unit,
-                                     beds=beds,
-                                     baths=baths,
                                      neighborhood=neighborhood,
                                      min_price=min_price,
                                      max_price=max_price,
+                                     beds=beds,
+                                     baths=baths,
                                      available=available,
                                      sort=sort_option)
 
-    return render_template('listings.html', listings=listings_data,  DASH_SERVICES_ENDPOINT=DASH_SERVICES_ENDPOINT)
+    return render_template(
+        'listings.html',
+        listings=listings_data,
+        unique_neighborhoods=unique_values.get('unique_neighborhoods', []),
+        unique_addresses=unique_values.get('unique_addresses', [])
+    )
 
 @app.route('/listings/<listing_id>')
 def listing_detail(listing_id):
