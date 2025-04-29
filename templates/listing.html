@@ -467,7 +467,7 @@
                 </div>
                 
                 <h1 class="property-title mb-2">
-                    {% if listing.building_name and listing.building_name != '-' %}
+                    {% if listing.building_name and listing.building_name|trim not in ['-', ' - '] %}
                         {{ listing.building_name }}
                     {% else %}
                         {{ listing.address }}
