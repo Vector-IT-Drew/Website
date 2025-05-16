@@ -82,6 +82,9 @@ def investor_services():
     """Display investor services page"""
     return render_template('investor_services.html', DASH_SERVICES_ENDPOINT=DASH_SERVICES_ENDPOINT)
 
+@app.route('/vector-highlights')
+def vectorHighlights():
+    return render_template('vectorHighlights.html')
 
 @app.route('/about')
 def about():

@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+
+{% block title %}Vector New York - Revolutionizing Real Estate{% endblock %}
+
+{% block extra_css %}
+<!-- Google Fonts - Cormorant Garamond as a fallback -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+    /* Hero section styling */
+    .hero-section {
+        background-color: #050e18 !important;
+        background-image: none !important;
+        position: relative;
+        overflow: hidden;
+        /* box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); */
+        background-size: 100% 80%;
+        background-position: top center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        height: 100vh;
+        width: 100%;
+        /* Create a new stacking context */
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
+    }
+    
+   
+    /* Ensure skyline image appears below overlay */
+    .skyline-image {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+        object-position: bottom;
+        z-index: 0;
+        /* Force hardware acceleration */
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
+    }
+    
+    /* Ensure content appears above overlay */
+    .hero-section .container {
+        position: relative;
+        z-index: 2;
+        /* Force hardware acceleration */
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
+    }
+    
+    /* Ensure gradient appears above overlay */
+    .hero-section .position-absolute.bottom-0.w-100 {
+        z-index: 2;
+        /* Force hardware acceleration */
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
+    }
+    
+    /* Mobile optimizations */
+    @media (max-width: 768px) {
+       
+      
+        
+        /* Force content above everything else on iOS */
+        .hero-section .skyline-image {
+            width: 300%;
+        }
+        
+        .section-heading {
+            font-size: 1.2rem !important;
+        }
+        
+        .section-subheading {
+            font-size: 0.9rem !important;
+        }
+        
+        .card-title {
+            font-size: 1.1rem !important;
+        }
+        
+        .card-text {
+            font-size: 0.9rem !important;
+        }
+        
+        .card-img-container {
+            height: 200px !important;
+        }
+    }
+    
+  
+</style>
+
+
+<!-- Vector Highlights Section -->
+<section class="py-5 mt-5" style="background-color: var(--primary);">
+    <div class="container" style="border: 2px solid rgba(42, 127, 255, 0.15); border-radius: 22px; padding: 2rem; box-shadow: 0 0 20px rgba(42, 127, 255, 0.05);">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="px-4 py-2 rounded-pill" style="background: linear-gradient(45deg, #132340, #1a3a6c); display: inline-block; border-left: 4px solid #2a7fff;">
+                <h2 class="text-left m-0 manderley-heading text-light" style="font-size: 1.5rem;">Vector Highlights</h2>
+            </div>
+            <span class="badge px-3 py-2" style="background: linear-gradient(45deg, #ffd700, #e9bb04); color: #000; font-size: 0.9rem; letter-spacing: 0.5px; border-radius: 8px; opacity: 0.9">FEATURED PROPERTY</span>
+        </div>
+        
+        <div class="card shadow-sm overflow-hidden" style="background-color: rgba(19, 35, 64, 0.4); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 0; transition: transform 0.3s, box-shadow 0.3s; cursor: pointer;" 
+             onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 30px rgba(42, 127, 255, 0.2)';" 
+             onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 0 0 rgba(42, 127, 255, 0)';"
+             onclick="window.location.href='{{ url_for('listings', portfolio='SMK') }}'">
+            <div class="row g-0">
+                <div class="col-md-5 d-flex align-items-center position-relative">
+                    <div class="position-absolute top-0 start-0 m-3 px-3 py-2 rounded-pill" style="background-color: rgba(0,0,0,0.7); z-index: 1; font-size: 0.8rem;">
+                        <i class="fas fa-map-marker-alt text-primary me-1"></i> Upper East Side
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" 
+                         class="img-fluid h-100 w-100 object-fit-cover" alt="SMK Portfolio" style="max-height: 450px; filter: brightness(1.05);">
+                    <div class="position-absolute bottom-0 start-0 w-100" style="height: 70px; background: linear-gradient(to top, rgba(5, 14, 23, 0.7), transparent);"></div>
+                </div>
+                <div class="col-md-7 d-flex flex-column">
+                    <div class="card-body p-3 p-lg-4 flex-grow-1 text-light">
+                        <h3 class="card-title mb-3" style="font-weight: 600; letter-spacing: 0.5px;">SMK Greenpoint Offering</h3>
+                        <div class="d-flex align-items-center mb-3">
+                            <!-- <div class="me-3">
+                                <span class="badge me-2" style="font-weight: 400; background-color: #2a7fff;">NEW</span>
+                                <span class="badge" style="font-weight: 400; background-color: #ff9800;">LUXURY</span>
+                            </div> -->
+                            <div class="ms-auto">
+                                <span class="text-warning">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <p class="card-text">Experience luxury living at its finest with SMK Portfolio properties. Featuring modern amenities, prime locations, and exceptional service, SMK Residences offer the perfect blend of comfort and sophistication.</p>
+                        
+                        <div class="row mt-4 mb-3">
+                            <div class="col-6 col-md-3 mb-3">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-user-shield me-2" style="color: var(--accent); font-size: 1.2rem;"></i>
+                                    <div>
+                                        <div class="small text-muted">Security</div>
+                                        <div>24hr Doorman</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3 mb-3">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-dumbbell me-2" style="color: var(--accent); font-size: 1.2rem;"></i>
+                                    <div>
+                                        <div class="small text-muted">Fitness</div>
+                                        <div>Premium Gym</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3 mb-3">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-umbrella-beach me-2" style="color: var(--accent); font-size: 1.2rem;"></i>
+                                    <div>
+                                        <div class="small text-muted">Outdoor</div>
+                                        <div>Rooftop Deck</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3 mb-3">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-paw me-2" style="color: var(--accent); font-size: 1.2rem;"></i>
+                                    <div>
+                                        <div class="small text-muted">Pets</div>
+                                        <div>Pet Friendly</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent border-0 p-4 pb-lg-5 mt-auto d-flex justify-content-between align-items-center">
+                     
+                        <a href="{{ url_for('listings', portfolio='SMK') }}" class="btn btn-outline-secondary px-4 py-2" style="border-radius: 8px; font-weight: 500; letter-spacing: 0.5px; color: #6c757d; border: 2px solid #6c757d; transition: all 0.3s ease; background: transparent;" onmouseover="this.style.backgroundColor='#6c757d'; this.style.color='white'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.1)';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='#6c757d'; this.style.boxShadow='none';">
+                            Explore Listings <i class="fas fa-arrow-right ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
