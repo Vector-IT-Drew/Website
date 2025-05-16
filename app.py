@@ -108,6 +108,7 @@ def listings():
     unit = request.args.get('unit')
     neighborhood = request.args.get('neighborhood')
     availability = request.args.get('availability')
+    portfolio = request.args.get('portfolio')
 
     # Get min/max price as integers if provided
     min_price = None
@@ -156,6 +157,7 @@ def listings():
                                      beds=beds,
                                      baths=baths,
                                      available=available,
+                                     portfolio=portfolio,
                                      sort=sort_option)
 
     return render_template(
