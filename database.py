@@ -330,6 +330,7 @@ def get_all_listings(address=None,
                      min_price=None,
                      max_price=None,
                      available=None,
+                     portfolio=None,
                      sort=None):
     """
     Get all listings from the external API
@@ -353,6 +354,8 @@ def get_all_listings(address=None,
         params = {}
         if address:
             params['address'] = address
+        if portfolio:
+            params['portfolio'] = portfolio
         if unit:
             params['unit'] = unit
         if beds is not None:
