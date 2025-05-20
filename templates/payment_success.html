@@ -14,6 +14,17 @@
                             <i class="fas fa-check-circle" style="font-size: 4rem; color: var(--success);"></i>
                         </div>
                         <h2 class="text-white mb-0">Payment Successful</h2>
+                        
+                        <!-- Address and Unit display at top -->
+                        {% if address or unit %}
+                        <div class="mt-2">
+                            <span class="badge rounded-pill px-3 py-2" style="background-color: rgba(255, 255, 255, 0.1); color: var(--text-light);">
+                                {% if address %}<i class="fas fa-map-marker-alt me-1"></i> {{ address }}{% endif %}
+                                {% if address and unit %} • {% endif %}
+                                {% if unit %}<i class="fas fa-home me-1"></i> Unit {{ unit }}{% endif %}
+                            </span>
+                        </div>
+                        {% endif %}
                     </div>
                     <div class="card-body p-4 p-lg-5">
                         <div class="text-center mb-4">
