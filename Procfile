@@ -1,1 +1,1 @@
-web: gunicorn app:app
+web: echo $PATH && which gunicorn && gunicorn app:app
