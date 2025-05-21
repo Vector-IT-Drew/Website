@@ -423,6 +423,7 @@ def payment_success():
         formatted_amount = "${:,.2f}".format(total_amount)
     except ValueError:
         formatted_amount = stripe_total
+    a=1
     
     return render_template('payment_success.html', 
                           amount=formatted_amount, 
