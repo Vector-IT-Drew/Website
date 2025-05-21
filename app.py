@@ -414,8 +414,6 @@ def payment_success():
     # Get parameters from URL
     stripe_total = request.args.get('stripe_total', '0')
     payment_method = request.args.get('payment_method', 'card')
-    address = request.args.get('address', '')
-    unit = request.args.get('unit', '')
     
     # Convert stripe_total to float and format as currency
     try:
@@ -423,10 +421,7 @@ def payment_success():
         formatted_amount = "${:,.2f}".format(total_amount)
     except ValueError:
         formatted_amount = stripe_total
-    a=1
     
     return render_template('payment_success.html', 
                           amount=formatted_amount, 
-                          payment_method=payment_method,
-                          address=address,
-                          unit=unit)
+                          payment_method=payment_method)
