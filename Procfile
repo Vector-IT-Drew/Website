@@ -1,1 +1,1 @@
-web: python main.py
+web: echo $PATH && export PATH=$PATH:$(python -m site --user-base)/bin && gunicorn app:app
