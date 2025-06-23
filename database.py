@@ -369,10 +369,10 @@ def get_all_listings(address=None,
         if max_price is not None:
             params['max_price'] = max_price
 
-        if available is not None:
+        if available:
             # If available=True, we want properties without move-out dates or with move-out dates in past
             # If available=False, we want properties with future move-out dates (coming soon)
-            params['available'] = available
+            params['available'] = True
 
         if sort is not None:
             # Pass the SQL ORDER BY clause directly to the API
