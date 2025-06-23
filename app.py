@@ -142,7 +142,7 @@ def listings():
     available = None
     if availability == 'available':
         available = True
-    elif availability == 'coming_soon':
+    else:
         available = False
 
     # Determine sort option and map to SQL ORDER BY clause
