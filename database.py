@@ -435,46 +435,6 @@ def get_all_listings(address=None,
         logger.error(f"[{req_id}] Error fetching listings from API: {e}\n{traceback.format_exc()}")
         return []
 
-    except Exception as e:
-        logger.error(f"Error fetching listings from API: {e}")
-        # If we had a JSON parsing error, we'll try a fallback strategy with simpler parsing
-        if "Expecting ',' delimiter" in str(
-                e) or "Expecting property name" in str(e):
-            try:
-                # Return a simpler list with just essential data
-                logger.debug("Attempting simplified fallback for listings")
-                # Start with empty params - we're just trying to get any listings at this point
-                empty_params = {}
-                response = requests.get(LISTINGS_API_ENDPOINT,
-                                        params=empty_params)
-                if response.status_code == 200:
-                    data = response.json()
-                    simple_listings = []
-                    for item in data.get('data', []):
-                        # Create a minimal listing with no JSON parsing
-                        simple_listing = {
-                            "unit_id": str(item.get('unit_id')),
-                            "title":
-                            f"{item.get('address', '-')}, Unit {item.get('unit', '-')}",
-                            "address": item.get('address', '-'),
-                            "unit": item.get('unit', '-'),
-                            "building_name": item.get('building_name', '-'),
-                            "neighborhood": item.get('neighborhood', '-'),
-                            "borough": item.get('borough', '-'),
-                            "city": "New York",
-                            "state": "NY",
-                            "actual_rent": item.get('actual_rent', 'N/A'),
-                            "beds": item.get('beds', 'N/A'),
-                            "baths": item.get('baths', 'N/A'),
-                            "sqft": item.get('sqft', 'N/A'),
-                        }
-                        simple_listings.append(simple_listing)
-                    return simple_listings
-            except Exception as fallback_error:
-                logger.error(f"Fallback also failed: {fallback_error}")
-
-        return []
-
 
 def save_listing(listing_data):
     """
