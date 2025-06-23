@@ -334,7 +334,7 @@ def get_all_listings(address=None,
                      sort=None):
     """
     Get all listings from the external API
-    
+
     Args:
         address (str, optional): Filter by address
         unit (str, optional): Filter by unit
@@ -345,10 +345,14 @@ def get_all_listings(address=None,
         max_price (int, optional): Filter by maximum price
         available (bool, optional): Filter by availability status
         sort (str, optional): SQL ORDER BY clause (e.g., "ORDER BY actual_rent DESC")
-        
+
     Returns:
         list: A list of all listings with their IDs
     """
+    import traceback
+    import time
+    req_id = int(time.time() * 1000)
+
     try:
         # Prepare parameters for API request
         params = {}
@@ -368,128 +372,105 @@ def get_all_listings(address=None,
             params['min_price'] = min_price
         if max_price is not None:
             params['max_price'] = max_price
-
         if available:
-            # If available=True, we want properties without move-out dates or with move-out dates in past
-            # If available=False, we want properties with future move-out dates (coming soon)
             params['available'] = True
-
         if sort is not None:
-            # Pass the SQL ORDER BY clause directly to the API
             params['sort'] = sort
 
-        # Make API request
-        logger.debug(
-            f"Making API request to {LISTINGS_API_ENDPOINT} with params: {params}"
-        )
+        logger.debug(f"[{req_id}] Initial API call params: {params}")
+        logger.debug(f"[{req_id}] Calling {LISTINGS_API_ENDPOINT} with params: {params}")
+
         response = requests.get(LISTINGS_API_ENDPOINT, params=params)
+        logger.debug(f"[{req_id}] Response status: {response.status_code}")
+        logger.debug(f"[{req_id}] Response text (first 500 chars): {response.text[:500]}")
 
-        # Check if the request was successful
-        if response.status_code == 200:
-            data = response.json()
+        # Log raw response before parsing JSON
+        logger.debug(f"[{req_id}] Raw response for parsing: {response.text[:500]}")
+        data = response.json()
+        logger.debug(f"[{req_id}] API returned {len(data.get('data', []))} listings")
 
-            # Just log the count of listings returned
-            logger.debug(f"API returned {len(data.get('data', []))} listings")
+        listings = []
+        for item in data.get('data', []):
+            listing = {
+                "id": str(item.get('listing_id')),
+                "unit_id": str(item.get('unit_id')),
+                "title": f"{item.get('address', '-')}, Unit {item.get('unit', '-')}",
+                "address": item.get('address', '-'),
+                "unit": item.get('unit', '-'),
+                "building_name": item.get('building_name', '-') if item.get('building_name') not in ['0', 'null', 'nan', None] else '-',
+                "neighborhood": item.get('neighborhood', '-') if item.get('neighborhood') not in ['0', 'null', 'nan', None] else '-',
+                "borough": item.get('borough', '-') if item.get('borough') not in ['0', 'null', 'nan', None] else '-',
+                "city": "New York",
+                "state": "NY",
+                "zip_code": item.get('zip_code', '-'),
+                "actual_rent": item.get('actual_rent', 'N/A'),
+                "beds": item.get('beds', 'N/A'),
+                "baths": item.get('baths', 'N/A'),
+                "sqft": item.get('sqft', 'N/A'),
+                "property_type": "Apartment",
+                "floor": str(item.get('floor_num', '-')) if item.get('floor_num') is not None else '-',
+                "exposure": item.get('exposure', '-') if item.get('exposure') != 'nan' else '-',
+                "listing_status": item.get('listing_status', '-'),
+                "description": f"Unit {item.get('unit', '-')} at {item.get('address', '-')}",
+                "features": [],
+                "unit_amenities": [],
+                "floor_type": item.get('floor_type', ''),
+                "countertop_type": item.get('countertop_type', ''),
+                "dishwasher": item.get('dishwasher', ''),
+                "laundry_in_unit": item.get('laundry_in_unit', ''),
+                "wheelchair_access": item.get('wheelchair_access', ''),
+                "smoke_free": item.get('smoke_free', ''),
+                "laundry_in_building": item.get('laundry_in_building', ''),
+                "pet_friendly": item.get('pet_friendly', ''),
+                "live_in_super": item.get('live_in_super', ''),
+                "concierge": item.get('concierge', ''),
+                "contact_email": "hello@vectorny.com",
+                "contact_phone": "+1 917 675 6696",
+                "pets_policy": item.get('pet_friendly', 0),
+                "unit_images": safe_json_loads(item.get('unit_images'), []),
+                "building_amenities": safe_json_loads(item.get('building_amenities'), []),
+                "building_image": item.get('building_image', ''),
+                "expiry": item.get('expiry', '-'),
+                "move_out": item.get('move_out', '-')
+            }
+            listings.append(listing)
+        return listings
 
-            # Transform the API response to match our listing format
-            listings = []
-            for item in data.get('data', []):
+    except Exception as e:
+        logger.error(f"[{req_id}] Error fetching listings from API: {e}\n{traceback.format_exc()}")
+        # If we had a JSON parsing error, we'll try a fallback strategy with simpler parsing
+        if "Expecting ',' delimiter" in str(e) or "Expecting property name" in str(e):
+            try:
+                logger.warning(f"[{req_id}] Fallback triggered: trying again with empty parameters")
+                empty_params = {}
+                logger.debug(f"[{req_id}] Fallback API call params: {empty_params}")
+                response = requests.get(LISTINGS_API_ENDPOINT, params=empty_params)
+                logger.debug(f"[{req_id}] Fallback response status: {response.status_code}")
+                logger.debug(f"[{req_id}] Fallback response text (first 500 chars): {response.text[:500]}")
+                data = response.json()
+                simple_listings = []
+                for item in data.get('data', []):
+                    simple_listing = {
+                        "unit_id": str(item.get('unit_id')),
+                        "title": f"{item.get('address', '-')}, Unit {item.get('unit', '-')}",
+                        "address": item.get('address', '-'),
+                        "unit": item.get('unit', '-'),
+                        "building_name": item.get('building_name', '-'),
+                        "neighborhood": item.get('neighborhood', '-'),
+                        "borough": item.get('borough', '-'),
+                        "city": "New York",
+                        "state": "NY",
+                        "actual_rent": item.get('actual_rent', 'N/A'),
+                        "beds": item.get('beds', 'N/A'),
+                        "baths": item.get('baths', 'N/A'),
+                        "sqft": item.get('sqft', 'N/A'),
+                    }
+                    simple_listings.append(simple_listing)
+                return simple_listings
+            except Exception as fallback_error:
+                logger.error(f"[{req_id}] Fallback also failed: {fallback_error}\n{traceback.format_exc()}")
 
-                # Format the listing with only real data
-                listing = {
-                    "id":
-                    str(item.get('listing_id')),
-                    "unit_id":
-                    str(item.get('unit_id')),
-                    "title":
-                    f"{item.get('address', '-')}, Unit {item.get('unit', '-')}",
-                    "address":
-                    item.get('address', '-'),
-                    "unit":
-                    item.get('unit', '-'),
-                    "building_name":
-                    item.get('building_name', '-') if item.get('building_name')
-                    not in ['0', 'null', 'nan', None] else '-',
-                    "neighborhood":
-                    item.get('neighborhood', '-') if item.get('neighborhood')
-                    not in ['0', 'null', 'nan', None] else '-',
-                    "borough":
-                    item.get('borough', '-') if item.get('borough')
-                    not in ['0', 'null', 'nan', None] else '-',
-                    "city":
-                    "New York",
-                    "state":
-                    "NY",
-                    "zip_code":
-                    item.get('zip_code', '-'),
-                    "actual_rent":
-                    item.get('actual_rent', 'N/A'),
-                    "beds":
-                    item.get('beds', 'N/A'),
-                    "baths":
-                    item.get('baths', 'N/A'),
-                    "sqft":
-                    item.get('sqft', 'N/A'),
-                    "property_type":
-                    "Apartment",
-                    "floor":
-                    str(item.get('floor_num', '-'))
-                    if item.get('floor_num') is not None else '-',
-                    "exposure":
-                    item.get('exposure', '-')
-                    if item.get('exposure') != 'nan' else '-',
-                    "listing_status":
-                    item.get('listing_status', '-'),
-                    "description":
-                    f"Unit {item.get('unit', '-')} at {item.get('address', '-')}",
-                    "features": [],
-                    "unit_amenities": [],
-                    "floor_type":
-                    item.get('floor_type', ''),
-                    "countertop_type":
-                    item.get('countertop_type', ''),
-                    "dishwasher":
-                    item.get('dishwasher', ''),
-                    "laundry_in_unit":
-                    item.get('laundry_in_unit', ''),
-                    "wheelchair_access":
-                    item.get('wheelchair_access', ''),
-                    "smoke_free":
-                    item.get('smoke_free', ''),
-                    "laundry_in_building":
-                    item.get('laundry_in_building', ''),
-                    "pet_friendly":
-                    item.get('pet_friendly', ''),
-                    "live_in_super":
-                    item.get('live_in_super', ''),
-                    "concierge":
-                    item.get('concierge', ''),
-                    "contact_email":
-                    "hello@vectorny.com",
-                    "contact_phone":
-                    "+1 917 675 6696",
-                    "pets_policy":
-                    item.get('pet_friendly', 0),
-                    "unit_images":
-                    safe_json_loads(item.get('unit_images'), []),
-                    "building_amenities":
-                    safe_json_loads(item.get('building_amenities'), []),
-                    "building_image":
-                    item.get('building_image', ''),
-                    "expiry":
-                    item.get('expiry', '-'),
-                    "move_out":
-                    item.get('move_out', '-')
-                }
-                listings.append(listing)
-            # We don't need to log all listings
-
-            
-            return listings
-        else:
-            logger.error(
-                f"Error fetching listings from API: {response.status_code}")
-            return []
+        return []
 
     except Exception as e:
         logger.error(f"Error fetching listings from API: {e}")
