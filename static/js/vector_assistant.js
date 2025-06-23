@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const API_ENDPOINT = 'https://dash-production-b25c.up.railway.app'; // Production endpoint
     
     // Initialize the chat when the DOM is fully loaded
-    initializeChat();
+    // initializeChat();
     
     // Setup event listeners
     document.getElementById('chatForm').addEventListener('submit', function(e) {
