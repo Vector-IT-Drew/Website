@@ -321,7 +321,6 @@ def get_listing(listing_id):
 
         return None
 
-
 def get_all_listings(address=None,
                      unit=None,
                      beds=None,
@@ -377,15 +376,11 @@ def get_all_listings(address=None,
         if sort is not None:
             params['sort'] = sort
 
-        logger.debug(f"[{req_id}] Initial API call params: {params}")
-        logger.debug(f"[{req_id}] Calling {LISTINGS_API_ENDPOINT} with params: {params}")
-
+        logger.debug(f"[{req_id}] API call params: {params}")
         response = requests.get(LISTINGS_API_ENDPOINT, params=params)
         logger.debug(f"[{req_id}] Response status: {response.status_code}")
         logger.debug(f"[{req_id}] Response text (first 500 chars): {response.text[:500]}")
 
-        # Log raw response before parsing JSON
-        logger.debug(f"[{req_id}] Raw response for parsing: {response.text[:500]}")
         data = response.json()
         logger.debug(f"[{req_id}] API returned {len(data.get('data', []))} listings")
 
@@ -438,38 +433,6 @@ def get_all_listings(address=None,
 
     except Exception as e:
         logger.error(f"[{req_id}] Error fetching listings from API: {e}\n{traceback.format_exc()}")
-        # If we had a JSON parsing error, we'll try a fallback strategy with simpler parsing
-        if "Expecting ',' delimiter" in str(e) or "Expecting property name" in str(e):
-            try:
-                logger.warning(f"[{req_id}] Fallback triggered: trying again with empty parameters")
-                empty_params = {}
-                logger.debug(f"[{req_id}] Fallback API call params: {empty_params}")
-                response = requests.get(LISTINGS_API_ENDPOINT, params=empty_params)
-                logger.debug(f"[{req_id}] Fallback response status: {response.status_code}")
-                logger.debug(f"[{req_id}] Fallback response text (first 500 chars): {response.text[:500]}")
-                data = response.json()
-                simple_listings = []
-                for item in data.get('data', []):
-                    simple_listing = {
-                        "unit_id": str(item.get('unit_id')),
-                        "title": f"{item.get('address', '-')}, Unit {item.get('unit', '-')}",
-                        "address": item.get('address', '-'),
-                        "unit": item.get('unit', '-'),
-                        "building_name": item.get('building_name', '-'),
-                        "neighborhood": item.get('neighborhood', '-'),
-                        "borough": item.get('borough', '-'),
-                        "city": "New York",
-                        "state": "NY",
-                        "actual_rent": item.get('actual_rent', 'N/A'),
-                        "beds": item.get('beds', 'N/A'),
-                        "baths": item.get('baths', 'N/A'),
-                        "sqft": item.get('sqft', 'N/A'),
-                    }
-                    simple_listings.append(simple_listing)
-                return simple_listings
-            except Exception as fallback_error:
-                logger.error(f"[{req_id}] Fallback also failed: {fallback_error}\n{traceback.format_exc()}")
-
         return []
 
     except Exception as e:
