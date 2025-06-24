@@ -234,9 +234,9 @@ def get_listing(listing_id):
                     "zip_code":
                     item.get('zip_code', '-'),
                     "price":
-                    item.get('actual_rent'),
+                    item.get('listed_price'),
                     "actual_rent":
-                    item.get('actual_rent'),
+                    item.get('listed_net'),
                     "beds":
                     item.get('beds', 'N/A'),
                     "baths":
@@ -398,7 +398,7 @@ def get_all_listings(address=None,
                 "city": "New York",
                 "state": "NY",
                 "zip_code": item.get('zip_code', '-'),
-                "actual_rent": item.get('actual_rent', 'N/A'),
+                "actual_rent": item.get('listed_net', 'N/A'),
                 "beds": item.get('beds', 'N/A'),
                 "baths": item.get('baths', 'N/A'),
                 "sqft": item.get('sqft', 'N/A'),
