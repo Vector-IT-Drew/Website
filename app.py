@@ -86,7 +86,7 @@ def investor_services():
 def vectorHighlights():
     return render_template('vectorHighlights.html')
 
-@app.route('/SMK')
+@app.route('/smk')
 def smk_landing():
     """SMK Greenpoint Collection landing page"""
     return render_template('smk_landing.html')
