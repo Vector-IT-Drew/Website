@@ -1,0 +1,1143 @@
+{% extends 'base.html' %}
+
+{% block title %}SMK Greenpoint Collection | Vector NY{% endblock %}
+
+{% block extra_css %}
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #0a1628 0%, #1a2332 50%, #0f1419 100%);
+        --accent-blue: #3b82f6;
+        --accent-gold: #f59e0b;
+        --accent-green: #10b981;
+        --text-primary: #ffffff;
+        --text-secondary: #94a3b8;
+        --glass-bg: rgba(255, 255, 255, 0.05);
+        --glass-border: rgba(255, 255, 255, 0.1);
+        --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.3);
+        --shadow-hover: 0 20px 60px rgba(59, 130, 246, 0.15);
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background: var(--primary-gradient);
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
+
+    /* Hero Section */
+    .hero-section {
+        position: relative;
+        height: 100vh;
+        background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        overflow: hidden;
+        z-index: 1;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 1000px;
+        padding: 0 2rem;
+        animation: fadeInUp 1s ease-out;
+    }
+
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        padding: 0.75rem 1.5rem;
+        border-radius: 50px;
+        backdrop-filter: blur(10px);
+        margin-bottom: 2rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--accent-gold);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        animation: fadeInUp 1s ease-out 0.3s both;
+    }
+
+    .hero-title {
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(3rem, 8vw, 6rem);
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 1.5rem;
+        line-height: 1.1;
+        background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: fadeInUp 1s ease-out 0.6s both;
+    }
+
+    .hero-subtitle {
+        font-size: 1.5rem;
+        color: var(--text-secondary);
+        margin-bottom: 3rem;
+        font-weight: 300;
+        line-height: 1.6;
+        animation: fadeInUp 1s ease-out 0.9s both;
+    }
+
+    .hero-stats {
+        display: flex;
+        justify-content: center;
+        gap: 3rem;
+        margin-bottom: 3rem;
+        animation: fadeInUp 1s ease-out 1.2s both;
+    }
+
+    .hero-stat {
+        text-align: center;
+    }
+
+    .hero-stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--accent-blue);
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    .hero-stat-label {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .hero-cta {
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem;
+        animation: fadeInUp 1s ease-out 1.5s both;
+    }
+
+    .cta-primary {
+        background: linear-gradient(135deg, var(--accent-blue), #2563eb);
+        color: white;
+        padding: 1.25rem 2.5rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
+    }
+
+    .cta-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 40px rgba(59, 130, 246, 0.4);
+        text-decoration: none;
+        color: white;
+    }
+
+    .cta-secondary {
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        color: white;
+        padding: 1.25rem 2.5rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+    }
+
+    .cta-secondary:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateY(-3px);
+        text-decoration: none;
+        color: white;
+    }
+
+    /* Floating Animation */
+    .floating {
+        animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-20px); }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Overview Section */
+    .overview-section {
+        padding: 6rem 0;
+        position: relative;
+        background: var(--primary-gradient);
+        z-index: 2;
+    }
+
+    .section-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+
+    .section-header {
+        text-align: center;
+        margin-bottom: 4rem;
+    }
+
+    .section-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        padding: 0.75rem 1.5rem;
+        border-radius: 50px;
+        backdrop-filter: blur(10px);
+        margin-bottom: 1.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--accent-gold);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .section-title {
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 1.5rem;
+        line-height: 1.2;
+    }
+
+    .section-description {
+        font-size: 1.25rem;
+        color: var(--text-secondary);
+        max-width: 800px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+
+    /* Interactive Gallery */
+    .interactive-gallery {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 2rem;
+        margin-bottom: 4rem;
+    }
+
+    .main-gallery {
+        position: relative;
+        border-radius: 24px;
+        overflow: hidden;
+        height: 600px;
+        background: #000;
+    }
+
+    .gallery-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: all 0.5s ease;
+        cursor: pointer;
+    }
+
+    .gallery-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(transparent, rgba(0,0,0,0.8));
+        padding: 2rem;
+        color: white;
+        transform: translateY(100%);
+        transition: transform 0.3s ease;
+    }
+
+    .main-gallery:hover .gallery-overlay {
+        transform: translateY(0);
+    }
+
+    .thumbnail-grid {
+        display: grid;
+        grid-template-rows: repeat(3, 1fr);
+        gap: 1rem;
+        height: 600px;
+    }
+
+    .thumbnail {
+        border-radius: 16px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        height: calc((600px - 2rem) / 3);
+    }
+
+    .thumbnail:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+
+    .thumbnail img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .thumbnail.active {
+        border: 3px solid var(--accent-blue);
+    }
+
+    /* Features Grid */
+    .features-section {
+        padding: 6rem 0;
+        background: var(--primary-gradient);
+        position: relative;
+        z-index: 2;
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 4rem;
+    }
+
+    .feature-card {
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 24px;
+        padding: 2rem;
+        backdrop-filter: blur(20px);
+        transition: all 0.3s ease;
+        text-align: center;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-8px);
+        box-shadow: var(--shadow-hover);
+        border-color: rgba(59, 130, 246, 0.3);
+    }
+
+    .feature-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, var(--accent-blue), #2563eb);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        font-size: 2rem;
+        color: white;
+    }
+
+    .feature-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+    }
+
+    .feature-description {
+        color: var(--text-secondary);
+        line-height: 1.6;
+    }
+
+    /* Buildings Section */
+    .buildings-section {
+        padding: 6rem 0;
+        background: var(--primary-gradient);
+        position: relative;
+        z-index: 2;
+    }
+
+    .buildings-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 2rem;
+        margin-top: 4rem;
+    }
+
+    .building-card {
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 24px;
+        overflow: hidden;
+        backdrop-filter: blur(20px);
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .building-card:hover {
+        transform: translateY(-8px);
+        box-shadow: var(--shadow-hover);
+        border-color: rgba(59, 130, 246, 0.3);
+    }
+
+    .building-image {
+        height: 250px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .building-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .building-card:hover .building-image img {
+        transform: scale(1.1);
+    }
+
+    .building-badge {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        background: var(--accent-green);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .building-content {
+        padding: 2rem;
+    }
+
+    .building-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .building-address {
+        color: var(--text-secondary);
+        margin-bottom: 1.5rem;
+    }
+
+    .building-stats {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+    }
+
+    .building-stat {
+        text-align: center;
+    }
+
+    .building-stat-number {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--accent-blue);
+        display: block;
+    }
+
+    .building-stat-label {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+    }
+
+    .building-amenities {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .amenity-tag {
+        background: rgba(59, 130, 246, 0.1);
+        color: var(--accent-blue);
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    /* CTA Section */
+    .cta-section {
+        padding: 6rem 0;
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(245, 158, 11, 0.1));
+        text-align: center;
+    }
+
+    .cta-content {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .cta-title {
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(2rem, 4vw, 3rem);
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 1.5rem;
+    }
+
+    .cta-description {
+        font-size: 1.25rem;
+        color: var(--text-secondary);
+        margin-bottom: 3rem;
+        line-height: 1.6;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .hero-stats {
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .hero-cta {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .interactive-gallery {
+            grid-template-columns: 1fr;
+        }
+
+        .main-gallery {
+            height: 400px;
+        }
+
+        .thumbnail-grid {
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: 1fr;
+        }
+
+        .buildings-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Neighborhood Section */
+    .neighborhood-section {
+        padding: 6rem 0;
+        background: var(--primary-gradient);
+        position: relative;
+        z-index: 2;
+    }
+
+    .neighborhood-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 2rem;
+        margin-top: 4rem;
+    }
+
+    .neighborhood-card {
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 24px;
+        padding: 2.5rem;
+        backdrop-filter: blur(20px);
+        transition: all 0.3s ease;
+        text-align: center;
+    }
+
+    .neighborhood-card:hover {
+        transform: translateY(-8px);
+        box-shadow: var(--shadow-hover);
+        border-color: rgba(245, 158, 11, 0.3);
+    }
+
+    .neighborhood-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, var(--accent-gold), #d97706);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        font-size: 2rem;
+        color: white;
+    }
+
+    .neighborhood-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+    }
+
+    .neighborhood-description {
+        color: var(--text-secondary);
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+    }
+
+    .neighborhood-highlights {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: left;
+    }
+
+    .highlight-item {
+        color: var(--accent-gold);
+        font-weight: 500;
+        font-size: 0.875rem;
+    }
+
+    /* Statistics Section */
+    .stats-section {
+        padding: 4rem 0;
+        background: var(--primary-gradient);
+        position: relative;
+        z-index: 2;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 3rem;
+        text-align: center;
+    }
+
+    .stat-item {
+        padding: 2rem;
+    }
+
+    .stat-number {
+        font-size: 4rem;
+        font-weight: 700;
+        color: var(--accent-blue);
+        margin-bottom: 0.5rem;
+        background: linear-gradient(135deg, var(--accent-blue), var(--accent-green));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .stat-label {
+        font-size: 1rem;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 500;
+    }
+
+    /* Scroll animations */
+    .fade-in {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.6s ease;
+    }
+
+    .fade-in.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-content">
+        <div class="hero-badge floating">
+            <i class="fas fa-crown"></i>
+            <span>Premium Portfolio</span>
+        </div>
+        <h1 class="hero-title">SMK Greenpoint Collection</h1>
+        <p class="hero-subtitle">Where modern luxury meets Brooklyn's most vibrant neighborhood</p>
+        
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <span class="hero-stat-number">4</span>
+                <span class="hero-stat-label">Buildings</span>
+            </div>
+            <div class="hero-stat">
+                <span class="hero-stat-number">120+</span>
+                <span class="hero-stat-label">Units</span>
+            </div>
+            <div class="hero-stat">
+                <span class="hero-stat-number">98%</span>
+                <span class="hero-stat-label">Occupied</span>
+            </div>
+        </div>
+
+        <div class="hero-cta">
+            <a href="{{ url_for('listings', portfolio='SMK') }}" class="cta-primary">
+                <span>View Available Units</span>
+                <i class="fas fa-arrow-right"></i>
+            </a>
+            <a href="#overview" class="cta-secondary">Learn More</a>
+        </div>
+    </div>
+</section>
+
+<!-- Overview Section -->
+<section id="overview" class="overview-section">
+    <div class="section-container">
+        <div class="section-header fade-in">
+            <div class="section-badge">
+                <i class="fas fa-building"></i>
+                <span>Portfolio Overview</span>
+            </div>
+            <h2 class="section-title">Experience Greenpoint Living</h2>
+            <p class="section-description">Discover a collection of thoughtfully designed buildings that blend modern amenities with the authentic charm of Brooklyn's most sought-after waterfront neighborhood.</p>
+        </div>
+
+        <div class="interactive-gallery fade-in">
+            <div class="main-gallery">
+                <img id="mainImage" src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="SMK Building Exterior" class="gallery-image">
+                <div class="gallery-overlay">
+                    <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Modern Architecture</h3>
+                    <p>Contemporary design meets Brooklyn character in our thoughtfully renovated buildings.</p>
+                </div>
+            </div>
+            <div class="thumbnail-grid">
+                <div class="thumbnail active" onclick="changeMainImage(this, 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80', 'Modern Architecture', 'Contemporary design meets Brooklyn character in our thoughtfully renovated buildings.')">
+                    <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Building Exterior">
+                </div>
+                <div class="thumbnail" onclick="changeMainImage(this, 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80', 'Luxury Interiors', 'Spacious layouts with premium finishes and modern appliances throughout.')">
+                    <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Luxury Interior">
+                </div>
+                <div class="thumbnail" onclick="changeMainImage(this, 'https://images.unsplash.com/photo-1484154218962-a197022b5858?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80', 'Designer Kitchens', 'Gourmet kitchens featuring stainless steel appliances and quartz countertops.')">
+                    <img src="https://images.unsplash.com/photo-1484154218962-a197022b5858?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Designer Kitchen">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section">
+    <div class="section-container">
+        <div class="section-header fade-in">
+            <div class="section-badge">
+                <i class="fas fa-star"></i>
+                <span>Premium Amenities</span>
+            </div>
+            <h2 class="section-title">Elevated Living Experience</h2>
+            <p class="section-description">Every detail designed with your comfort and convenience in mind.</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card fade-in">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3 class="feature-title">Virtual Doorman</h3>
+                <p class="feature-description">24/7 security with keyless entry and package management for ultimate peace of mind.</p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon">
+                    <i class="fas fa-wifi"></i>
+                </div>
+                <h3 class="feature-title">High-Speed Internet</h3>
+                <p class="feature-description">Complimentary fiber internet in all common areas and building-wide connectivity.</p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon">
+                    <i class="fas fa-tshirt"></i>
+                </div>
+                <h3 class="feature-title">Laundry Facilities</h3>
+                <p class="feature-description">Brand-new industrial laundry room with modern, efficient machines.</p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon">
+                    <i class="fas fa-tree"></i>
+                </div>
+                <h3 class="feature-title">Outdoor Spaces</h3>
+                <p class="feature-description">Beautiful common areas with greenery and entertainment spaces for residents.</p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon">
+                    <i class="fas fa-subway"></i>
+                </div>
+                <h3 class="feature-title">Prime Location</h3>
+                <p class="feature-description">Minutes from McGolrick Park, McCarren Park, and excellent transportation.</p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon">
+                    <i class="fas fa-paw"></i>
+                </div>
+                <h3 class="feature-title">Pet Friendly</h3>
+                <p class="feature-description">Welcome your furry friends with our pet-friendly policies and amenities.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Buildings Section -->
+<section class="buildings-section">
+    <div class="section-container">
+        <div class="section-header fade-in">
+            <div class="section-badge">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>Our Buildings</span>
+            </div>
+            <h2 class="section-title">Discover Your New Home</h2>
+            <p class="section-description">Each building in our collection offers unique character while maintaining our signature standard of excellence.</p>
+        </div>
+
+        <div class="buildings-grid">
+            <div class="building-card fade-in" onclick="window.location.href='{{ url_for('listings', portfolio='SMK', address='123 Greenpoint Ave') }}'">
+                <div class="building-image">
+                    <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="123 Greenpoint Ave">
+                    <div class="building-badge">Available</div>
+                </div>
+                <div class="building-content">
+                    <h3 class="building-title">The Greenpoint</h3>
+                    <p class="building-address">123 Greenpoint Avenue, Brooklyn NY</p>
+                    <div class="building-stats">
+                        <div class="building-stat">
+                            <span class="building-stat-number">32</span>
+                            <span class="building-stat-label">Units</span>
+                        </div>
+                        <div class="building-stat">
+                            <span class="building-stat-number">1-3</span>
+                            <span class="building-stat-label">Bedrooms</span>
+                        </div>
+                        <div class="building-stat">
+                            <span class="building-stat-number">$3.2K+</span>
+                            <span class="building-stat-label">Starting</span>
+                        </div>
+                    </div>
+                    <div class="building-amenities">
+                        <span class="amenity-tag">Rooftop Deck</span>
+                        <span class="amenity-tag">Fitness Center</span>
+                        <span class="amenity-tag">Storage</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="building-card fade-in" onclick="window.location.href='{{ url_for('listings', portfolio='SMK', address='456 Manhattan Ave') }}'">
+                <div class="building-image">
+                    <img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="456 Manhattan Ave">
+                    <div class="building-badge">Available</div>
+                </div>
+                <div class="building-content">
+                    <h3 class="building-title">Manhattan Heights</h3>
+                    <p class="building-address">456 Manhattan Avenue, Brooklyn NY</p>
+                    <div class="building-stats">
+                        <div class="building-stat">
+                            <span class="building-stat-number">28</span>
+                            <span class="building-stat-label">Units</span>
+                        </div>
+                        <div class="building-stat">
+                            <span class="building-stat-number">1-2</span>
+                            <span class="building-stat-label">Bedrooms</span>
+                        </div>
+                        <div class="building-stat">
+                            <span class="building-stat-number">$2.8K+</span>
+                            <span class="building-stat-label">Starting</span>
+                        </div>
+                    </div>
+                    <div class="building-amenities">
+                        <span class="amenity-tag">Bike Storage</span>
+                        <span class="amenity-tag">Garden</span>
+                        <span class="amenity-tag">Co-working</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="building-card fade-in" onclick="window.location.href='{{ url_for('listings', portfolio='SMK', address='789 McGuinness Blvd') }}'">
+                <div class="building-image">
+                    <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="789 McGuinness Blvd">
+                    <div class="building-badge">Available</div>
+                </div>
+                <div class="building-content">
+                    <h3 class="building-title">Waterfront Lofts</h3>
+                    <p class="building-address">789 McGuinness Boulevard, Brooklyn NY</p>
+                    <div class="building-stats">
+                        <div class="building-stat">
+                            <span class="building-stat-number">24</span>
+                            <span class="building-stat-label">Units</span>
+                        </div>
+                        <div class="building-stat">
+                            <span class="building-stat-number">2-4</span>
+                            <span class="building-stat-label">Bedrooms</span>
+                        </div>
+                        <div class="building-stat">
+                            <span class="building-stat-number">$4.1K+</span>
+                            <span class="building-stat-label">Starting</span>
+                        </div>
+                    </div>
+                    <div class="building-amenities">
+                        <span class="amenity-tag">Water Views</span>
+                        <span class="amenity-tag">Balconies</span>
+                        <span class="amenity-tag">Concierge</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="building-card fade-in" onclick="window.location.href='{{ url_for('listings', portfolio='SMK', address='321 Norman Ave') }}'">
+                <div class="building-image">
+                    <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="321 Norman Ave">
+                    <div class="building-badge">Available</div>
+                </div>
+                <div class="building-content">
+                    <h3 class="building-title">Norman Square</h3>
+                    <p class="building-address">321 Norman Avenue, Brooklyn NY</p>
+                    <div class="building-stats">
+                        <div class="building-stat">
+                            <span class="building-stat-number">36</span>
+                            <span class="building-stat-label">Units</span>
+                        </div>
+                        <div class="building-stat">
+                            <span class="building-stat-number">Studio-2</span>
+                            <span class="building-stat-label">Bedrooms</span>
+                        </div>
+                        <div class="building-stat">
+                            <span class="building-stat-number">$2.5K+</span>
+                            <span class="building-stat-label">Starting</span>
+                        </div>
+                    </div>
+                    <div class="building-amenities">
+                        <span class="amenity-tag">Gym</span>
+                        <span class="amenity-tag">Lounge</span>
+                        <span class="amenity-tag">Parking</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Neighborhood Section -->
+<section class="neighborhood-section">
+    <div class="section-container">
+        <div class="section-header fade-in">
+            <div class="section-badge">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>Greenpoint Neighborhood</span>
+            </div>
+            <h2 class="section-title">Your Brooklyn Oasis</h2>
+            <p class="section-description">Discover why Greenpoint is Brooklyn's most coveted neighborhood for modern professionals and families.</p>
+        </div>
+
+        <div class="neighborhood-grid">
+            <div class="neighborhood-card fade-in">
+                <div class="neighborhood-icon">
+                    <i class="fas fa-utensils"></i>
+                </div>
+                <h3 class="neighborhood-title">Dining & Nightlife</h3>
+                <p class="neighborhood-description">From artisan coffee shops to Michelin-starred restaurants, Greenpoint's culinary scene rivals Manhattan's best neighborhoods.</p>
+                <div class="neighborhood-highlights">
+                    <span class="highlight-item">• Lilia (Michelin Star)</span>
+                    <span class="highlight-item">• Café Grumpy</span>
+                    <span class="highlight-item">• Brooklyn Brewery</span>
+                </div>
+            </div>
+            <div class="neighborhood-card fade-in">
+                <div class="neighborhood-icon">
+                    <i class="fas fa-water"></i>
+                </div>
+                <h3 class="neighborhood-title">Waterfront Living</h3>
+                <p class="neighborhood-description">Miles of waterfront parks and promenades offer stunning Manhattan skyline views and peaceful retreats from city life.</p>
+                <div class="neighborhood-highlights">
+                    <span class="highlight-item">• East River State Park</span>
+                    <span class="highlight-item">• Transmitter Park</span>
+                    <span class="highlight-item">• WNYC Transmitter Park</span>
+                </div>
+            </div>
+            <div class="neighborhood-card fade-in">
+                <div class="neighborhood-icon">
+                    <i class="fas fa-subway"></i>
+                </div>
+                <h3 class="neighborhood-title">Transportation Hub</h3>
+                <p class="neighborhood-description">Multiple subway lines and ferry service provide quick access to Manhattan, with commute times under 20 minutes.</p>
+                <div class="neighborhood-highlights">
+                    <span class="highlight-item">• G Train (Nassau Ave)</span>
+                    <span class="highlight-item">• L Train (Graham Ave)</span>
+                    <span class="highlight-item">• NYC Ferry Service</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Statistics Section -->
+<section class="stats-section">
+    <div class="section-container">
+        <div class="stats-grid">
+            <div class="stat-item fade-in">
+                <div class="stat-number" data-target="15">0</div>
+                <div class="stat-label">Minutes to Manhattan</div>
+            </div>
+            <div class="stat-item fade-in">
+                <div class="stat-number" data-target="98">0</div>
+                <div class="stat-label">% Occupancy Rate</div>
+            </div>
+            <div class="stat-item fade-in">
+                <div class="stat-number" data-target="4.8">0</div>
+                <div class="stat-label">Average Rating</div>
+            </div>
+            <div class="stat-item fade-in">
+                <div class="stat-number" data-target="120">0</div>
+                <div class="stat-label">Happy Residents</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="section-container">
+        <div class="cta-content fade-in">
+            <h2 class="cta-title">Ready to Call SMK Home?</h2>
+            <p class="cta-description">Join our community of residents who've discovered the perfect blend of modern luxury and Brooklyn authenticity.</p>
+            <div class="hero-cta">
+                <a href="{{ url_for('listings', portfolio='SMK') }}" class="cta-primary">
+                    <span>Browse Available Units</span>
+                    <i class="fas fa-home"></i>
+                </a>
+                <a href="https://dash-production-b25c.up.railway.app/tour-schedule" target="_blank" class="cta-secondary">Schedule a Tour</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+// Image gallery functionality
+function changeMainImage(thumbnail, imageSrc, title, description) {
+    const mainImage = document.getElementById('mainImage');
+    const overlay = document.querySelector('.gallery-overlay');
+    
+    // Remove active class from all thumbnails
+    document.querySelectorAll('.thumbnail').forEach(thumb => thumb.classList.remove('active'));
+    
+    // Add active class to clicked thumbnail
+    thumbnail.classList.add('active');
+    
+    // Change main image
+    mainImage.src = imageSrc;
+    
+    // Update overlay content
+    overlay.innerHTML = `
+        <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem;">${title}</h3>
+        <p>${description}</p>
+    `;
+}
+
+// Scroll animations
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+        }
+    });
+}, observerOptions);
+
+// Observe all fade-in elements
+document.querySelectorAll('.fade-in').forEach(el => {
+    observer.observe(el);
+});
+
+// Smooth scrolling for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    });
+});
+
+// Reduced parallax effect for hero
+window.addEventListener('scroll', () => {
+    const scrolled = window.pageYOffset;
+    const hero = document.querySelector('.hero-section');
+    if (hero && scrolled < window.innerHeight) {
+        hero.style.transform = `translateY(${scrolled * 0.2}px)`;
+    }
+});
+
+// Animated counter for statistics
+function animateCounter(element) {
+    const target = parseInt(element.getAttribute('data-target'));
+    const duration = 2000;
+    const start = 0;
+    const increment = target / (duration / 16);
+    let current = start;
+    
+    const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+            element.textContent = target % 1 === 0 ? target : target.toFixed(1);
+            clearInterval(timer);
+        } else {
+            element.textContent = current % 1 === 0 ? Math.floor(current) : current.toFixed(1);
+        }
+    }, 16);
+}
+
+// Initialize counters when they come into view
+const statObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const counter = entry.target.querySelector('.stat-number');
+            if (counter && !counter.classList.contains('animated')) {
+                counter.classList.add('animated');
+                animateCounter(counter);
+            }
+        }
+    });
+}, { threshold: 0.5 });
+
+// Observe all stat items
+document.querySelectorAll('.stat-item').forEach(item => {
+    statObserver.observe(item);
+});
+
+// Add floating animation to hero badge
+document.addEventListener('DOMContentLoaded', () => {
+    const badge = document.querySelector('.hero-badge');
+    if (badge) {
+        badge.style.animation = 'float 6s ease-in-out infinite';
+    }
+});
+</script>
+
+{% endblock %} 
