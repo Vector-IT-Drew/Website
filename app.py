@@ -86,10 +86,15 @@ def investor_services():
 def vectorHighlights():
     return render_template('vectorHighlights.html')
 
+
+
+
 @app.route('/smk')
-def smk_landing():
-    """SMK Greenpoint Collection landing page"""
-    return render_template('smk_landing.html')
+def smk_redirect():
+    """Redirect /smk to external Greenpoint Vista landing page"""
+    from flask import redirect
+    return redirect('https://greenpoint-vista-landing.lovable.app/', code=302)
+    # return render_template('smk_landing.html')
 
 @app.route('/about')
 def about():
