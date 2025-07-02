@@ -90,11 +90,11 @@ def vectorHighlights():
 
 
 @app.route('/smk')
+@app.route('/SMK')
 def smk_redirect():
-    """Redirect /smk to external Greenpoint Vista landing page"""
+    """Redirect /smk or /SMK to external Greenpoint Vista landing page"""
     from flask import redirect
     return redirect('https://greenpoint-vista-landing.lovable.app/', code=302)
-    # return render_template('smk_landing.html')
 
 @app.route('/about')
 def about():
