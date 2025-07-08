@@ -38,6 +38,7 @@
                         <label class="form-check-label" for="contactConsent">I agree to be contacted about this property</label>
                     </div>
                     <input type="hidden" id="recipientEmail" value="{% if listing %}{{ listing.portfolio_email }}{% else %}investor.services@vectorny.com{% endif %}">
+                    <input type="hidden" id="propertyInfo" value="{% if listing %}{{ listing.address }}, Unit {{ listing.unit }}{% else %}Investor Services{% endif %}">
                 </form>
             </div>
             <div class="modal-footer border-0">
@@ -64,22 +65,24 @@
                     const recipientEmail = document.getElementById('recipientEmail').value;
                     
                     const subject = `Inquiry about ${document.title}`;
-                    const msg = `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\n\nMessage:\n${message}`;
+                    const propertyInfo = document.getElementById('propertyInfo').value;
                     
                     sendContactFormBtn.disabled = true;
                     sendContactFormBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Sending...';
                     
-                    fetch('{{ DASH_SERVICES_ENDPOINT }}/notify', {
+                    fetch('{{ DASH_SERVICES_ENDPOINT }}/send_hello_email', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({
-                            sender: "it@vectorny.com",
-                            recipients: [recipientEmail],
-                            cc: [],
+                            recipient_email: recipientEmail,
                             subject: subject,
-                            msg: msg
+                            sender_name: name,
+                            sender_email: email,
+                            sender_phone: phone,
+                            message: message,
+                            property_info: propertyInfo
                         })
                     })
                     .then(response => response.json())

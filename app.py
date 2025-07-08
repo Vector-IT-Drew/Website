@@ -3,7 +3,7 @@ import logging
 import datetime
 import json
 import requests
-from flask import Flask, render_template, redirect, url_for, flash, request, session, abort, jsonify
+from flask import Flask, render_template, redirect, url_for, flash, request, session, abort, jsonify, send_from_directory
 from werkzeug.security import generate_password_hash, check_password_hash
 from forms import LoginForm, ListingForm, ApplicationForm
 from database import get_listing, get_all_listings, filter_listings_by_budget, filter_listings_by_bedrooms, filter_listings_by_location
@@ -88,13 +88,43 @@ def vectorHighlights():
 
 
 
-
 @app.route('/smk')
-@app.route('/SMK')
-def smk_redirect():
-    """Redirect /smk or /SMK to external Greenpoint Vista landing page"""
-    from flask import redirect
-    return redirect('https://greenpoint-vista-landing.lovable.app/', code=302)
+def serve_smk():
+    build_dir = os.path.join(app.root_path, 'react-pages', 'smk', 'build')
+    index_path = os.path.join(build_dir, 'index.html')
+    if os.path.exists(index_path):
+        return send_from_directory(build_dir, 'index.html')
+    else:
+        abort(404)
+
+
+@app.route('/smk/static/<path:filename>')
+def serve_smk_static(filename):
+    """Serve static files for the SMK React app"""
+    build_dir = os.path.join(app.root_path, 'react-pages', 'smk', 'build', 'static')
+    return send_from_directory(build_dir, filename)
+
+
+@app.route('/smk/manifest.json')
+def serve_smk_manifest():
+    """Serve manifest.json for the SMK React app"""
+    build_dir = os.path.join(app.root_path, 'react-pages', 'smk', 'build')
+    return send_from_directory(build_dir, 'manifest.json')
+
+
+@app.route('/smk/favicon.ico')
+def serve_smk_favicon():
+    """Serve favicon.ico for the SMK React app"""
+    build_dir = os.path.join(app.root_path, 'react-pages', 'smk', 'build')
+    return send_from_directory(build_dir, 'favicon.ico')
+
+
+@app.route('/lovable-uploads/<path:filename>')
+def serve_lovable_uploads(filename):
+    """Serve images from the lovable-uploads directory for the SMK React app"""
+    uploads_dir = os.path.join(app.root_path, 'react-pages', 'smk', 'public', 'lovable-uploads')
+    return send_from_directory(uploads_dir, filename)
+
 
 @app.route('/about')
 def about():
@@ -419,6 +449,7 @@ def clear_session_on_new_visit():
         # Set visited flag
         session['visited'] = True
 
+
 @app.route('/payment-success')
 def payment_success():
     # Get parameters from URL
@@ -440,3 +471,10 @@ def payment_success():
                           payment_method=payment_method,
                           address=address,
                           unit=unit)
+
+#cd Website/react-pages/smk
+#npm run build
+
+#cd Website
+#source venv/bin/activate
+#python3 main.py
