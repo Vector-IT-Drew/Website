@@ -29,7 +29,7 @@
         body {
             background-color: var(--primary);
             color: var(--text-light);
-            font-family: 'Playfair Display', serif;
+            font-family: sans-serif;
         }
         
         /* Apply Playfair Display to headings and specific elements */
@@ -38,7 +38,7 @@
         .btn, 
         .card-title,
         .lead {
-            font-family: 'Playfair Display', serif;
+            font-family: sans-serif;
         }
         
         /* Keep original font for code elements */
@@ -162,8 +162,8 @@
             stroke: var(--accent);
         }
 
-        @font-face {
-            font-family: 'Manderley Regular';
+        /* @font-face {
+            font-family: sans-serif;
             src: url('{{ url_for('static', filename='fonts/Manderley Regular.ttf') }}') format('truetype');
             font-weight: normal;
             font-style: normal;
@@ -190,10 +190,10 @@
             font-weight: normal;
             font-style: normal;
             font-display: fallback;
-        }
+        } */
         
         .manderley-heading {
-            font-family: 'Manderley Regular', 'Cormorant Garamond', serif;
+            font-family: sans-serif;
         }
         
        

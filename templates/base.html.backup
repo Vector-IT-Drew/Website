@@ -25,7 +25,7 @@
         body {
             background-color: var(--primary);
             color: var(--text-light);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: sans-serif;
         }
         
 .navbar {
