@@ -89,7 +89,9 @@ def vectorHighlights():
 
 
 @app.route('/smk')
-def serve_smk():
+@app.route('/smk/<path:path>')
+def serve_smk(path=''):
+    """Serve the SMK React app for all routes starting with /smk"""
     build_dir = os.path.join(app.root_path, 'react-pages', 'smk', 'build')
     index_path = os.path.join(build_dir, 'index.html')
     if os.path.exists(index_path):

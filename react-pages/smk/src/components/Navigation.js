@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export const Navigation = ({ heroComplete = true }) => {
+export const Navigation = ({ heroComplete = true, currentPage = 'home' }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [showNav, setShowNav] = useState(false);
 
@@ -44,24 +44,65 @@ export const Navigation = ({ heroComplete = true }) => {
             />
           </div>
           <div className="hidden md:flex items-center space-x-8">
-            <a 
-              href="/" 
-              className="text-lg tracking-wide text-white hover:text-zinc-300 transition-colors"
-            >
-              HOME
-            </a>
-            <a 
-              href="/listings?portfolio=smk" 
-              className="text-lg tracking-wide text-white hover:text-zinc-300 transition-colors"
-            >
-              BROWSE AVAILABILITY
-            </a>
-            <a 
-              href="/#contact" 
-              className="text-lg tracking-wide text-white hover:text-zinc-300 transition-colors"
-            >
-              CONTACT LEASING
-            </a>
+            {currentPage === 'home' ? (
+              <>
+                <a 
+                  href="#browse-availability" 
+                  className="text-lg tracking-wide text-white hover:text-zinc-300 transition-colors"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    window.location.href = '/listings?portfolio=smk';
+                  }}
+                >
+                  BROWSE AVAILABILITY
+                </a>
+                <a 
+                  href="#smk-ownership" 
+                  className="text-lg tracking-wide text-white hover:text-zinc-300 transition-colors"
+                >
+                  SMK OWNERSHIP AND INTENTIONS
+                </a>
+                <a 
+                  href="#living-in-greenpoint" 
+                  className="text-lg tracking-wide text-white hover:text-zinc-300 transition-colors"
+                >
+                  LIVING IN GREENPOINT
+                </a>
+                <a 
+                  href="#contact" 
+                  className="text-lg tracking-wide text-white hover:text-zinc-300 transition-colors"
+                >
+                  CONTACT LEASING
+                </a>
+                <a 
+                  href="/smk/coming-soon" 
+                  className="text-lg tracking-wide text-white hover:text-zinc-300 transition-colors"
+                >
+                  COMING SOON
+                </a>
+              </>
+            ) : (
+              <>
+                <a 
+                  href="/smk" 
+                  className="text-lg tracking-wide text-white hover:text-zinc-300 transition-colors"
+                >
+                  HOME
+                </a>
+                <a 
+                  href="/listings?portfolio=smk" 
+                  className="text-lg tracking-wide text-white hover:text-zinc-300 transition-colors"
+                >
+                  BROWSE AVAILABILITY
+                </a>
+                <a 
+                  href="/#contact" 
+                  className="text-lg tracking-wide text-white hover:text-zinc-300 transition-colors"
+                >
+                  CONTACT LEASING
+                </a>
+              </>
+            )}
           </div>
         </div>
       </div>
