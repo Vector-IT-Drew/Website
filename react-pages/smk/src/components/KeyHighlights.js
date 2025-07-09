@@ -4,7 +4,7 @@ export const KeyHighlights = () => {
       <div className="container mx-auto px-0">
         <div className="grid lg:grid-cols-2 min-h-screen">
           {/* Text Content - Left Side */}
-          <div className="bg-zinc-200 px-12 py-24 flex flex-col justify-center">
+          <div className="bg-white px-12 py-24 flex flex-col justify-center">
             <h2 className="text-3xl md:text-4xl font-light tracking-wider text-black mb-8">
               Property Highlights
             </h2>
