@@ -4,22 +4,24 @@ This directory contains automated scripts to build and deploy the SMK React app 
 
 ## Scripts Available
 
-### 1. `./build-and-deploy.sh` - Full Build & Deploy
+### 1. `./build-and-deploy.sh` - Build & Git Add
 **Use this for production deployments**
 
-This script handles the complete build and deployment process:
+This script handles the build and git staging process:
 - ✅ Builds the React app (`npm run build`)
 - ✅ Installs dependencies if needed
 - ✅ Adds Flask app changes to git
 - ✅ Force-adds React build files (overrides .gitignore)
-- ✅ Commits changes with timestamp
-- ✅ Pushes to Railway for deployment
-- ✅ Shows deployment status
+- ✅ Stages all files for commit
+- ✅ Shows what's ready to commit
+- ❌ Does NOT commit or push (you control this)
 
 **Usage:**
 ```bash
 cd Website
 ./build-and-deploy.sh
+git commit -m "Your commit message"
+git push origin main
 ```
 
 ### 2. `./quick-build.sh` - Development Build Only

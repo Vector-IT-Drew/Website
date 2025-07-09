@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# SMK React App Build and Deploy Script
-# This script handles the complete build and deployment process
+# SMK React App Build and Git Add Script
+# This script handles building and staging files for commit (you handle commit/push)
 
 set -e  # Exit on any error
 
-echo "🚀 Starting SMK React App Build and Deploy Process..."
+echo "🚀 Starting SMK React App Build and Git Add Process..."
 
 # Colors for output
 RED='\033[0;31m'
@@ -71,46 +71,36 @@ git add app.py
 
 # Step 5: Force add React build files (override .gitignore)
 print_status "Step 4: Adding React build files..."
-git add -f react-pages/smk/build/static/js/
-git add -f react-pages/smk/build/static/css/
-git add -f react-pages/smk/build/index.html
-git add -f react-pages/smk/build/asset-manifest.json
-git add -f react-pages/smk/build/manifest.json
 
-# Step 6: Check if there are any changes to commit
-if git diff --cached --quiet; then
-    print_warning "No changes to commit"
-else
-    # Step 7: Commit changes
-    print_status "Step 5: Committing changes..."
-    
-    # Get current timestamp for commit message
-    TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
-    COMMIT_MSG="Deploy SMK React app - Build and update static files ($TIMESTAMP)"
-    
-    git commit -m "$COMMIT_MSG"
-    print_success "Changes committed successfully!"
-    
-    # Step 8: Push to Railway
-    print_status "Step 6: Pushing to Railway..."
-    git push origin main
-    
-    if [ $? -eq 0 ]; then
-        print_success "Successfully pushed to Railway!"
-        print_success "🎉 Deployment complete! Your app should be live shortly."
-        print_status "Check deployment status at: https://railway.app"
-    else
-        print_error "Failed to push to Railway"
-        exit 1
-    fi
+# Check if critical build files exist
+if [ ! -f "react-pages/smk/build/index.html" ]; then
+    print_error "index.html not found in build directory!"
+    print_error "React build may have failed. Please check the build output above."
+    exit 1
 fi
 
-# Step 9: Show final status
-print_status "Final git status:"
+if [ ! -d "react-pages/smk/build/static/js" ]; then
+    print_error "JavaScript files not found in build directory!"
+    print_error "React build may have failed. Please check the build output above."
+    exit 1
+fi
+
+print_status "Adding ALL build files (including new JS files with hashes)..."
+# Use git add . to catch all new files in the build directory
+cd react-pages/smk/build
+git add -f .
+cd ../../../
+
+print_success "All build files added to git successfully!"
+
+# Step 6: Show what's been staged
+print_status "Step 5: Showing what's been added to git..."
 git status
 
 echo ""
-print_success "✅ Build and deploy process completed successfully!"
-print_status "Your SMK React app has been deployed to Railway"
-print_status "Visit: https://vectorny.com/smk"
+print_success "✅ Build and git add process completed successfully!"
+print_status "Files are now staged and ready for commit"
+print_status "To commit and push, run:"
+print_status "  git commit -m \"Deploy SMK React app - Build and update static files\""
+print_status "  git push origin main"
 echo "" 
