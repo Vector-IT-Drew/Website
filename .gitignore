@@ -11,7 +11,10 @@ venv/
 *.so
 .Python
 
+# Python build directories
 build/
+# But allow React build directories
+!react-pages/*/build/
 develop-eggs/
 dist/
 downloads/
