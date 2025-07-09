@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 export const Navigation = ({ heroComplete = true, currentPage = 'home' }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [showNav, setShowNav] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -34,7 +35,7 @@ export const Navigation = ({ heroComplete = true, currentPage = 'home' }) => {
         ? 'opacity-100 translate-y-0' 
         : 'opacity-0 -translate-y-4'
     }`}>
-      <div className="container mx-auto py-0 px-0">
+      <div className="container mx-auto py-0 px-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <img 
@@ -43,6 +44,23 @@ export const Navigation = ({ heroComplete = true, currentPage = 'home' }) => {
               className="h-6 w-auto md:h-7 lg:h-8" 
             />
           </div>
+          
+          {/* Mobile menu button */}
+          <button
+            className="md:hidden p-2 text-white hover:text-zinc-300 transition-colors"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label="Toggle mobile menu"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              {isMobileMenuOpen ? (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              )}
+            </svg>
+          </button>
+          
+          {/* Desktop navigation */}
           <div className="hidden md:flex items-center space-x-8">
             {currentPage === 'home' ? (
               <>
@@ -98,6 +116,81 @@ export const Navigation = ({ heroComplete = true, currentPage = 'home' }) => {
                 <a 
                   href="/#contact" 
                   className="text-lg tracking-wide text-white hover:text-zinc-300 transition-colors"
+                >
+                  CONTACT LEASING
+                </a>
+              </>
+            )}
+          </div>
+        </div>
+        
+        {/* Mobile menu */}
+        <div className={`md:hidden transition-all duration-300 ease-in-out ${
+          isMobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+        } overflow-hidden bg-black/95 backdrop-blur-sm`}>
+          <div className="px-4 py-4 space-y-4">
+            {currentPage === 'home' ? (
+              <>
+                <a 
+                  href="#browse-availability" 
+                  className="block text-base tracking-wide text-white hover:text-zinc-300 transition-colors py-2"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setIsMobileMenuOpen(false);
+                    window.location.href = '/listings?portfolio=smk';
+                  }}
+                >
+                  BROWSE AVAILABILITY
+                </a>
+                <a 
+                  href="#smk-ownership" 
+                  className="block text-base tracking-wide text-white hover:text-zinc-300 transition-colors py-2"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  SMK OWNERSHIP AND INTENTIONS
+                </a>
+                <a 
+                  href="#living-in-greenpoint" 
+                  className="block text-base tracking-wide text-white hover:text-zinc-300 transition-colors py-2"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  LIVING IN GREENPOINT
+                </a>
+                <a 
+                  href="#contact" 
+                  className="block text-base tracking-wide text-white hover:text-zinc-300 transition-colors py-2"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  CONTACT LEASING
+                </a>
+                <a 
+                  href="/smk/coming-soon" 
+                  className="block text-base tracking-wide text-white hover:text-zinc-300 transition-colors py-2"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  COMING SOON
+                </a>
+              </>
+            ) : (
+              <>
+                <a 
+                  href="/smk" 
+                  className="block text-base tracking-wide text-white hover:text-zinc-300 transition-colors py-2"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  HOME
+                </a>
+                <a 
+                  href="/listings?portfolio=smk" 
+                  className="block text-base tracking-wide text-white hover:text-zinc-300 transition-colors py-2"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  BROWSE AVAILABILITY
+                </a>
+                <a 
+                  href="/#contact" 
+                  className="block text-base tracking-wide text-white hover:text-zinc-300 transition-colors py-2"
+                  onClick={() => setIsMobileMenuOpen(false)}
                 >
                   CONTACT LEASING
                 </a>

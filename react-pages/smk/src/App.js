@@ -46,7 +46,7 @@ function ComingSoonPage() {
 function App() {
   return (
     <Router basename="/smk">
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-white">
         <Routes>
           <Route path="/" element={<MainPage />} />
           <Route path="/coming-soon" element={<ComingSoonPage />} />
