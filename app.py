@@ -506,3 +506,9 @@ def payment_success():
 #cd Website
 #source venv/bin/activate
 #python3 main.py
+
+
+
+# cd Website
+# ./build-and-deploy.sh  # For production deployment
+# ./quick-build.sh       # For development testing

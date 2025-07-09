@@ -518,25 +518,46 @@
                                 </select>
                             </div>
                             
-                            <!-- Third Row: Search Button, Portfolio Toggle, and Reset Filters link -->
+                            <!-- Third Row: Portfolio Toggle (mobile only), Search Button, and Reset Filters link -->
                             <div class="col-12 mt-2 mb-3">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div class="d-flex align-items-center gap-4">
-                                        <button type="submit" class="btn btn-primary px-5">
-                                            <i class="fas fa-search me-2"></i>Find Properties
-                                        </button>
-                                        <!-- Portfolio Filter - Only show if portfolio parameter exists -->
-                                        {% if request.args.get('portfolio') %}
+                                <!-- Portfolio Filter - Mobile Layout (full width above buttons) -->
+                                {% if request.args.get('portfolio') %}
+                                <div class="portfolio-filter-mobile d-md-none mb-3">
+                                    <div class="d-flex justify-content-center">
                                         <div class="portfolio-filter-inline">
                                             <span class="filter-title me-2">Portfolio: </span>
                                             <div class="portfolio-toggle-container">
                                                 <span class="toggle-label">{{ request.args.get('portfolio').upper() }}</span>
                                                 <label class="portfolio-toggle-switch">
-                                                    <input type="checkbox" id="portfolio-toggle" {% if not request.args.get('portfolio') %}checked{% endif %}>
+                                                    <input type="checkbox" id="portfolio-toggle-mobile" {% if not request.args.get('portfolio') %}checked{% endif %}>
                                                     <span class="portfolio-slider"></span>
                                                 </label>
                                                 <span class="toggle-label">All</span>
-                                                <input type="hidden" name="portfolio" id="portfolio-input" value="{% if request.args.get('portfolio') %}{{ request.args.get('portfolio') }}{% endif %}">
+                                                <input type="hidden" name="portfolio" id="portfolio-input-mobile" value="{% if request.args.get('portfolio') %}{{ request.args.get('portfolio') }}{% endif %}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                
+                                <!-- Desktop and Mobile Button Layout -->
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center gap-4">
+                                        <button type="submit" class="btn btn-primary px-5">
+                                            <i class="fas fa-search me-2"></i>Find Properties
+                                        </button>
+                                        <!-- Portfolio Filter - Desktop Layout (inline with button) -->
+                                        {% if request.args.get('portfolio') %}
+                                        <div class="portfolio-filter-inline d-none d-md-flex">
+                                            <span class="filter-title me-2">Portfolio: </span>
+                                            <div class="portfolio-toggle-container">
+                                                <span class="toggle-label">{{ request.args.get('portfolio').upper() }}</span>
+                                                <label class="portfolio-toggle-switch">
+                                                    <input type="checkbox" id="portfolio-toggle-desktop" {% if not request.args.get('portfolio') %}checked{% endif %}>
+                                                    <span class="portfolio-slider"></span>
+                                                </label>
+                                                <span class="toggle-label">All</span>
+                                                <input type="hidden" name="portfolio" id="portfolio-input-desktop" value="{% if request.args.get('portfolio') %}{{ request.args.get('portfolio') }}{% endif %}">
                                             </div>
                                         </div>
                                         {% endif %}
@@ -556,18 +577,37 @@
     <!-- Portfolio Toggle JavaScript -->
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const portfolioToggle = document.getElementById('portfolio-toggle');
-        const portfolioInput = document.getElementById('portfolio-input');
+        const portfolioToggleMobile = document.getElementById('portfolio-toggle-mobile');
+        const portfolioInputMobile = document.getElementById('portfolio-input-mobile');
+        const portfolioToggleDesktop = document.getElementById('portfolio-toggle-desktop');
+        const portfolioInputDesktop = document.getElementById('portfolio-input-desktop');
         const form = document.querySelector('.filter-panel form');
         
-        if (portfolioToggle && portfolioInput) {
-            portfolioToggle.addEventListener('change', function() {
+        // Handle mobile portfolio toggle
+        if (portfolioToggleMobile && portfolioInputMobile) {
+            portfolioToggleMobile.addEventListener('change', function() {
                 if (this.checked) {
                     // Set to empty (All)
-                    portfolioInput.value = '';
+                    portfolioInputMobile.value = '';
                 } else {
                     // Set to portfolio value
-                    portfolioInput.value = '{{ request.args.get('portfolio') }}';
+                    portfolioInputMobile.value = '{{ request.args.get('portfolio') }}';
+                }
+                
+                // Auto-submit the form to update results
+                form.submit();
+            });
+        }
+        
+        // Handle desktop portfolio toggle
+        if (portfolioToggleDesktop && portfolioInputDesktop) {
+            portfolioToggleDesktop.addEventListener('change', function() {
+                if (this.checked) {
+                    // Set to empty (All)
+                    portfolioInputDesktop.value = '';
+                } else {
+                    // Set to portfolio value
+                    portfolioInputDesktop.value = '{{ request.args.get('portfolio') }}';
                 }
                 
                 // Auto-submit the form to update results
