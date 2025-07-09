@@ -28,7 +28,7 @@ export const Navigation = ({ heroComplete = true, currentPage = 'home' }) => {
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
       isScrolled 
-        ? 'bg-background/95 backdrop-blur-sm border-b border-border' 
+        ? 'bg-black/95 backdrop-blur-sm border-b border-white/10' 
         : 'bg-transparent'
     } ${
       showNav 
