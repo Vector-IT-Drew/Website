@@ -127,6 +127,9 @@ def serve_smk(path=''):
 def serve_smk_static(filename):
     """Serve static files for the SMK React app"""
     build_dir = os.path.join(app.root_path, 'react-pages', 'smk', 'build', 'static')
+    logging.debug(f"Serving static file: {filename} from {build_dir}")
+    
+    # Use send_from_directory which should handle nested paths correctly
     return send_from_directory(build_dir, filename)
 
 
