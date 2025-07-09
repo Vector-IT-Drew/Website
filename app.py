@@ -92,11 +92,17 @@ def vectorHighlights():
 @app.route('/smk/<path:path>')
 def serve_smk(path=''):
     """Serve the SMK React app for all routes starting with /smk"""
+    logging.debug(f"SMK route accessed with path: '{path}'")
     build_dir = os.path.join(app.root_path, 'react-pages', 'smk', 'build')
     index_path = os.path.join(build_dir, 'index.html')
+    logging.debug(f"Build directory: {build_dir}")
+    logging.debug(f"Index path: {index_path}")
+    logging.debug(f"Index exists: {os.path.exists(index_path)}")
     if os.path.exists(index_path):
+        logging.debug("Serving index.html from build directory")
         return send_from_directory(build_dir, 'index.html')
     else:
+        logging.error(f"Index file not found at {index_path}")
         abort(404)
 
 
