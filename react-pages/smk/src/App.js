@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Navigation } from './components/Navigation';
 import { HeroSection } from './components/HeroSection';
@@ -15,10 +15,14 @@ import { Toaster } from './components/ui/sonner';
 function MainPage() {
   const [heroComplete, setHeroComplete] = useState(false);
 
+  const handleAnimationComplete = useCallback(() => {
+    setHeroComplete(true);
+  }, []);
+
   return (
     <>
       <Navigation heroComplete={heroComplete} currentPage="home" />
-      <HeroSection onAnimationComplete={() => setHeroComplete(true)} />
+      <HeroSection onAnimationComplete={handleAnimationComplete} />
       <KeyHighlights />
       <SMKOwnershipSection />
       <GreenpointSection />

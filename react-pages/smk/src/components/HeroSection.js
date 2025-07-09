@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
-export const HeroSection = ({ onAnimationComplete }) => {
+const HeroSectionComponent = ({ onAnimationComplete }) => {
   const [phase, setPhase] = useState('black');
   const [finalTypingText, setFinalTypingText] = useState('');
   const finalTypingSequence = 'TIMELESS BROOKLYN,\nTAILORED FOR TODAY';
@@ -50,7 +50,7 @@ export const HeroSection = ({ onAnimationComplete }) => {
 
   return (
     <section className="relative h-screen w-full overflow-hidden">
-      {/* Initial logo animation phase over black background */}
+      {/* Initial logo animation phase over black background - only show during animation phases */}
       <div className={`absolute inset-0 bg-black flex items-center justify-center transition-all duration-1000 ease-in-out ${
         phase === 'black' || phase === 'initial-logo' ? 'opacity-100' : 
         phase === 'fade-out' ? 'opacity-0' : 
@@ -100,4 +100,6 @@ export const HeroSection = ({ onAnimationComplete }) => {
       </div>
     </section>
   );
-}; 
+};
+
+export const HeroSection = React.memo(HeroSectionComponent); 
