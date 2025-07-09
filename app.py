@@ -98,12 +98,29 @@ def serve_smk(path=''):
     logging.debug(f"Build directory: {build_dir}")
     logging.debug(f"Index path: {index_path}")
     logging.debug(f"Index exists: {os.path.exists(index_path)}")
+    
+    # Additional debugging for Railway deployment
+    if os.path.exists(build_dir):
+        build_contents = os.listdir(build_dir)
+        logging.debug(f"Build directory contents: {build_contents}")
+    else:
+        logging.error(f"Build directory does not exist: {build_dir}")
+        # Check if react-pages directory exists
+        react_pages_dir = os.path.join(app.root_path, 'react-pages')
+        if os.path.exists(react_pages_dir):
+            logging.debug(f"React pages directory exists, contents: {os.listdir(react_pages_dir)}")
+            smk_dir = os.path.join(react_pages_dir, 'smk')
+            if os.path.exists(smk_dir):
+                logging.debug(f"SMK directory exists, contents: {os.listdir(smk_dir)}")
+        else:
+            logging.error(f"React pages directory does not exist: {react_pages_dir}")
+    
     if os.path.exists(index_path):
         logging.debug("Serving index.html from build directory")
         return send_from_directory(build_dir, 'index.html')
     else:
         logging.error(f"Index file not found at {index_path}")
-        abort(404)
+        return f"<h1>SMK Build Error</h1><p>Build directory: {build_dir}</p><p>Index path: {index_path}</p><p>Build exists: {os.path.exists(build_dir)}</p><p>Index exists: {os.path.exists(index_path)}</p>", 500
 
 
 @app.route('/smk/static/<path:filename>')
