@@ -27,7 +27,7 @@ export const SpecSheet = ({ sections }) => {
             <Card className="bg-white border-zinc-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
               <CardHeader className="pb-4">
                 <CardTitle className="text-xl font-medium text-zinc-800 flex items-center">
-                  <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
+                  <div className="w-2 h-2 bg-zinc-600 rounded-full mr-3"></div>
                   {section.title}
                 </CardTitle>
               </CardHeader>
@@ -42,7 +42,7 @@ export const SpecSheet = ({ sections }) => {
                       transition={{ duration: 0.3, delay: 0.6 + index * 0.1 }}
                     >
                       <div className="flex items-start">
-                        <span className="inline-block w-2 h-2 bg-accent rounded-full mr-3 mt-2 flex-shrink-0"></span>
+                        <span className="inline-block w-2 h-2 bg-zinc-600 rounded-full mr-3 mt-2 flex-shrink-0"></span>
                         <div>
                           <span className="font-medium text-zinc-700">{spec.title}:</span>{' '}
                           <span className="text-zinc-600">{spec.description}</span>

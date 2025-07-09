@@ -583,6 +583,14 @@
         const portfolioInputDesktop = document.getElementById('portfolio-input-desktop');
         const form = document.querySelector('.filter-panel form');
         
+        // Sync desktop and mobile toggles
+        function syncToggles(sourceToggle, targetToggle, sourceInput, targetInput) {
+            if (targetToggle && targetInput) {
+                targetToggle.checked = sourceToggle.checked;
+                targetInput.value = sourceInput.value;
+            }
+        }
+        
         // Handle mobile portfolio toggle
         if (portfolioToggleMobile && portfolioInputMobile) {
             portfolioToggleMobile.addEventListener('change', function() {
@@ -594,8 +602,11 @@
                     portfolioInputMobile.value = '{{ request.args.get('portfolio') }}';
                 }
                 
-                // Auto-submit the form to update results
-                form.submit();
+                // Sync with desktop toggle
+                syncToggles(portfolioToggleMobile, portfolioToggleDesktop, portfolioInputMobile, portfolioInputDesktop);
+                
+                // Note: Form will be submitted when user clicks "Find Properties" button
+                // This allows user to see the toggle state change before submitting
             });
         }
         
@@ -610,8 +621,11 @@
                     portfolioInputDesktop.value = '{{ request.args.get('portfolio') }}';
                 }
                 
-                // Auto-submit the form to update results
-                form.submit();
+                // Sync with mobile toggle
+                syncToggles(portfolioToggleDesktop, portfolioToggleMobile, portfolioInputDesktop, portfolioInputMobile);
+                
+                // Note: Form will be submitted when user clicks "Find Properties" button
+                // This allows user to see the toggle state change before submitting
             });
         }
     });

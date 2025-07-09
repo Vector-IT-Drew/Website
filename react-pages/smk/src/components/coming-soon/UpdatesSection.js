@@ -86,6 +86,7 @@ export const UpdatesSection = () => {
                   
                   <Button
                     variant="outline"
+                    onClick={() => window.location.href = '/listings?portfolio=smk'}
                     className="w-full border-zinc-600 text-zinc-50 bg-zinc-600 hover:bg-zinc-500 font-extrabold"
                   >
                     Contact Management

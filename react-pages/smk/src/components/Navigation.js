@@ -38,11 +38,13 @@ export const Navigation = ({ heroComplete = true, currentPage = 'home' }) => {
       <div className="container mx-auto py-0 px-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <img 
-              src="/lovable-uploads/f935332a-65f6-45da-9303-f7fcc78afbce.png" 
-              alt="SMK Greenpoint" 
-              className="h-6 w-auto md:h-7 lg:h-8" 
-            />
+            <a href="/" className="block">
+              <img 
+                src="/lovable-uploads/f935332a-65f6-45da-9303-f7fcc78afbce.png" 
+                alt="SMK Greenpoint" 
+                className="h-6 w-auto md:h-7 lg:h-8 cursor-pointer hover:opacity-80 transition-opacity" 
+              />
+            </a>
           </div>
           
           {/* Mobile menu button */}
@@ -87,7 +89,7 @@ export const Navigation = ({ heroComplete = true, currentPage = 'home' }) => {
                   LIVING IN GREENPOINT
                 </a>
                 <a 
-                  href="#contact" 
+                  href="/listings?portfolio=smk" 
                   className="text-lg tracking-wide text-white hover:text-zinc-300 transition-colors"
                 >
                   CONTACT LEASING
@@ -114,7 +116,7 @@ export const Navigation = ({ heroComplete = true, currentPage = 'home' }) => {
                   BROWSE AVAILABILITY
                 </a>
                 <a 
-                  href="/#contact" 
+                  href="/listings?portfolio=smk" 
                   className="text-lg tracking-wide text-white hover:text-zinc-300 transition-colors"
                 >
                   CONTACT LEASING
@@ -157,7 +159,7 @@ export const Navigation = ({ heroComplete = true, currentPage = 'home' }) => {
                   LIVING IN GREENPOINT
                 </a>
                 <a 
-                  href="#contact" 
+                  href="/listings?portfolio=smk" 
                   className="block text-base tracking-wide text-white hover:text-zinc-300 transition-colors py-2"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
@@ -188,7 +190,7 @@ export const Navigation = ({ heroComplete = true, currentPage = 'home' }) => {
                   BROWSE AVAILABILITY
                 </a>
                 <a 
-                  href="/#contact" 
+                  href="/listings?portfolio=smk" 
                   className="block text-base tracking-wide text-white hover:text-zinc-300 transition-colors py-2"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >

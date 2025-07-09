@@ -2,8 +2,8 @@ import { Button } from '../ui/button';
 
 export const StickyContactButton = () => {
   const handleContactClick = () => {
-    // Scroll to contact section on main page or navigate
-    window.location.href = '/#contact';
+    // Navigate to listings page with SMK portfolio filter
+    window.location.href = '/listings?portfolio=smk';
   };
 
   return (

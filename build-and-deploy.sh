@@ -91,6 +91,10 @@ cd react-pages/smk/build
 git add -f .
 cd ../../../
 
+# Add React source code changes
+print_status "Adding React source code changes..."
+git add react-pages/smk/src/
+
 print_success "All build files added to git successfully!"
 
 # Step 6: Show what's been staged
