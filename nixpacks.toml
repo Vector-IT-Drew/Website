@@ -1,0 +1,13 @@
+[phases.setup]
+nixPkgs = ['...', 'nodejs', 'npm']
+
+[phases.build]
+cmds = [
+  'cd react-pages/smk && npm install && npm run build && cd ../..'
+]
+
+[phases.install]
+cmds = ['pip install -r requirements.txt']
+
+[start]
+cmd = 'gunicorn app:app' 
