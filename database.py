@@ -373,7 +373,7 @@ def get_all_listings(address=None,
             params['max_price'] = max_price
         if available:
             params['available'] = True
-        if sort is not None:
+        if sort is not None and sort != '':
             params['sort'] = sort
 
         logger.debug(f"[{req_id}] API call params: {params}")

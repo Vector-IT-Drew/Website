@@ -216,7 +216,7 @@ def listings():
         available = False
 
     # Determine sort option and map to SQL ORDER BY clause
-    sort_option = request.args.get('sort', 'price_asc')
+    sort_option = request.args.get('sort', '')
 
     # Get filtered and sorted listings from database/API
     listings_data = get_all_listings(address=address,

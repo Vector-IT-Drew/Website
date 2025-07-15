@@ -512,6 +512,7 @@
                             <div class="col-md-4 mb-3">
                                 <label class="filter-title">Sort By</label>
                                 <select name="sort" id="sort" class="form-select">
+                                    <option value="" {% if not request.args.get('sort') %}selected{% endif %}>-- Select Sort --</option>
                                     <option value="price_asc" {% if request.args.get('sort') == 'price_asc' %}selected{% endif %}>Price (Low to High)</option>
                                     <option value="price_desc" {% if request.args.get('sort') == 'price_desc' %}selected{% endif %}>Price (High to Low)</option>
                                     <option value="size_desc" {% if request.args.get('sort') == 'size_desc' %}selected{% endif %}>Largest</option>
