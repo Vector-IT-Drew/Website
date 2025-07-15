@@ -90,6 +90,8 @@ def vectorHighlights():
 
 @app.route('/smk')
 @app.route('/smk/<path:path>')
+@app.route('/SMK')
+@app.route('/SMK/<path:path>')
 def serve_smk(path=''):
     """Serve the SMK React app for all routes starting with /smk"""
     logging.debug(f"SMK route accessed with path: '{path}'")
@@ -508,13 +510,15 @@ def payment_success():
 #python3 main.py
 
 
-
+#Build and deploy this
 # cd react-pages/smk/build
 # git add -f .
 # cd ../../../
-
 # git add react-pages/smk/src/
 # git add .
+# cd /Users/drewwood/Desktop/Vector && cp css/custom.css Website/static/css/ && cp css/vector_assistant.css Website/static/css/ && cp js/main.js Website/static/js/ && cp js/vector_assistant.js Website/static/js/
+
+# git add static/css/custom.css static/css/vector_assistant.css static/js/main.js static/js/vector_assistant.js
 
 # cd Website
 # ./build-and-deploy.sh  # For production deployment
