@@ -509,6 +509,13 @@ def payment_success():
 
 
 
+# cd react-pages/smk/build
+# git add -f .
+# cd ../../../
+
+# git add react-pages/smk/src/
+# git add .
+
 # cd Website
 # ./build-and-deploy.sh  # For production deployment
 # ./quick-build.sh       # For development testing
