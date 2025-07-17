@@ -517,8 +517,8 @@ def payment_success():
 # git add react-pages/smk/src/
 # git add .
 # cd /Users/drewwood/Desktop/Vector && cp css/custom.css Website/static/css/ && cp css/vector_assistant.css Website/static/css/ && cp js/main.js Website/static/js/ && cp js/vector_assistant.js Website/static/js/
-
-# git add static/css/custom.css static/css/vector_assistant.css static/js/main.js static/js/vector_assistant.js
+# cd Website/react-pages/smk/build
+# git add /static
 
 # cd Website
 # ./build-and-deploy.sh  # For production deployment
