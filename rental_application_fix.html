@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JavaScript Fix for Rental Application</title>
+</head>
+<body>
+
+<!-- Copy this JavaScript code to replace the broken sections in your rental_application.html -->
+
+<script>
+// Fix for the JavaScript errors
+
+// Remove any duplicate window declarations
+// Replace the broken tenant/guarantor functions with these working versions:
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Initializing tenant and guarantor functionality...');
+    
+    // Initialize main tenant guarantor
+    initMainGuarantor();
+    
+    // Make functions globally available
+    window.addTenant = addTenant;
+    window.removeTenant = removeTenant;
+    
+    console.log('Functions made global:', {
+        addTenant: typeof window.addTenant,
+        removeTenant: typeof window.removeTenant
+    });
+});
+
+function initMainGuarantor() {
+    const checkbox = document.getElementById('main-tenant-guarantor');
+    const fields = document.getElementById('main-tenant-guarantor-fields');
+    
+    if (checkbox && fields) {
+        checkbox.addEventListener('change', function() {
+            console.log('Main guarantor checkbox changed:', this.checked);
+            if (this.checked) {
+                fields.classList.remove('hidden');
+                fields.style.display = 'block';
+                fields.querySelectorAll('input[name*="GuarantorName"], input[name*="GuarantorEmail"]').forEach(input => {
+                    input.required = true;
+                });
+            } else {
+                fields.classList.add('hidden');
+                fields.style.display = 'none';
+                fields.querySelectorAll('input').forEach(input => {
+                    input.required = false;
+                    input.value = '';
+                });
+            }
+        });
+        console.log('Main guarantor functionality initialized');
+    } else {
+        console.error('Main guarantor elements not found');
+    }
+}
+
+function addTenant() {
+    console.log('addTenant called');
+    
+    const container = document.getElementById('additional-tenants-container');
+    if (!container) {
+        console.error('Container not found');
+        alert('Error: Could not find tenant container');
+        return;
+    }
+    
+    const tenantCount = container.children.length + 2; // Start from 2 (main is 1)
+    const tenantId = `tenant-${tenantCount}`;
+    
+    const tenantHTML = `
+        <div class="border border-gray-200 rounded-lg p-6 mb-6 bg-white" id="${tenantId}">
+            <div class="flex items-center justify-between mb-4">
+                <h4 class="text-lg font-semibold text-gray-900">Tenant ${tenantCount}</h4>
+                <button type="button" onclick="removeTenant('${tenantId}')" class="text-red-600 hover:text-red-800 text-sm px-2 py-1 rounded">
+                    Remove
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
+                    <input type="text" name="tenant_${tenantCount}_name" class="w-full border border-gray-300 rounded-lg px-3 py-2" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                    <input type="email" name="tenant_${tenantCount}_email" class="w-full border border-gray-300 rounded-lg px-3 py-2" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+                    <input type="tel" name="tenant_${tenantCount}_phone" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                </div>
+            </div>
+            
+            <div class="mt-4 pt-4 border-t border-gray-200">
+                <div class="flex items-center space-x-3 mb-4">
+                    <input type="checkbox" id="tenant-${tenantCount}-guarantor" name="tenant_${tenantCount}_hasGuarantor" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                    <label for="tenant-${tenantCount}-guarantor" class="text-sm font-medium text-gray-900 cursor-pointer">
+                        I have a guarantor
+                    </label>
+                </div>
+                
+                <div id="tenant-${tenantCount}-guarantor-fields" class="hidden bg-gray-50 rounded-lg p-4 border border-gray-200">
+                    <h5 class="text-sm font-semibold text-gray-900 mb-3">Guarantor Information</h5>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Guarantor Name *</label>
+                            <input type="text" name="tenant_${tenantCount}_guarantorName" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Guarantor Email *</label>
+                            <input type="email" name="tenant_${tenantCount}_guarantorEmail" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Guarantor Phone</label>
+                            <input type="tel" name="tenant_${tenantCount}_guarantorPhone" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    container.insertAdjacentHTML('beforeend', tenantHTML);
+    
+    // Setup guarantor functionality for this tenant
+    const checkbox = document.getElementById(`tenant-${tenantCount}-guarantor`);
+    const fields = document.getElementById(`tenant-${tenantCount}-guarantor-fields`);
+    
+    if (checkbox && fields) {
+        checkbox.addEventListener('change', function() {
+            console.log(`Tenant ${tenantCount} guarantor changed:`, this.checked);
+            if (this.checked) {
+                fields.classList.remove('hidden');
+                fields.style.display = 'block';
+                fields.querySelectorAll('input[name*="GuarantorName"], input[name*="GuarantorEmail"]').forEach(input => {
+                    input.required = true;
+                });
+            } else {
+                fields.classList.add('hidden');
+                fields.style.display = 'none';
+                fields.querySelectorAll('input').forEach(input => {
+                    input.required = false;
+                    input.value = '';
+                });
+            }
+        });
+    }
+    
+    console.log(`Tenant ${tenantCount} added successfully`);
+}
+
+function removeTenant(tenantId) {
+    console.log('removeTenant called:', tenantId);
+    const element = document.getElementById(tenantId);
+    if (element) {
+        element.remove();
+        console.log('Tenant removed successfully');
+    } else {
+        console.error('Tenant element not found:', tenantId);
+    }
+}
+
+</script>
+
+</body>
+</html>
