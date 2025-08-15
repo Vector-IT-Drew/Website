@@ -15,7 +15,7 @@ class ListingForm(FlaskForm):
     unit = StringField('Unit/Apt #', validators=[Optional()])
     city = StringField('City', validators=[DataRequired()])
     state = StringField('State', validators=[DataRequired(), Length(min=2, max=2)])
-    zip_code = StringField('ZIP Code', validators=[DataRequired(), Length(min=5, max=10)])
+    zip_code = IntegerField('ZIP Code', validators=[DataRequired()])
     price = IntegerField('Price ($)', validators=[DataRequired()])
     beds = FloatField('Bedrooms', validators=[DataRequired()])
     baths = FloatField('Bathrooms', validators=[DataRequired()])
