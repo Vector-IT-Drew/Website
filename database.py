@@ -232,7 +232,7 @@ def get_listing(listing_id):
                     "state":
                     "NY",
                     "zip_code":
-                    item.get('zip_code', '-'),
+                    int(item.get('zip_code')) if item.get('zip_code') and str(item.get('zip_code')).isdigit() else '-',
                     "price":
                     item.get('listed_price'),
                     "actual_rent":
