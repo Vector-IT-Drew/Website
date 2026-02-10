@@ -213,9 +213,13 @@ def listings():
         except ValueError:
             pass
 
-    # Get beds/baths as floats if provided
+    # Get beds/baths (exact or min/max) if provided
     beds = None
     baths = None
+    min_beds = None
+    max_beds = None
+    min_baths = None
+    max_baths = None
     if request.args.get('beds'):
         try:
             beds = float(request.args.get('beds'))
@@ -224,6 +228,26 @@ def listings():
     if request.args.get('baths'):
         try:
             baths = float(request.args.get('baths'))
+        except ValueError:
+            pass
+    if request.args.get('min_beds'):
+        try:
+            min_beds = float(request.args.get('min_beds'))
+        except ValueError:
+            pass
+    if request.args.get('max_beds'):
+        try:
+            max_beds = float(request.args.get('max_beds'))
+        except ValueError:
+            pass
+    if request.args.get('min_baths'):
+        try:
+            min_baths = float(request.args.get('min_baths'))
+        except ValueError:
+            pass
+    if request.args.get('max_baths'):
+        try:
+            max_baths = float(request.args.get('max_baths'))
         except ValueError:
             pass
 

@@ -325,6 +325,10 @@ def get_all_listings(address=None,
                      unit=None,
                      beds=None,
                      baths=None,
+                     min_beds=None,
+                     max_beds=None,
+                     min_baths=None,
+                     max_baths=None,
                      neighborhood=None,
                      borough=None,
                      min_price=None,
@@ -354,6 +358,9 @@ def get_all_listings(address=None,
     req_id = int(time.time() * 1000)
 
     try:
+        requested_amenities = amenities
+        apply_local_amenities_filter = False
+
         # Prepare parameters for API request
         params = {}
         if address:
@@ -366,6 +373,14 @@ def get_all_listings(address=None,
             params['beds'] = beds
         if baths is not None:
             params['baths'] = baths
+        if min_beds is not None and str(min_beds).strip() != '':
+            params['min_beds'] = min_beds
+        if max_beds is not None and str(max_beds).strip() != '':
+            params['max_beds'] = max_beds
+        if min_baths is not None and str(min_baths).strip() != '':
+            params['min_baths'] = min_baths
+        if max_baths is not None and str(max_baths).strip() != '':
+            params['max_baths'] = max_baths
         if neighborhood:
             params['neighborhood'] = neighborhood
         if borough:
@@ -400,6 +415,21 @@ def get_all_listings(address=None,
 
         data = response.json()
         logger.debug(f"[{req_id}] API returned {len(data.get('data', []))} listings")
+
+        # Fallback: if amenities were requested but API returns 0, retry without amenities
+        # and apply the amenities filter locally so URL-only filters work reliably.
+        if requested_amenities and len(data.get('data', [])) == 0:
+            try:
+                params_no_amen = dict(params)
+                params_no_amen.pop('amenities', None)
+                logger.warning(f"[{req_id}] Amenities filter returned 0 from API; retrying without amenities for local filtering.")
+                response2 = requests.get(LISTINGS_API_ENDPOINT, params=params_no_amen)
+                data2 = response2.json()
+                logger.debug(f"[{req_id}] Retry without amenities returned {len(data2.get('data', []))} listings")
+                data = data2
+                apply_local_amenities_filter = True
+            except Exception as e:
+                logger.error(f"[{req_id}] Retry without amenities failed: {e}")
 
         listings = []
         for item in data.get('data', []):
@@ -446,6 +476,25 @@ def get_all_listings(address=None,
                 "move_out": item.get('move_out', '-')
             }
             listings.append(listing)
+
+        if apply_local_amenities_filter and requested_amenities:
+            if isinstance(requested_amenities, str):
+                wants = [w.strip().lower() for w in requested_amenities.split(',') if w and w.strip()]
+            elif isinstance(requested_amenities, list):
+                wants = [str(w).strip().lower() for w in requested_amenities if w and str(w).strip()]
+            else:
+                wants = []
+            if wants:
+                def _has_all_wants(l):
+                    combined = []
+                    combined.extend(l.get("building_amenities") or [])
+                    combined.extend(l.get("unit_amenities") or [])
+                    combined = [str(a).lower() for a in combined if a]
+                    for w in wants:
+                        if not any(w in a for a in combined):
+                            return False
+                    return True
+                listings = [l for l in listings if _has_all_wants(l)]
         return listings
 
     except Exception as e:
