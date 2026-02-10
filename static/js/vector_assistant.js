@@ -61,17 +61,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 showTypingIndicator(false);
                 
                 // Add assistant response to chat
-                addMessage(data.message || data.initial_message || "Hi there! I'm Vector Assistant, your personal NYC apartment hunting guide. Let's start with the basics - how many bedrooms are you looking for in your new apartment?", 'assistant');
-                
-                // Update the listing count indicator if available
-                updateListingCount(data.listing_count);
-                
-                // If there are listings to display
-                if (data.listings && data.listings.length > 0) {
-                    const listingsElement = document.createElement('div');
-                    listingsElement.innerHTML = formatListings(data.listings);
-                    addMessage(listingsElement, 'assistant');
-                }
+                addMessage(data.message || data.initial_message || "Hi! I'm Vector Assistant. I can help you find NYC apartments. How many bedrooms are you looking for?", 'assistant');
+
+                // View listings button: show count and link (filters applied when user narrows down)
+                updateViewListingsButton(data.listing_count, data.filter_state || {});
                 
                 // Scroll to bottom of chat with a slight delay to ensure content is fully rendered
                 scrollChatToBottom(100);
@@ -148,14 +141,10 @@ document.addEventListener('DOMContentLoaded', function() {
             // Hide typing indicator
             showTypingIndicator(false);
             
-            if (data.status === 'success') {
-                // Display the welcome message
+            if (data.message || data.status === 'success') {
                 addMessage(data.welcome_message || data.message, 'assistant');
-                
-                // Clear the input field
+                updateViewListingsButton(data.listing_count, data.filter_state || {});
                 document.getElementById('userMessage').value = '';
-                
-                // Scroll to bottom of chat
                 scrollChatToBottom(100);
             } else {
                 // Show error message
@@ -213,46 +202,16 @@ document.addEventListener('DOMContentLoaded', function() {
             return response.json();
         })
         .then(data => {
-            console.log("FULL RESPONSE DATA:", JSON.stringify(data));
-            console.log("show_listings flag:", data.show_listings);
-            console.log("listings array:", data.listings ? data.listings.length : 0);
-            
             // Hide typing indicator
             showTypingIndicator(false);
             
-            // Add assistant response to chat
+            // Add assistant response to chat (no listings in response; user clicks "View listings" to see them)
             const responseText = data.response || data.message || "I'm sorry, I couldn't process your request at this time.";
             addMessage(responseText, 'assistant');
             
-            // Update the listing count indicator if available
-            if (data.listing_count) {
-                console.log("Updating listing count:", data.listing_count);
-                updateListingCount(data.listing_count);
-            }
+            // Update "View listings (N)" button: count and URL with current filters
+            updateViewListingsButton(data.listing_count, data.filter_state || {});
             
-            // Find the last message element (the one we just added)
-            const lastMessage = document.querySelector('#chatMessages .message:last-child .message-content');
-            
-            // Check if listings are included in the response AND lastMessage exists
-            if (data.listings && data.listings.length > 0 && lastMessage) {
-                console.log("Listings found:", data.listings.length);
-                console.log("First listing:", data.listings[0]);
-                
-                // Create listings element
-                const listingsElement = document.createElement('div');
-                listingsElement.className = 'listings-section';
-                listingsElement.innerHTML = formatListings(data.listings);
-                
-                // Append listings to the last message
-                lastMessage.appendChild(listingsElement);
-                console.log("Listings added to chat");
-            } else {
-                console.log("No listings in response or lastMessage not found:", 
-                           "Listings:", data.listings ? data.listings.length : 0,
-                           "lastMessage:", lastMessage ? "exists" : "null");
-            }
-            
-            // Scroll to bottom of chat
             scrollChatToBottom(100);
         })
         .catch(error => {
@@ -264,26 +223,29 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Function to update listing count indicator
-    function updateListingCount(count) {
-        const modalHeader = document.querySelector('#vectorAssistantModal .modal-header');
-        
-        // Remove existing count badge if present
-        const existingBadge = modalHeader.querySelector('.listing-count-badge');
-        if (existingBadge) {
-            existingBadge.remove();
+    // Build listings page URL from chatbot filter_state (same params the listings page accepts)
+    function buildListingsUrl(filterState) {
+        if (!filterState || typeof filterState !== 'object') {
+            return '/listings';
         }
-        
-        // Add new count badge if count is available
-        if (count !== null && count !== undefined) {
-            const countBadge = document.createElement('div');
-            countBadge.classList.add('listing-count-badge', 'ms-auto', 'badge', 'bg-info');
-            countBadge.textContent = `${count} matching listings`;
-            
-            // Insert before the close button
-            const closeButton = modalHeader.querySelector('.btn-close');
-            modalHeader.insertBefore(countBadge, closeButton);
-        }
+        const params = new URLSearchParams();
+        Object.keys(filterState).forEach(function(key) {
+            var val = filterState[key];
+            if (val !== undefined && val !== null && val !== '') {
+                params.set(key, String(val));
+            }
+        });
+        var qs = params.toString();
+        return qs ? '/listings?' + qs : '/listings';
+    }
+
+    // Update "View listings (N)" button: count + href from filter_state so click goes to listings with filters applied
+    function updateViewListingsButton(count, filterState) {
+        var btn = document.getElementById('viewListingsBtn');
+        var countEl = document.getElementById('viewListingsCount');
+        if (!btn || !countEl) return;
+        countEl.textContent = (count !== undefined && count !== null) ? Number(count) : 0;
+        btn.href = buildListingsUrl(filterState || {});
     }
     
     // Function to add message to chat

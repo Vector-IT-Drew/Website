@@ -326,24 +326,25 @@ def get_all_listings(address=None,
                      beds=None,
                      baths=None,
                      neighborhood=None,
+                     borough=None,
                      min_price=None,
                      max_price=None,
                      available=None,
                      portfolio=None,
-                     sort=None):
+                     sort=None,
+                     exposure=None,
+                     amenities=None,
+                     doorman=None,
+                     elevator=None,
+                     pet_friendly=None,
+                     wheelchair_access=None,
+                     smoke_free=None,
+                     laundry_in_building=None,
+                     laundry_in_unit=None,
+                     live_in_super=None,
+                     concierge=None):
     """
-    Get all listings from the external API
-
-    Args:
-        address (str, optional): Filter by address
-        unit (str, optional): Filter by unit
-        beds (int, optional): Filter by number of bedrooms
-        baths (int, optional): Filter by number of bathrooms
-        neighborhood (str, optional): Filter by neighborhood
-        min_price (int, optional): Filter by minimum price
-        max_price (int, optional): Filter by maximum price
-        available (bool, optional): Filter by availability status
-        sort (str, optional): SQL ORDER BY clause (e.g., "ORDER BY actual_rent DESC")
+    Get all listings from the external API. Supports all filters (form + chatbot View listings URL).
 
     Returns:
         list: A list of all listings with their IDs
@@ -367,6 +368,8 @@ def get_all_listings(address=None,
             params['baths'] = baths
         if neighborhood:
             params['neighborhood'] = neighborhood
+        if borough:
+            params['borough'] = borough
         if min_price is not None:
             params['min_price'] = min_price
         if max_price is not None:
@@ -375,6 +378,20 @@ def get_all_listings(address=None,
             params['available'] = True
         if sort is not None and sort != '':
             params['sort'] = sort
+        if exposure:
+            params['exposure'] = exposure
+        if amenities:
+            params['amenities'] = amenities if isinstance(amenities, str) else ','.join(str(a) for a in amenities)
+        for key, val in [
+            ('doorman', doorman), ('elevator', elevator), ('pet_friendly', pet_friendly),
+            ('wheelchair_access', wheelchair_access), ('smoke_free', smoke_free),
+            ('laundry_in_building', laundry_in_building), ('laundry_in_unit', laundry_in_unit),
+            ('live_in_super', live_in_super), ('concierge', concierge),
+        ]:
+            if val is True:
+                params[key] = 'true'
+            elif val is False:
+                params[key] = 'false'
 
         logger.debug(f"[{req_id}] API call params: {params}")
         response = requests.get(LISTINGS_API_ENDPOINT, params=params)

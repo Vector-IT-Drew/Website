@@ -173,12 +173,31 @@ def listings():
         unique_values = {"unique_neighborhoods": [], "unique_addresses": []}
         print(f"Error fetching unique values: {e}")
 
-    # Extract filter parameters from the request
+    # Extract filter parameters from the request (including chatbot View listings URL params)
     address = request.args.get('address')
     unit = request.args.get('unit')
     neighborhood = request.args.get('neighborhood')
+    borough = request.args.get('borough')
     availability = request.args.get('availability')
     portfolio = request.args.get('portfolio')
+    exposure = request.args.get('exposure')
+    amenities = request.args.get('amenities')  # comma-separated from chatbot
+
+    # Boolean filters (from URL: true/false/1/0)
+    def _bool_arg(name):
+        v = request.args.get(name)
+        if v is None or v == '':
+            return None
+        return str(v).lower() in ('1', 'true', 'yes')
+    doorman = _bool_arg('doorman')
+    elevator = _bool_arg('elevator')
+    pet_friendly = _bool_arg('pet_friendly')
+    wheelchair_access = _bool_arg('wheelchair_access')
+    smoke_free = _bool_arg('smoke_free')
+    laundry_in_building = _bool_arg('laundry_in_building')
+    laundry_in_unit = _bool_arg('laundry_in_unit')
+    live_in_super = _bool_arg('live_in_super')
+    concierge = _bool_arg('concierge')
 
     # Get min/max price as integers if provided
     min_price = None
@@ -218,17 +237,29 @@ def listings():
     # Determine sort option and map to SQL ORDER BY clause
     sort_option = request.args.get('sort', '')
 
-    # Get filtered and sorted listings from database/API
+    # Get filtered and sorted listings from database/API (all filters for chatbot + form)
     listings_data = get_all_listings(address=address,
                                      unit=unit,
                                      neighborhood=neighborhood,
+                                     borough=borough,
                                      min_price=min_price,
                                      max_price=max_price,
                                      beds=beds,
                                      baths=baths,
                                      available=available,
                                      portfolio=portfolio,
-                                     sort=sort_option)
+                                     sort=sort_option,
+                                     exposure=exposure,
+                                     amenities=amenities,
+                                     doorman=doorman,
+                                     elevator=elevator,
+                                     pet_friendly=pet_friendly,
+                                     wheelchair_access=wheelchair_access,
+                                     smoke_free=smoke_free,
+                                     laundry_in_building=laundry_in_building,
+                                     laundry_in_unit=laundry_in_unit,
+                                     live_in_super=live_in_super,
+                                     concierge=concierge)
 
     return render_template(
         'listings.html',
@@ -374,23 +405,19 @@ def chat():
             'message': assistant_message
         })
 
-        # Get the listing count if available
+        # Listing count and filter_state for "View listings" button (no listings in response; user clicks button to see them)
         listing_count = api_data.get('listing_count', 0)
+        filter_state = api_data.get('filter_state', {})
 
         # Trim history if it gets too long
         if len(session['chat_history']) > 20:
             session['chat_history'] = session['chat_history'][-20:]
 
-        # Debug the response
-        print(f"API response keys: {api_data.keys()}")
-        print(f"Listings in response: {len(api_data.get('listings', []))}")
-        print(f"Show listings flag: {api_data.get('preferences', {}).get('show_listings', False)}")
-
         return jsonify({
             'response': assistant_message,
-            'listings': api_data.get('listings', []),
+            'message': assistant_message,
             'listing_count': listing_count,
-            'show_listings': api_data.get('show_listings', api_data.get('preferences', {}).get('show_listings', False))
+            'filter_state': filter_state,
         })
 
     except requests.exceptions.Timeout:

@@ -323,6 +323,19 @@
             <div class="col-lg-11">
                 <div class="filter-panel p-3 mt-3">
                     <form action="{{ url_for('listings') }}" method="GET">
+                        <!-- Preserve chatbot/URL-only filters when form is submitted -->
+                        {% if request.args.get('borough') %}<input type="hidden" name="borough" value="{{ request.args.get('borough') }}">{% endif %}
+                        {% if request.args.get('exposure') %}<input type="hidden" name="exposure" value="{{ request.args.get('exposure') }}">{% endif %}
+                        {% if request.args.get('amenities') %}<input type="hidden" name="amenities" value="{{ request.args.get('amenities') }}">{% endif %}
+                        {% if request.args.get('doorman') %}<input type="hidden" name="doorman" value="{{ request.args.get('doorman') }}">{% endif %}
+                        {% if request.args.get('elevator') %}<input type="hidden" name="elevator" value="{{ request.args.get('elevator') }}">{% endif %}
+                        {% if request.args.get('pet_friendly') %}<input type="hidden" name="pet_friendly" value="{{ request.args.get('pet_friendly') }}">{% endif %}
+                        {% if request.args.get('wheelchair_access') %}<input type="hidden" name="wheelchair_access" value="{{ request.args.get('wheelchair_access') }}">{% endif %}
+                        {% if request.args.get('smoke_free') %}<input type="hidden" name="smoke_free" value="{{ request.args.get('smoke_free') }}">{% endif %}
+                        {% if request.args.get('laundry_in_building') %}<input type="hidden" name="laundry_in_building" value="{{ request.args.get('laundry_in_building') }}">{% endif %}
+                        {% if request.args.get('laundry_in_unit') %}<input type="hidden" name="laundry_in_unit" value="{{ request.args.get('laundry_in_unit') }}">{% endif %}
+                        {% if request.args.get('live_in_super') %}<input type="hidden" name="live_in_super" value="{{ request.args.get('live_in_super') }}">{% endif %}
+                        {% if request.args.get('concierge') %}<input type="hidden" name="concierge" value="{{ request.args.get('concierge') }}">{% endif %}
                         <div class="row">
                             <!-- First Row: Bedroom, Bathroom, Neighborhood side by side -->
 
