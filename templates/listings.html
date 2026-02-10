@@ -66,6 +66,22 @@
         position: relative;
         width: 100%; /* Ensure image uses full width */
     }
+
+    .no-images-overlay {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 0 1rem;
+        background: rgba(7, 15, 30, 0.55);
+        color: rgba(255, 255, 255, 0.95);
+        font-weight: 600;
+        letter-spacing: 0.2px;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+    }
     
     .listing-badges {
         position: absolute;
@@ -668,13 +684,20 @@
 
                         
                             {% set background_url = default_images|random %}
+                            {% set has_real_image = false %}
                             {% if listing.unit_images and (listing.unit_images|length > 0) and listing.unit_images[0] %}
                                 {% set background_url = listing.unit_images[0] %}
+                                {% set has_real_image = true %}
                             {% elif listing.building_image != '' %}
                                 {% set background_url = listing.building_image %}
+                                {% set has_real_image = true %}
                             {% endif %}
                             style="background-image: url('{{ background_url }}');"
                         
+                        {% if not has_real_image %}
+                        <div class="no-images-overlay">Photos coming soon</div>
+                        {% endif %}
+
                         <!-- Property type and features badges -->
                         <div class="listing-badges">
                             <!-- <span class="badge bg-primary">{{ listing.property_type }}</span> -->
