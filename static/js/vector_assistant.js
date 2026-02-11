@@ -34,50 +34,37 @@ document.addEventListener('DOMContentLoaded', function() {
     // Make scrolling function available globally in this scope
     window.scrollChatToBottom = scrollChatToBottom;
     
-    // Show welcome message from the API when the modal is opened
+    // When the modal is opened, always start a fresh chat (reset session and UI)
     document.getElementById('vectorAssistantModal').addEventListener('shown.bs.modal', function() {
-        if (document.getElementById('chatMessages').children.length === 0) {
-            // Show typing indicator
-            showTypingIndicator(true);
-            
-            // Send an empty message to get initial response from the API
-            fetch(`${API_ENDPOINT}/start-chat`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({}),
-                // Add timeout to prevent hanging requests
-                timeout: 30000
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Server responded with status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                // Hide typing indicator
-                showTypingIndicator(false);
-                
-                // Add assistant response to chat
-                addMessage(data.message || data.initial_message || "Hi! I'm Vector Assistant. I can help you find NYC apartments. How many bedrooms are you looking for?", 'assistant');
+        var chatMessages = document.getElementById('chatMessages');
+        if (!chatMessages) return;
+        chatMessages.innerHTML = '';
+        showTypingIndicator(true);
 
-                // View listings button: show count and link (filters applied when user narrows down)
-                updateViewListingsButton(data.listing_count, data.filter_state || {});
-                
-                // Scroll to bottom of chat with a slight delay to ensure content is fully rendered
-                scrollChatToBottom(100);
-            })
-            .catch(error => {
-                console.error('Error getting initial message:', error);
-                showTypingIndicator(false);
-                addMessage("I'm sorry, I encountered an error connecting to the assistant. Please try refreshing the page or try again later.", 'assistant');
-                scrollChatToBottom(100);
-            });
-        }
-        
-        // Auto-focus the input field
+        fetch(`${API_ENDPOINT}/start-chat`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({}),
+            credentials: 'include',
+            timeout: 30000
+        })
+        .then(function(response) {
+            if (!response.ok) throw new Error('Server responded with status: ' + response.status);
+            return response.json();
+        })
+        .then(function(data) {
+            showTypingIndicator(false);
+            addMessage(data.message || data.initial_message || "Hi! I'm Vector Assistant. I can help you find NYC apartments. How many bedrooms are you looking for?", 'assistant');
+            updateViewListingsButton(data.listing_count, data.filter_state || {});
+            scrollChatToBottom(100);
+        })
+        .catch(function(error) {
+            console.error('Error getting initial message:', error);
+            showTypingIndicator(false);
+            addMessage("I'm sorry, I encountered an error connecting to the assistant. Please try refreshing the page or try again later.", 'assistant');
+            scrollChatToBottom(100);
+        });
+
         document.getElementById('userMessage').focus();
     });
     
