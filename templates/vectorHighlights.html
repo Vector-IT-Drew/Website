@@ -527,7 +527,7 @@
                         <span>Greenpoint, Brooklyn</span>
                     </div>
                     
-                    <div class="gallery-container">
+                    <div class="gallery-container" id="galleryContainerGreenpoint">
                         <div class="gallery-images" id="galleryImages">
                             <img src="https://www.dropbox.com/scl/fi/ixx70uc5pmq7g0tmuhb90/BS-669-Meeker-PH-Living-Staged.png?rlkey=migt0h1q8vvu1tioaln4vrk6f&st=s3mh2jvt&dl=1" 
                                  class="gallery-image" alt="SMK Portfolio - 669 Meeker Penthouse Living Room">
@@ -623,6 +623,104 @@
                     </div>
                 </div>
         </div>
+
+        <!-- Aspen Offering Section -->
+        <div class="section-header" style="margin-top: 4rem;">
+            <div class="section-badge">
+                <i class="fas fa-crown"></i>
+                <span>Featured Partnership</span>
+            </div>
+            <h2 class="section-title">Aspen Collection</h2>
+            <p class="section-description">Full-service Upper East Side living with spacious studios, one- and two-bedroom homes, premium amenities, and minutes from the East River Esplanade.</p>
+        </div>
+
+        <!-- Aspen Portfolio Card -->
+        <div class="portfolio-card" onclick="window.location.href='{{ url_for('listings', portfolio='Aspen') }}'">
+            <div class="gallery-section">
+                <div class="location-badge">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Upper East Side, Manhattan</span>
+                </div>
+                <div class="gallery-container" id="galleryContainerAspen">
+                    <div class="gallery-images" id="galleryImagesAspen">
+                        <img src="https://placehold.co/800x600/1a2332/94a3b8?text=Aspen+Offering+1" class="gallery-image" alt="Aspen Portfolio - Building">
+                        <img src="https://placehold.co/800x600/1a2332/94a3b8?text=Aspen+Offering+2" class="gallery-image" alt="Aspen Portfolio - Amenities">
+                        <img src="https://placehold.co/800x600/1a2332/94a3b8?text=Aspen+Offering+3" class="gallery-image" alt="Aspen Portfolio - Interiors">
+                        <img src="https://placehold.co/800x600/1a2332/94a3b8?text=Aspen+Offering+4" class="gallery-image" alt="Aspen Portfolio - Garden">
+                        <img src="https://placehold.co/800x600/1a2332/94a3b8?text=Aspen+Offering+5" class="gallery-image" alt="Aspen Portfolio - Views">
+                    </div>
+                    <button class="gallery-nav prev" onclick="event.stopPropagation(); changeImageAspen(-1)" aria-label="Previous image">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="gallery-nav next" onclick="event.stopPropagation(); changeImageAspen(1)" aria-label="Next image">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <div class="gallery-indicators" id="galleryIndicatorsAspen">
+                        <div class="gallery-dot active" onclick="event.stopPropagation(); currentImageAspen(1)"></div>
+                        <div class="gallery-dot" onclick="event.stopPropagation(); currentImageAspen(2)"></div>
+                        <div class="gallery-dot" onclick="event.stopPropagation(); currentImageAspen(3)"></div>
+                        <div class="gallery-dot" onclick="event.stopPropagation(); currentImageAspen(4)"></div>
+                        <div class="gallery-dot" onclick="event.stopPropagation(); currentImageAspen(5)"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="content-section">
+                <div class="content-header">
+                    <a href="{{ url_for('listings', portfolio='Aspen') }}" class="cta-button" onclick="event.stopPropagation();">
+                        <span>Explore Listings</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <h3 class="portfolio-title">Aspen Offering</h3>
+                    <div class="rating-section">
+                        <div class="status-badges">
+                            <span class="status-badge">Exclusive</span>
+                        </div>
+                        <div class="rating-stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    <p class="portfolio-description">
+                        Upper East Side living with a full-service amenity lineup. The Aspen offers spacious studios, one-, and two-bedroom rentals — many with private terraces or balconies — plus bright layouts, oversized windows, hardwood floors, central air, and in-unit dishwashers.
+                        <br><br>
+                        Enjoy the convenience of elevators, a package room, live-in super, and parking garage. Recharge with an on-site gym, media room, and outdoor garden + patio— minutes from the East River Esplanade and nearby parks.
+                    </p>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <i class="fas fa-shield-alt feature-icon"></i>
+                        <div class="feature-content">
+                            <div class="feature-label">Security</div>
+                            <div class="feature-value">Full-Time Doorman</div>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-tshirt feature-icon"></i>
+                        <div class="feature-content">
+                            <div class="feature-label">Laundry</div>
+                            <div class="feature-value">In Building</div>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-paw feature-icon"></i>
+                        <div class="feature-content">
+                            <div class="feature-label">Pets</div>
+                            <div class="feature-value">Pet Friendly</div>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-tree feature-icon"></i>
+                        <div class="feature-content">
+                            <div class="feature-label">Outdoor</div>
+                            <div class="feature-value">Garden & Patio</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
 
@@ -666,16 +764,42 @@ let autoAdvanceInterval = setInterval(() => {
     changeImage(1);
 }, 6000);
 
-// Pause auto-advance on hover
-document.querySelector('.gallery-container').addEventListener('mouseenter', () => {
+// Pause auto-advance on hover (Greenpoint)
+document.getElementById('galleryContainerGreenpoint').addEventListener('mouseenter', () => {
     clearInterval(autoAdvanceInterval);
 });
+document.getElementById('galleryContainerGreenpoint').addEventListener('mouseleave', () => {
+    autoAdvanceInterval = setInterval(() => changeImage(1), 6000);
+});
 
-// Resume auto-advance when not hovering
-document.querySelector('.gallery-container').addEventListener('mouseleave', () => {
-    autoAdvanceInterval = setInterval(() => {
-        changeImage(1);
-    }, 6000);
+// Aspen gallery
+let currentImageIndexAspen = 0;
+const totalImagesAspen = 5;
+
+function changeImageAspen(direction) {
+    currentImageIndexAspen += direction;
+    if (currentImageIndexAspen >= totalImagesAspen) currentImageIndexAspen = 0;
+    else if (currentImageIndexAspen < 0) currentImageIndexAspen = totalImagesAspen - 1;
+    updateGalleryAspen();
+}
+
+function currentImageAspen(index) {
+    currentImageIndexAspen = index - 1;
+    updateGalleryAspen();
+}
+
+function updateGalleryAspen() {
+    const galleryImages = document.getElementById('galleryImagesAspen');
+    const indicators = document.querySelectorAll('#galleryIndicatorsAspen .gallery-dot');
+    if (!galleryImages || !indicators.length) return;
+    galleryImages.style.transform = `translateX(${-currentImageIndexAspen * 100}%)`;
+    indicators.forEach((dot, index) => dot.classList.toggle('active', index === currentImageIndexAspen));
+}
+
+let autoAdvanceIntervalAspen = setInterval(() => changeImageAspen(1), 6000);
+document.getElementById('galleryContainerAspen').addEventListener('mouseenter', () => clearInterval(autoAdvanceIntervalAspen));
+document.getElementById('galleryContainerAspen').addEventListener('mouseleave', () => {
+    autoAdvanceIntervalAspen = setInterval(() => changeImageAspen(1), 6000);
 });
 </script>
 
