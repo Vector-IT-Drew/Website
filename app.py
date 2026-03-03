@@ -159,6 +159,8 @@ def serve_lovable_uploads(filename):
 @app.route('/about')
 def about():
     """About Us page for Vector New York"""
+    print('DASH_SERVICES_ENDPOINT', DASH_SERVICES_ENDPOINT)
+    print('about page accessed', datetime.datetime.now())
     return render_template('about.html', DASH_SERVICES_ENDPOINT=DASH_SERVICES_ENDPOINT)
 
 @app.route('/listings')
