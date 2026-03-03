@@ -331,7 +331,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Create the listing card with a clickable link
             listingsHTML += `
-                <a href="https://vectorny.com/listings/${listingId}" target="_blank" style="text-decoration: none; color: inherit; cursor: pointer;">
+                <a href="https://www.vectorny.com/listings/${listingId}" target="_blank" style="text-decoration: none; color: inherit; cursor: pointer;">
                     <div class="listing-card" style="display: flex; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.1); background: white; max-width: 100%; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 6px 12px rgba(0,0,0,0.15)';" onmouseout="this.style.transform=''; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.1)';">
                         <div class="listing-image" style="width: 120px; min-width: 120px; height: 120px; overflow: hidden; position: relative;">
                             <img src="${imageUrl}" alt="${listing.address} ${listing.unit}" 
