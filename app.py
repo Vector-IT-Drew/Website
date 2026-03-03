@@ -533,7 +533,7 @@ def clear_session_on_new_visit():
 
 @app.route('/payment-success')
 def payment_success():
-    # Get parameters from URL
+    # Get parameters from URL.
     stripe_total = request.args.get('stripe_total', '0')
     payment_method = request.args.get('payment_method', 'card')
     address = request.args.get('address', '')
