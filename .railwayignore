@@ -1,0 +1,10 @@
+# Not used at runtime — Flask serves pre-built React from react-pages/smk/build
+node_modules/
+package.json
+package-lock.json
+
+venv/
+__pycache__/
+*.pyc
+.env
+.git/
