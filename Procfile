@@ -1,1 +1,1 @@
-web: echo $PATH && export PATH=$PATH:$(python -m site --user-base)/bin && gunicorn app:app
+web: gunicorn --bind 0.0.0.0:$PORT --timeout 120 --workers 2 app:app
