@@ -1,50 +1,136 @@
-# Website — Docker (Railway + local)
+# Vector Website — Docker setup
 
-The site runs as a **Python/Flask** container. Railway builds from `Dockerfile` (not Nixpacks).
+This folder deploys as a **Docker image** (Flask + gunicorn). Railway does **not** use Nixpacks anymore.
 
-## One-time: install Docker
+## Files that matter
 
-- **Mac:** [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-- After install, open Docker Desktop and wait until it says “Running”.
+| File | Role |
+|------|------|
+| `Dockerfile` | How the image is built |
+| `.dockerignore` | What is excluded from the image |
+| `docker-compose.yml` | Easy local run |
+| `railway.json` | Tells Railway: `builder: DOCKERFILE` |
+| `scripts/run-local-docker.sh` | Same as compose, one command |
 
-## Run locally (pick one)
+There is **no** `nixpacks.toml` in this repo root (removed on purpose).
 
-### Option A — script
+---
+
+## 1. Code layout (already done)
+
+- Python app entry: `app.py`
+- Dependencies: `requirements.txt`
+- Production server: gunicorn in `Dockerfile` `CMD`
+- Port **8080** inside the container (`PORT` env; Railway public networking uses 8080)
+
+---
+
+## 2. Run locally with Docker Desktop
+
+### Install (one time)
+
+1. Download [Docker Desktop for Mac](https://www.docker.com/products/docker-desktop/)
+2. Install and open **Docker Desktop**
+3. Wait until the whale icon says **Running**
+
+### Run the site
+
+**Easiest — Docker Desktop + terminal**
 
 ```bash
-cd Website
-./scripts/run-local-docker.sh
-```
-
-Open **http://127.0.0.1:5005**
-
-### Option B — docker compose
-
-```bash
-cd Website
+cd /Users/drewwood/Desktop/Vector/Website
 docker compose up --build
 ```
 
-### Option C — manual
+Or:
 
 ```bash
-cd Website
-docker build -t vector-website:local .
-docker run --rm -p 5005:8080 -e PORT=8080 vector-website:local
+./scripts/run-local-docker.sh
 ```
 
-Optional: copy `.env` into `Website/` for API keys (loaded automatically by the script / compose).
+Open in browser: **http://127.0.0.1:5005**
 
-## Deploy to Railway
+Stop: `Ctrl+C` in the terminal, or in Docker Desktop → **Containers** → stop `website-web-1`.
 
-Push to GitHub (`main`). Railway uses `railway.json` → `DOCKERFILE` → root `Dockerfile`.
+### Optional env vars
 
-Build logs should show `FROM python:3.11-slim` and `pip install`, **not** Nixpacks `nodejs_18` only.
+```bash
+cp .env.example .env   # if you have secrets for Dash API etc.
+# edit .env, then run compose again
+```
 
-## Stack reminder
+### See the image in Docker Desktop
 
-| Piece | Role |
-|-------|------|
-| **GitHub** | Source; push triggers Railway |
-| **Railway** | Builds Docker image, runs gunicorn on `$PORT` (8080) |
-| **GoDaddy** | DNS only — point domains at Railway |
+After `docker compose up --build`:
+
+- **Images** → `website-web` or `vector-website:local`
+- **Containers** → running container → logs / port `5005:8080`
+
+---
+
+## 3. GitHub → Railway (Docker deploy)
+
+### Push code
+
+```bash
+cd /Users/drewwood/Desktop/Vector/Website
+git status
+git add -A
+git commit -m "your message"
+git push origin main
+```
+
+Railway (connected to `Vector-IT-Drew/Website`) builds from **`Dockerfile`** automatically when `railway.json` is on `main`.
+
+### Railway dashboard — fix Nixpacks overrides
+
+In Railway → **Website** service:
+
+1. **Settings → Build**
+   - Builder should be **Dockerfile** (from repo `railway.json`)
+   - Dockerfile path: `Dockerfile`
+2. **Settings → Deploy**
+   - **Remove** any custom **Start Command** (leave empty so Docker `CMD` runs)
+   - Do **not** set a Nixpacks start command like `gunicorn app:app` alone
+3. **Settings → Networking**
+   - Target port: **8080**
+
+### Good build log (Docker)
+
+You should see:
+
+```
+FROM python:3.11-slim
+RUN pip install --no-cache-dir -r requirements.txt
+```
+
+You should **not** see:
+
+```
+Nixpacks v1.41.0
+nodejs_18, npm-9_x
+```
+
+### Domains (GoDaddy)
+
+| Domain | Fix |
+|--------|-----|
+| `www.vectorny.com` | DNS at GoDaddy → Railway records |
+| `vectorny.com` | Apex DNS at GoDaddy (Railway “Show DNS records”) |
+
+Docker does not configure GoDaddy — only DNS records there.
+
+---
+
+## Quick commands
+
+```bash
+# Build only
+docker build -t vector-website:local .
+
+# Run without compose
+docker run --rm -p 5005:8080 -e PORT=8080 vector-website:local
+
+# Shell inside container (debug)
+docker run --rm -it -p 5005:8080 -e PORT=8080 vector-website:local sh
+```

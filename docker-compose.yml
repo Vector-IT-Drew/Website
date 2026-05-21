@@ -6,6 +6,6 @@ services:
     environment:
       PORT: "8080"
       SESSION_SECRET: "local-dev-secret"
-    env_file:
-      - path: .env
-        required: false
+    # Create .env from .env.example if you need secrets locally
+    # env_file:
+    #   - .env
