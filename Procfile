@@ -1,1 +1,1 @@
-web: python -m gunicorn --bind 0.0.0.0:$PORT app:app
+web: echo $PATH && export PATH=$PATH:$(python -m site --user-base)/bin && gunicorn app:app
