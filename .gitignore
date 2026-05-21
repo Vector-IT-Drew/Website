@@ -1,33 +1,30 @@
-node_modules/
-package-lock.json
-
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
-
-.env.local
 venv/
-.vscode/
-.idea/
-.env
-
+.venv/
 *.so
 .Python
-
-# Python build directories
-build/
-# But allow React build directories
-!react-pages/*/build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
 *.egg-info/
 .installed.cfg
 *.egg
+build/
+!react-pages/*/build/
+
+# Env / IDE
+.env
+.env.local
+.vscode/
+.idea/
+
+# Node (SMK uses react-pages/smk/package.json — not repo root)
+node_modules/
+package-lock.json
+
+# Legacy / local-only
+attached_assets/
+archive/
+
+# OS
+.DS_Store

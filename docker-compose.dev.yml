@@ -1,0 +1,14 @@
+# Fast local dev: code is mounted into the container — no rebuild for most edits.
+# First time: docker compose -f docker-compose.dev.yml up --build
+# After that: docker compose -f docker-compose.dev.yml up
+services:
+  web:
+    build: .
+    ports:
+      - "5005:8080"
+    environment:
+      PORT: "8080"
+      SESSION_SECRET: "local-dev-secret"
+    volumes:
+      - .:/app
+    command: ["sh", "-c", "gunicorn --bind 0.0.0.0:${PORT} --reload --workers 1 app:app"]
