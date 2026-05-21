@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" width="1200" height="400">
+  <style>
+    .building {
+      fill: #0b1527;
+    }
+    .background {
+      fill: #080e1b;
+    }
+    .window {
+      fill: rgba(255, 255, 255, 0.15);
+    }
+    .accent {
+      fill: #2a7fff;
+    }
+  </style>
+  
+  <!-- Background -->
+  <rect class="background" x="0" y="0" width="1200" height="400"/>
+  
+  <!-- Buildings - Skyline silhouette -->
+  <!-- Left section -->
+  <polygon class="building" points="0,400 0,250 30,250 30,220 60,220 60,190 90,190 90,230 120,230 120,210 150,210 150,180 180,180 180,150 210,150 210,170 240,170 240,150 270,150 270,190 300,190 300,230 330,230 330,270 360,270 360,400"/>
+  
+  <!-- Central Downtown -->
+  <polygon class="building" points="360,400 360,220 380,220 380,180 400,180 400,140 420,140 420,100 440,100 440,80 460,80 460,120 480,120 480,180 500,180 500,160 520,160 520,120 540,120 540,90 560,90 560,50 580,50 580,40 600,40 600,80 610,80 610,180 620,180 620,250 630,250 630,200 650,200 650,180 670,180 670,150 690,150 690,130 710,130 710,100 730,100 730,80 750,80 750,60 770,60 770,30 790,30 790,50 810,50 810,70 830,70 830,90 850,90 850,110 870,110 870,150 890,150 890,180 910,180 910,220 930,220 930,200 950,200 950,240 970,240 970,230 990,230 990,220 1010,220 1010,240 1030,240 1030,400"/>
+  
+  <!-- Right section -->
+  <polygon class="building" points="1030,400 1030,210 1050,210 1050,170 1070,170 1070,190 1090,190 1090,220 1110,220 1110,200 1130,200 1130,230 1150,230 1150,260 1170,260 1170,240 1190,240 1190,280 1200,280 1200,400"/>
+  
+  <!-- Freedom Tower -->
+  <polygon class="building" points="810,70 810,30 815,20 820,30 820,70"/>
+  
+  <!-- Windows -->
+  <!-- Left section windows -->
+  <rect class="window" x="40" y="230" width="10" height="10"/>
+  <rect class="window" x="70" y="200" width="10" height="10"/>
+  <rect class="window" x="100" y="240" width="10" height="10"/>
+  <rect class="window" x="130" y="220" width="10" height="10"/>
+  <rect class="window" x="160" y="190" width="10" height="10"/>
+  <rect class="window" x="190" y="160" width="10" height="10"/>
+  <rect class="window" x="220" y="180" width="10" height="10"/>
+  <rect class="window" x="250" y="170" width="10" height="10"/>
+  <rect class="window" x="280" y="210" width="10" height="10"/>
+  <rect class="window" x="310" y="250" width="10" height="10"/>
+  <rect class="window" x="340" y="280" width="10" height="10"/>
+  
+  <!-- Central section windows -->
+  <rect class="window" x="385" y="190" width="8" height="8"/>
+  <rect class="window" x="430" y="120" width="8" height="8"/>
+  <rect class="window" x="450" y="90" width="8" height="8"/>
+  <rect class="window" x="505" y="170" width="8" height="8"/>
+  <rect class="window" x="530" y="130" width="8" height="8"/>
+  <rect class="window" x="565" y="100" width="8" height="8"/>
+  <rect class="window" x="590" y="90" width="8" height="8"/>
+  <rect class="window" x="615" y="190" width="8" height="8"/>
+  <rect class="window" x="635" y="210" width="8" height="8"/>
+  <rect class="window" x="660" y="190" width="8" height="8"/>
+  <rect class="window" x="680" y="160" width="8" height="8"/>
+  <rect class="window" x="700" y="140" width="8" height="8"/>
+  <rect class="window" x="720" y="110" width="8" height="8"/>
+  <rect class="window" x="740" y="90" width="8" height="8"/>
+  <rect class="window" x="760" y="70" width="8" height="8"/>
+  <rect class="window" x="780" y="60" width="8" height="8"/>
+  <rect class="window" x="815" y="40" width="5" height="5"/>
+  <rect class="window" x="805" y="80" width="8" height="8"/>
+  <rect class="window" x="825" y="100" width="8" height="8"/>
+  <rect class="window" x="845" y="120" width="8" height="8"/>
+  <rect class="window" x="865" y="160" width="8" height="8"/>
+  <rect class="window" x="885" y="190" width="8" height="8"/>
+  <rect class="window" x="905" y="230" width="8" height="8"/>
+  <rect class="window" x="925" y="210" width="8" height="8"/>
+  <rect class="window" x="945" y="250" width="8" height="8"/>
+  <rect class="window" x="965" y="240" width="8" height="8"/>
+  <rect class="window" x="985" y="230" width="8" height="8"/>
+  <rect class="window" x="1005" y="250" width="8" height="8"/>
+  <rect class="window" x="1025" y="260" width="8" height="8"/>
+  
+  <!-- Right section windows -->
+  <rect class="window" x="1045" y="220" width="10" height="10"/>
+  <rect class="window" x="1065" y="200" width="10" height="10"/>
+  <rect class="window" x="1085" y="230" width="10" height="10"/>
+  <rect class="window" x="1105" y="210" width="10" height="10"/>
+  <rect class="window" x="1125" y="240" width="10" height="10"/>
+  <rect class="window" x="1145" y="270" width="10" height="10"/>
+  <rect class="window" x="1165" y="250" width="10" height="10"/>
+  <rect class="window" x="1185" y="290" width="10" height="10"/>
+  
+  <!-- Accent lights -->
+  <rect class="accent" x="565" y="60" width="2" height="2"/>
+  <rect class="accent" x="815" y="10" width="2" height="2"/>
+  <rect class="accent" x="720" y="80" width="2" height="2"/>
+  <rect class="accent" x="780" y="40" width="2" height="2"/>
+  <rect class="accent" x="940" y="220" width="2" height="2"/>
+  <rect class="accent" x="1080" y="200" width="2" height="2"/>
+</svg>

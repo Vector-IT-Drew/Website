@@ -1,0 +1,256 @@
+{% extends 'base.html' %}
+
+{% block title %}Apply for {{ listing.address }}, Unit {{ listing.unit }} - Vector New York{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="listing-hero position-relative" style="height: 40vh; background-color: var(--primary-dark);">
+    <div class="position-absolute w-100 h-100 top-0 start-0" style="background-image: url('{{ url_for('static', filename='images/about/nyc-skyline-dark.svg') }}'); background-size: cover; background-position: bottom; opacity: 0.4;"></div>
+    
+    <div class="container h-100 d-flex align-items-center position-relative">
+        <div class="row w-100">
+            <div class="col-lg-10 mx-auto">
+                <h1 class="display-4 fw-bold text-white mb-2">Apply for this Property</h1>
+                <p class="text-white opacity-75 lead">{{ listing.address }}, Unit {{ listing.unit }}, {{ listing.city }}</p>
+                
+                <div class="mt-4">
+                    <a href="{{ url_for('listing_detail', listing_id=listing.unit_id) }}" class="btn btn-outline-light px-4">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Listing
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="position-absolute bottom-0 w-100" style="height: 100px; background: linear-gradient(to top, var(--primary), transparent);"></div>
+</section>
+
+<!-- Application Form Section -->
+<section class="py-5" style="background-color: var(--primary);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card application-form-card">
+                    <div class="card-body p-4 p-md-5">
+                        <div class="row mb-4">
+                            <div class="col-lg-8">
+                                <h2 class="mb-3">Application Form</h2>
+                                <p class="text-muted mb-0">Please fill out the form below to apply for this property. We'll contact you shortly after your application is received.</p>
+                            </div>
+                            <div class="col-lg-4 text-lg-end">
+                                <div class="property-details p-3 rounded">
+                                    <h5 class="mb-3">Property Details</h5>
+                                    <p class="mb-2"><strong>Address:</strong> {{ listing.address }}</p>
+                                    <p class="mb-2"><strong>Unit:</strong> {{ listing.unit }}</p>
+                                    <p class="mb-2"><strong>Price:</strong> ${{ "{:,.0f}".format(listing.actual_rent) }}</p>
+                                    <p class="mb-2"><strong>Bedrooms:</strong> {{ listing.beds }}</p>
+                                    <p class="mb-0"><strong>Bathrooms:</strong> {{ listing.baths }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <form method="POST" action="{{ url_for('apply', listing_id=listing.unit_id) }}">
+                            {{ form.csrf_token }}
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-group">
+                                        {{ form.first_name.label(class='form-label') }}
+                                        {{ form.first_name(class='form-control') }}
+                                        {% if form.first_name.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.first_name.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-group">
+                                        {{ form.last_name.label(class='form-label') }}
+                                        {{ form.last_name(class='form-control') }}
+                                        {% if form.last_name.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.last_name.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-group">
+                                        {{ form.email.label(class='form-label') }}
+                                        {{ form.email(class='form-control') }}
+                                        {% if form.email.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.email.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-group">
+                                        {{ form.phone.label(class='form-label') }}
+                                        {{ form.phone(class='form-control') }}
+                                        {% if form.phone.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.phone.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-group">
+                                        {{ form.move_in_date.label(class='form-label') }}
+                                        {{ form.move_in_date(class='form-control', type='date') }}
+                                        {% if form.move_in_date.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.move_in_date.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-group">
+                                        {{ form.lease_term.label(class='form-label') }}
+                                        {{ form.lease_term(class='form-select') }}
+                                        {% if form.lease_term.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.lease_term.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group mb-4">
+                                {{ form.message.label(class='form-label') }}
+                                {{ form.message(class='form-control', rows=5, placeholder='Any special requirements or questions?') }}
+                                {% if form.message.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.message.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="form-check mb-4">
+                                {{ form.agree_terms(class='form-check-input') }}
+                                {{ form.agree_terms.label(class='form-check-label') }}
+                                <div class="form-text mt-1">By checking this box, you agree to the terms of our application process and consent to a background check.</div>
+                                {% if form.agree_terms.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.agree_terms.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                {{ form.submit(class='btn btn-primary btn-lg py-3', style='border-radius: 4px;') }}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Form styling */
+    .application-form-card {
+        background-color: var(--primary-dark);
+        border-radius: 8px;
+        border: none;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    }
+    
+    .form-control, .form-select {
+        background-color: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #fff;
+        border-radius: 4px;
+        padding: 0.75rem 1rem;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-color: var(--accent);
+        color: #fff;
+        box-shadow: 0 0 0 0.25rem rgba(42, 127, 255, 0.25);
+    }
+    
+    .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+    }
+    
+    .form-select {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    }
+    
+    .form-label, .form-check-label {
+        color: #fff;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-text {
+        color: rgba(255, 255, 255, 0.6);
+    }
+    
+    .invalid-feedback {
+        color: #ff6b6b;
+    }
+    
+    /* Property details card */
+    .property-details {
+        background-color: rgba(255, 255, 255, 0.05);
+        color: #fff;
+    }
+    
+    /* Button styling */
+    .btn-primary {
+        background-color: var(--accent);
+        border-color: var(--accent);
+        box-shadow: 0 4px 15px rgba(42, 127, 255, 0.3);
+    }
+    
+    .btn-primary:hover {
+        background-color: #1e5bb8;
+        border-color: #1e5bb8;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(42, 127, 255, 0.4);
+    }
+    
+    .btn-outline-light {
+        border-width: 2px;
+        box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+    }
+    
+    .btn-outline-light:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 255, 255, 0.15);
+    }
+</style>
+{% endblock %}

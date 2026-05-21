@@ -1,0 +1,4 @@
+    <div class="scroll-down-indicator" role="button" tabindex="0">
+        <div class="scroll-arrow"></div>
+        <span class="small text-white-50">Scroll Down</span>
+    </div>
