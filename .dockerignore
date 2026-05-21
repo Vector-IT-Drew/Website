@@ -1,0 +1,15 @@
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+.git/
+.gitignore
+.env.local
+.idea/
+.vscode/
+node_modules/
+*.md
+attached_assets/
+replit.nix
+uv.lock
+pyproject.toml

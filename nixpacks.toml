@@ -1,7 +1,0 @@
-# Flask site: ensure Python + pip run on every rebuild (Nixpacks v1.41 was Node-only
-# when root package.json was in the upload).
-[phases.setup]
-nixPkgs = ["..."]
-
-[phases.install]
-cmds = ["pip install -r requirements.txt"]

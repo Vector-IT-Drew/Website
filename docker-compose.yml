@@ -1,0 +1,11 @@
+services:
+  web:
+    build: .
+    ports:
+      - "5005:8080"
+    environment:
+      PORT: "8080"
+      SESSION_SECRET: "local-dev-secret"
+    env_file:
+      - path: .env
+        required: false
