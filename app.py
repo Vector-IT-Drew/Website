@@ -7,6 +7,7 @@ from flask import Flask, render_template, redirect, url_for, flash, request, ses
 from werkzeug.security import generate_password_hash, check_password_hash
 from forms import LoginForm, ListingForm, ApplicationForm
 from database import get_listing, get_all_listings, filter_listings_by_budget, filter_listings_by_bedrooms, filter_listings_by_location
+from tour_schedule import build_tour_schedule_url
 from functools import wraps
 import markdown2
 from dotenv import load_dotenv
@@ -42,8 +43,31 @@ def from_json(value):
 
 # Add context processor to inject current date into all templates
 @app.context_processor
-def inject_now():
-    return {'now': datetime.datetime.now()}
+def inject_globals():
+    def tour_schedule_url(unit_id=None, address_id=None, email_address=None):
+        return build_tour_schedule_url(
+            DASH_SERVICES_ENDPOINT,
+            unit_id=unit_id,
+            address_id=address_id,
+            email_address=email_address,
+        )
+
+    return {
+        'now': datetime.datetime.now(),
+        'DASH_SERVICES_ENDPOINT': DASH_SERVICES_ENDPOINT,
+        'tour_schedule_general_url': tour_schedule_url(),
+        'tour_schedule_url': tour_schedule_url,
+    }
+
+
+@app.template_filter('tour_schedule_url')
+def tour_schedule_url_filter(_unused=None, unit_id=None, address_id=None, email_address=None):
+    return build_tour_schedule_url(
+        DASH_SERVICES_ENDPOINT,
+        unit_id=unit_id,
+        address_id=address_id,
+        email_address=email_address,
+    )
 
 
 # Admin credentials (in a real app, these would be stored securely)
@@ -287,11 +311,25 @@ def listings():
                                      live_in_super=live_in_super,
                                      concierge=concierge)
 
+    building_address_id = None
+    building_portfolio_email = None
+    if address and listings_data:
+        first = listings_data[0]
+        building_address_id = first.get('address_id')
+        building_portfolio_email = first.get('portfolio_email')
+
     return render_template(
         'listings.html',
         listings=listings_data,
         unique_neighborhoods=unique_values.get('unique_neighborhoods', []),
-        unique_addresses=unique_values.get('unique_addresses', [])
+        unique_addresses=unique_values.get('unique_addresses', []),
+        building_address_id=building_address_id,
+        building_portfolio_email=building_portfolio_email,
+        building_tour_url=build_tour_schedule_url(
+            DASH_SERVICES_ENDPOINT,
+            address_id=building_address_id,
+            email_address=building_portfolio_email,
+        ) if building_address_id else None,
     )
 
 @app.route('/listings/<listing_id>')

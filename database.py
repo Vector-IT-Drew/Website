@@ -304,7 +304,9 @@ def get_listing(listing_id):
                     "longitude":
                     item.get('longitude'),
                     "portfolio_email":
-                    item.get('portfolio_email')
+                    item.get('portfolio_email'),
+                    "address_id":
+                    item.get('address_id')
                 }
                 return listing
             else:
@@ -473,7 +475,9 @@ def get_all_listings(address=None,
                 "building_amenities": safe_json_loads(item.get('building_amenities'), []),
                 "building_image": item.get('building_image', ''),
                 "expiry": item.get('expiry', '-'),
-                "move_out": item.get('move_out', '-')
+                "move_out": item.get('move_out', '-'),
+                "portfolio_email": item.get('portfolio_email'),
+                "address_id": item.get('address_id')
             }
             listings.append(listing)
 

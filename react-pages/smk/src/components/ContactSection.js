@@ -1,5 +1,7 @@
 import { Button } from './ui/button';
 
+const DASH_HOST = 'https://dash-production-b25c.up.railway.app';
+
 export const ContactSection = () => {
   return (
     <section id="contact" className="py-24 bg-zinc-800">
@@ -24,7 +26,7 @@ export const ContactSection = () => {
           <Button 
             size="lg"
             className="border-2 border-white bg-transparent text-white hover:bg-white hover:text-zinc-800 px-8 py-3 tracking-wide transition-all hover:scale-105"
-            onClick={() => window.open('https://dash-production-b25c.up.railway.app/tour-schedule?email_address=Brooklyn@VectorNY.com', '_blank')}
+            onClick={() => window.open(`${DASH_HOST}/tour-schedule?email_address=${encodeURIComponent('Brooklyn@VectorNY.com')}`, '_blank')}
           >
             SCHEDULE A TOUR
           </Button>
