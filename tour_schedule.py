@@ -8,7 +8,8 @@ def build_tour_schedule_url(dash_host, unit_id=None, address_id=None, email_addr
     Build a Dash tour-schedule URL.
 
     Priority: unit_id (listing page) > address_id (building page) > general CTA.
-    Optional email_address overrides portfolio routing.
+    Dash resolves portfolio email from unit_id/address_id; only pass email_address
+    as an explicit override when no ID is available (e.g. portfolio-only CTAs).
     """
     base = f"{dash_host.rstrip('/')}/tour-schedule"
     params = {}

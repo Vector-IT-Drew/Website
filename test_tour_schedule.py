@@ -4,8 +4,13 @@ DASH_HOST = 'https://dash.example.com'
 
 
 def test_listing_page_url():
-    url = build_tour_schedule_url(DASH_HOST, unit_id=344, email_address='leasing@portfolio.com')
-    assert url == 'https://dash.example.com/tour-schedule?unit_id=344&email_address=leasing%40portfolio.com'
+    url = build_tour_schedule_url(DASH_HOST, unit_id=344)
+    assert url == 'https://dash.example.com/tour-schedule?unit_id=344'
+
+
+def test_optional_email_override():
+    url = build_tour_schedule_url(DASH_HOST, email_address='leasing@portfolio.com')
+    assert url == 'https://dash.example.com/tour-schedule?email_address=leasing%40portfolio.com'
 
 
 def test_building_page_url():

@@ -312,11 +312,8 @@ def listings():
                                      concierge=concierge)
 
     building_address_id = None
-    building_portfolio_email = None
     if address and listings_data:
-        first = listings_data[0]
-        building_address_id = first.get('address_id')
-        building_portfolio_email = first.get('portfolio_email')
+        building_address_id = listings_data[0].get('address_id')
 
     return render_template(
         'listings.html',
@@ -324,11 +321,9 @@ def listings():
         unique_neighborhoods=unique_values.get('unique_neighborhoods', []),
         unique_addresses=unique_values.get('unique_addresses', []),
         building_address_id=building_address_id,
-        building_portfolio_email=building_portfolio_email,
         building_tour_url=build_tour_schedule_url(
             DASH_SERVICES_ENDPOINT,
             address_id=building_address_id,
-            email_address=building_portfolio_email,
         ) if building_address_id else None,
     )
 
