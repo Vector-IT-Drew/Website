@@ -312,6 +312,245 @@
     .portfolio-filter-inline .portfolio-toggle-container {
         margin-top: 0;
     }
+
+    /* v2 listing preview modal */
+    .listing-card--preview {
+        cursor: pointer;
+    }
+
+    .listing-card--preview:focus-visible {
+        outline: 2px solid rgba(42, 127, 255, 0.7);
+        outline-offset: 3px;
+    }
+
+    .listing-preview-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 2000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.25rem;
+        background: rgba(4, 12, 22, 0.72);
+        backdrop-filter: blur(10px);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.28s ease;
+    }
+
+    .listing-preview-overlay.is-open {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .listing-preview-modal {
+        width: min(980px, 100%);
+        max-height: min(88vh, 720px);
+        display: grid;
+        grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+        background: linear-gradient(160deg, rgba(13, 25, 45, 0.98), rgba(7, 15, 30, 0.98));
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 28px 80px rgba(0, 0, 0, 0.55);
+        transform: translateY(16px) scale(0.985);
+        transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .listing-preview-overlay.is-open .listing-preview-modal {
+        transform: translateY(0) scale(1);
+    }
+
+    .listing-preview-media {
+        position: relative;
+        min-height: 100%;
+        background: #0b1a2e center/cover no-repeat;
+    }
+
+    .listing-preview-media::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(4, 12, 22, 0.05), rgba(4, 12, 22, 0.35));
+        pointer-events: none;
+    }
+
+    .listing-preview-body {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        padding: 1.6rem 1.7rem 1.4rem;
+        overflow: auto;
+    }
+
+    .listing-preview-close {
+        position: absolute;
+        top: 0.85rem;
+        right: 0.85rem;
+        width: 36px;
+        height: 36px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.04);
+        color: rgba(255, 255, 255, 0.85);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background 0.2s ease, border-color 0.2s ease;
+        z-index: 2;
+    }
+
+    .listing-preview-close:hover {
+        background: rgba(42, 127, 255, 0.18);
+        border-color: rgba(42, 127, 255, 0.4);
+    }
+
+    .listing-preview-kicker {
+        font-size: 0.78rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.55);
+        margin-bottom: 0.55rem;
+        padding-right: 2.5rem;
+    }
+
+    .listing-preview-address {
+        font-family: 'Playfair Display', Georgia, serif;
+        font-size: clamp(1.45rem, 2.2vw, 1.85rem);
+        font-weight: 600;
+        line-height: 1.2;
+        color: #fff;
+        margin-bottom: 0.45rem;
+        padding-right: 2rem;
+    }
+
+    .listing-preview-price {
+        font-family: 'Playfair Display', Georgia, serif;
+        font-size: clamp(1.55rem, 2.4vw, 2rem);
+        font-weight: 700;
+        color: #7eb3ff;
+        margin-bottom: 1.1rem;
+    }
+
+    .listing-preview-stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0.5rem;
+        padding: 0.9rem 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        margin-bottom: 1rem;
+    }
+
+    .listing-preview-stat {
+        text-align: center;
+    }
+
+    .listing-preview-stat strong {
+        display: block;
+        font-family: 'Playfair Display', Georgia, serif;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #fff;
+        line-height: 1.1;
+    }
+
+    .listing-preview-stat span {
+        display: block;
+        margin-top: 0.2rem;
+        font-size: 0.65rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .listing-preview-summary {
+        color: rgba(255, 255, 255, 0.78);
+        font-size: 0.95rem;
+        line-height: 1.55;
+        margin-bottom: 0.85rem;
+    }
+
+    .listing-preview-highlights {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 1.25rem;
+        flex: 1;
+    }
+
+    .listing-preview-highlights li {
+        padding: 0.55rem 0;
+        border-bottom: 1px dotted rgba(255, 255, 255, 0.16);
+        color: rgba(255, 255, 255, 0.82);
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+
+    .listing-preview-highlights li:last-child {
+        border-bottom: none;
+    }
+
+    .listing-preview-actions {
+        display: grid;
+        gap: 0.65rem;
+        margin-top: auto;
+    }
+
+    .listing-preview-actions .btn {
+        font-family: sans-serif;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        font-size: 0.82rem;
+        font-weight: 600;
+        padding: 0.8rem 1rem;
+        border-radius: 6px;
+    }
+
+    .listing-preview-tour {
+        background: #e8eef7;
+        color: #07101d;
+        border: 1px solid #e8eef7;
+    }
+
+    .listing-preview-tour:hover {
+        background: #ffffff;
+        color: #07101d;
+        border-color: #ffffff;
+    }
+
+    .listing-preview-more {
+        background: transparent;
+        color: #fff;
+        border: 1px solid rgba(42, 127, 255, 0.45);
+    }
+
+    .listing-preview-more:hover {
+        background: rgba(42, 127, 255, 0.16);
+        color: #fff;
+        border-color: rgba(42, 127, 255, 0.7);
+    }
+
+    body.listing-preview-open {
+        overflow: hidden;
+    }
+
+    @media (max-width: 820px) {
+        .listing-preview-modal {
+            grid-template-columns: 1fr;
+            max-height: min(92vh, 860px);
+        }
+
+        .listing-preview-media {
+            min-height: 220px;
+            max-height: 260px;
+        }
+
+        .listing-preview-stats {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            row-gap: 0.75rem;
+        }
+    }
 </style>
 {% endblock %}
 
@@ -669,19 +908,72 @@
         {% if listings %}
         <div class="row g-4">
             {% for listing in listings %}
+            {% set default_images = ['https://dl.dropboxusercontent.com/scl/fi/fy2wl340lre6y2gm84m13/img-coming-soon-2.jpeg?rlkey=xkao9jz2p6mrznqhb8e3hf7w6&st=k3gwz5kj&dl=0', 'https://dl.dropboxusercontent.com/scl/fi/5kqjpn1lqdt6p73zo5xkj/img-coming-soon-3.jpeg?rlkey=ngk4iu9pvl6jusqps220pi2uv&st=ttncu3xt&dl=0', 'https://dl.dropboxusercontent.com/scl/fi/in5oflurzeui3k61z2vh6/img-coming-soon-4.jpeg?rlkey=rp9ucjxfih59yldqgsib9ukdl&st=x5td7577&dl=0', 'https://dl.dropboxusercontent.com/scl/fi/erhz52z0z7lskr8ru5v1h/img-coming-soon-5.jpeg?rlkey=bf8j1tpvtqb2q02tcjy0mdp3v&st=r7mtn0d7&dl=0'] %}
+            {% set background_url = default_images|random %}
+            {% if listing.unit_images and (listing.unit_images|length > 0) and listing.unit_images[0] %}
+                {% set background_url = listing.unit_images[0] %}
+            {% elif listing.building_image %}
+                {% set background_url = listing.building_image %}
+            {% endif %}
+            {% if listing.actual_rent is none %}
+                {% set price_label = 'Price on request' %}
+            {% elif listing.actual_rent == 'N/A' %}
+                {% set price_label = listing.actual_rent %}
+            {% else %}
+                {% set price_label = '${:,.0f}'.format(listing.actual_rent) %}
+            {% endif %}
+            {% if listing.beds == 0 or listing.beds == '0' %}
+                {% set beds_label = 'Studio' %}
+                {% set beds_stat = 'Studio' %}
+            {% elif listing.beds and listing.beds != 'N/A' %}
+                {% set beds_label = (listing.beds|string ~ ' Bed') ~ ('' if listing.beds == 1 or listing.beds == '1' else 's') %}
+                {% set beds_stat = listing.beds %}
+            {% else %}
+                {% set beds_label = 'N/A' %}
+                {% set beds_stat = '—' %}
+            {% endif %}
+            {% if listing.baths and listing.baths != 'N/A' %}
+                {% set baths_label = (listing.baths|string ~ ' Bath') ~ ('' if listing.baths == 1 or listing.baths == '1' else 's') %}
+                {% set baths_stat = listing.baths %}
+            {% else %}
+                {% set baths_label = 'N/A' %}
+                {% set baths_stat = '—' %}
+            {% endif %}
+            {% if listing.sqft and listing.sqft != 'N/A' and listing.sqft != 0 %}
+                {% set sqft_stat = "{:,.0f}".format(listing.sqft|float) %}
+            {% else %}
+                {% set sqft_stat = '—' %}
+            {% endif %}
+            {% set exposure_stat = listing.exposure if listing.exposure and listing.exposure|string not in ['0', '', '-', 'nan', 'N/A'] else '—' %}
+            {% set location_label = listing.neighborhood if listing.neighborhood and listing.neighborhood != '-' else (listing.borough if listing.borough and listing.borough != '-' else 'New York') %}
+            {% if listing.borough and listing.borough != '-' and listing.neighborhood and listing.neighborhood != '-' and listing.borough|lower not in listing.neighborhood|lower %}
+                {% set location_label = listing.neighborhood ~ ', ' ~ listing.borough %}
+            {% endif %}
+            {% set preview_payload = {
+                'unitId': listing.unit_id,
+                'imageUrl': background_url,
+                'location': location_label,
+                'address': listing.address ~ (', #' ~ listing.unit if listing.unit and listing.unit != '-' else ''),
+                'price': price_label ~ (' / mo' if price_label not in ['Price on request', 'N/A'] else ''),
+                'beds': beds_stat,
+                'baths': baths_stat,
+                'sqft': sqft_stat,
+                'exposure': exposure_stat,
+                'summary': listing.preview_summary if listing.preview_summary else '',
+                'highlights': listing.preview_highlights if listing.preview_highlights else [],
+                'detailUrl': url_for('listing_detail', listing_id=listing.unit_id),
+                'tourUrl': tour_schedule_url(unit_id=listing.unit_id)
+            } %}
             <div class="col-lg-4 col-md-6">
-                <div class="listing-card h-100 d-flex flex-column">
+                <div class="listing-card h-100 d-flex flex-column{% if request.args.get('v') == '2' %} listing-card--preview{% endif %}"
+                     {% if request.args.get('v') == '2' %}
+                     role="button"
+                     tabindex="0"
+                     data-listing-preview='{{ preview_payload|tojson }}'
+                     aria-label="Preview {{ listing.address }}{% if listing.unit %}, #{{ listing.unit }}{% endif %}"
+                     {% endif %}>
                     <!-- Image on top -->
-                    <div class="listing-img" id="listing-image-{{ loop.index }}" 
-                            {% set default_images = ['https://dl.dropboxusercontent.com/scl/fi/fy2wl340lre6y2gm84m13/img-coming-soon-2.jpeg?rlkey=xkao9jz2p6mrznqhb8e3hf7w6&st=k3gwz5kj&dl=0', 'https://dl.dropboxusercontent.com/scl/fi/5kqjpn1lqdt6p73zo5xkj/img-coming-soon-3.jpeg?rlkey=ngk4iu9pvl6jusqps220pi2uv&st=ttncu3xt&dl=0', 'https://dl.dropboxusercontent.com/scl/fi/in5oflurzeui3k61z2vh6/img-coming-soon-4.jpeg?rlkey=rp9ucjxfih59yldqgsib9ukdl&st=x5td7577&dl=0', 'https://dl.dropboxusercontent.com/scl/fi/erhz52z0z7lskr8ru5v1h/img-coming-soon-5.jpeg?rlkey=bf8j1tpvtqb2q02tcjy0mdp3v&st=r7mtn0d7&dl=0'] %}
-
-                        
-                            {% set background_url = default_images|random %}
-                            {% if listing.unit_images and (listing.unit_images|length > 0) and listing.unit_images[0] %}
-                                {% set background_url = listing.unit_images[0] %}
-                            {% elif listing.building_image != '' %}
-                                {% set background_url = listing.building_image %}
-                            {% endif %}
+                    <div class="listing-img" id="listing-image-{{ loop.index }}"
                             style="background-image: url('{{ background_url }}');">
 
                         <!-- Property type and features badges -->
@@ -699,13 +991,7 @@
                         <div class="listing-price">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="fs-4 fw-bold">
-                                    {% if listing.actual_rent is none %}
-                                        Price on request
-                                    {% elif listing.actual_rent == 'N/A' %}
-                                        {{ listing.actual_rent }}
-                                    {% else %}
-                                        ${{ "{:,.0f}".format(listing.actual_rent) }}
-                                    {% endif %}
+                                    {{ price_label }}
                                 </div>
                                 <div class="availability-badge"
                                      style="font-size: 0.9em; color: {% if listing.move_out %}orange{% else %}green{% endif %};">
@@ -744,10 +1030,10 @@
                         <!-- Features list -->
                         <div class="features-list">
                             <div class="feature-badge">
-                                <i class="fas fa-bed"></i> {% if listing.beds == 0 %}Studio{% elif listing.beds and listing.beds != 'N/A' %}{{ listing.beds }} Bed{% if listing.beds != 1 %}s{% endif %}{% else %}N/A{% endif %}
+                                <i class="fas fa-bed"></i> {{ beds_label }}
                             </div>
                             <div class="feature-badge">
-                                <i class="fas fa-bath"></i> {% if listing.baths and listing.baths != 'N/A' %}{{ listing.baths }} Bath{% if listing.baths != 1 %}s{% endif %}{% else %}N/A{% endif %}
+                                <i class="fas fa-bath"></i> {{ baths_label }}
                             </div>
                             {% if listing.sqft and listing.sqft != 'N/A' and listing.sqft != 0 %}
                             <div class="feature-badge">
@@ -823,9 +1109,15 @@
                         
                         <!-- View details button -->
                         <div class="mt-2">
+                            {% if request.args.get('v') == '2' %}
+                            <button type="button" class="btn btn-sm view-details-btn w-100 py-1 listing-preview-trigger">
+                                Quick Preview
+                            </button>
+                            {% else %}
                             <a href="{{ url_for('listing_detail', listing_id=listing.unit_id) }}" class="btn btn-sm view-details-btn w-100 py-1">
                                 View Details
                             </a>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -840,10 +1132,160 @@
         {% endif %}
     </div>
 </section>
+
+{% if request.args.get('v') == '2' %}
+<div class="listing-preview-overlay" id="listingPreviewOverlay" hidden aria-hidden="true">
+    <div class="listing-preview-modal" role="dialog" aria-modal="true" aria-labelledby="listingPreviewAddress">
+        <div class="listing-preview-media" id="listingPreviewMedia" aria-hidden="true"></div>
+        <div class="listing-preview-body">
+            <button type="button" class="listing-preview-close" id="listingPreviewClose" aria-label="Close preview">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="listing-preview-kicker" id="listingPreviewLocation"></div>
+            <h3 class="listing-preview-address" id="listingPreviewAddress"></h3>
+            <div class="listing-preview-price" id="listingPreviewPrice"></div>
+            <div class="listing-preview-stats">
+                <div class="listing-preview-stat">
+                    <strong id="listingPreviewBeds">—</strong>
+                    <span>Bedrooms</span>
+                </div>
+                <div class="listing-preview-stat">
+                    <strong id="listingPreviewBaths">—</strong>
+                    <span>Bathrooms</span>
+                </div>
+                <div class="listing-preview-stat">
+                    <strong id="listingPreviewSqft">—</strong>
+                    <span>Sq. Feet</span>
+                </div>
+                <div class="listing-preview-stat">
+                    <strong id="listingPreviewExposure">—</strong>
+                    <span>Exposure</span>
+                </div>
+            </div>
+            <p class="listing-preview-summary" id="listingPreviewSummary"></p>
+            <ul class="listing-preview-highlights" id="listingPreviewHighlights"></ul>
+            <div class="listing-preview-actions">
+                <a href="#" target="_blank" rel="noopener noreferrer" class="btn listing-preview-tour" id="listingPreviewTour">
+                    Schedule a Tour
+                </a>
+                <a href="#" class="btn listing-preview-more" id="listingPreviewMore">
+                    View More Info
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
 {% endblock %}
 
-{% block scripts %}
+{% block extra_js %}
+{% if request.args.get('v') == '2' %}
 <script>
-    // No extra JavaScript needed, using inline handlers in the HTML
+(function () {
+    const overlay = document.getElementById('listingPreviewOverlay');
+    if (!overlay) return;
+
+    const media = document.getElementById('listingPreviewMedia');
+    const locationEl = document.getElementById('listingPreviewLocation');
+    const addressEl = document.getElementById('listingPreviewAddress');
+    const priceEl = document.getElementById('listingPreviewPrice');
+    const bedsEl = document.getElementById('listingPreviewBeds');
+    const bathsEl = document.getElementById('listingPreviewBaths');
+    const sqftEl = document.getElementById('listingPreviewSqft');
+    const exposureEl = document.getElementById('listingPreviewExposure');
+    const summaryEl = document.getElementById('listingPreviewSummary');
+    const highlightsEl = document.getElementById('listingPreviewHighlights');
+    const tourBtn = document.getElementById('listingPreviewTour');
+    const moreBtn = document.getElementById('listingPreviewMore');
+    const closeBtn = document.getElementById('listingPreviewClose');
+    let lastFocus = null;
+
+    function fillText(el, value, fallback) {
+        el.textContent = (value === 0 || value) ? String(value) : (fallback || '—');
+    }
+
+    function openPreview(data, trigger) {
+        if (!data) return;
+        lastFocus = trigger || document.activeElement;
+        media.style.backgroundImage = data.imageUrl ? `url('${data.imageUrl}')` : '';
+        fillText(locationEl, data.location, 'New York');
+        fillText(addressEl, data.address, 'Listing');
+        fillText(priceEl, data.price, 'Price on request');
+        fillText(bedsEl, data.beds);
+        fillText(bathsEl, data.baths);
+        fillText(sqftEl, data.sqft);
+        fillText(exposureEl, data.exposure);
+        fillText(summaryEl, data.summary, 'Explore this Vector residence.');
+
+        highlightsEl.innerHTML = '';
+        const highlights = Array.isArray(data.highlights) ? data.highlights : [];
+        if (highlights.length) {
+            highlights.forEach((item) => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                highlightsEl.appendChild(li);
+            });
+            highlightsEl.hidden = false;
+        } else {
+            highlightsEl.hidden = true;
+        }
+
+        tourBtn.href = data.tourUrl || '#';
+        moreBtn.href = data.detailUrl || '#';
+
+        overlay.hidden = false;
+        overlay.setAttribute('aria-hidden', 'false');
+        requestAnimationFrame(() => overlay.classList.add('is-open'));
+        document.body.classList.add('listing-preview-open');
+        closeBtn.focus();
+    }
+
+    function closePreview() {
+        overlay.classList.remove('is-open');
+        document.body.classList.remove('listing-preview-open');
+        overlay.setAttribute('aria-hidden', 'true');
+        window.setTimeout(() => {
+            if (!overlay.classList.contains('is-open')) {
+                overlay.hidden = true;
+            }
+        }, 280);
+        if (lastFocus && typeof lastFocus.focus === 'function') {
+            lastFocus.focus();
+        }
+    }
+
+    function getPreviewData(card) {
+        try {
+            return JSON.parse(card.getAttribute('data-listing-preview') || '{}');
+        } catch (err) {
+            console.error('Unable to parse listing preview data', err);
+            return null;
+        }
+    }
+
+    document.querySelectorAll('.listing-card--preview').forEach((card) => {
+        card.addEventListener('click', (event) => {
+            if (event.target.closest('a')) return;
+            openPreview(getPreviewData(card), card);
+        });
+        card.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                openPreview(getPreviewData(card), card);
+            }
+        });
+    });
+
+    closeBtn.addEventListener('click', closePreview);
+    overlay.addEventListener('click', (event) => {
+        if (event.target === overlay) closePreview();
+    });
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && overlay.classList.contains('is-open')) {
+            closePreview();
+        }
+    });
+})();
 </script>
+{% endif %}
 {% endblock %}

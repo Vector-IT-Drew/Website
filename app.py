@@ -8,6 +8,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from forms import LoginForm, ListingForm, ApplicationForm
 from database import get_listing, get_all_listings, filter_listings_by_budget, filter_listings_by_bedrooms, filter_listings_by_location
 from tour_schedule import build_tour_schedule_url
+from listing_preview import enrich_listing_preview
 from functools import wraps
 import markdown2
 from dotenv import load_dotenv
@@ -315,9 +316,14 @@ def listings():
     if address and listings_data:
         building_address_id = listings_data[0].get('address_id')
 
+    listings_ui_v = request.args.get('v')
+    if listings_ui_v == '2' and listings_data:
+        listings_data = [enrich_listing_preview(listing) for listing in listings_data]
+
     return render_template(
         'listings.html',
         listings=listings_data,
+        listings_ui_v=listings_ui_v,
         unique_neighborhoods=unique_values.get('unique_neighborhoods', []),
         unique_addresses=unique_values.get('unique_addresses', []),
         building_address_id=building_address_id,
