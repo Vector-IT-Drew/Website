@@ -336,6 +336,7 @@
                         {% if request.args.get('laundry_in_unit') %}<input type="hidden" name="laundry_in_unit" value="{{ request.args.get('laundry_in_unit') }}">{% endif %}
                         {% if request.args.get('live_in_super') %}<input type="hidden" name="live_in_super" value="{{ request.args.get('live_in_super') }}">{% endif %}
                         {% if request.args.get('concierge') %}<input type="hidden" name="concierge" value="{{ request.args.get('concierge') }}">{% endif %}
+                        {% if request.args.get('v') %}<input type="hidden" name="v" value="{{ request.args.get('v') }}">{% endif %}
                         <div class="row">
                             <!-- First Row: Bedroom, Bathroom, Neighborhood side by side -->
 
@@ -576,7 +577,7 @@
                                         </div>
                                         {% endif %}
                                     </div>
-                                    <a href="{{ url_for('listings') }}" class="btn btn-secondary px-4 reset-filters">
+                                    <a href="{{ url_for('listings', v=request.args.get('v')) if request.args.get('v') else url_for('listings') }}" class="btn btn-secondary px-4 reset-filters">
                                         Reset Filters
                                     </a>
                                 </div>
@@ -755,42 +756,68 @@
                             {% endif %}
                         </div>
                         
-                        <!-- Building amenities badges -->
+                        <!-- Amenity badges: default = building amenities; ?v=2 = unit amenities only -->
                         <div class="features-list mt-1">
-                            {% if listing.wheelchair_access and listing.wheelchair_access|string|lower in ['true', '1', 'yes', 't', 'y'] %}
-                            <div class="feature-badge">
-                                <i class="fas fa-wheelchair"></i> Accessible
-                            </div>
-                            {% endif %}
-                            
-                            {% if listing.smoke_free and listing.smoke_free|string|lower in ['true', '1', 'yes', 't', 'y'] %}
-                            <div class="feature-badge">
-                                <i class="fas fa-smoking-ban"></i> Smoke-Free
-                            </div>
-                            {% endif %}
-                            
-                            {% if listing.laundry_in_building and listing.laundry_in_building|string|lower in ['true', '1', 'yes', 't', 'y'] %}
-                            <div class="feature-badge">
-                                <i class="fas fa-tshirt"></i> Laundry
-                            </div>
-                            {% endif %}
-                            
-                            {% if listing.pet_friendly and listing.pet_friendly|string|lower in ['true', '1', 'yes', 't', 'y'] %}
-                            <div class="feature-badge">
-                                <i class="fas fa-paw"></i> Pet-Friendly
-                            </div>
-                            {% endif %}
-                            
-                            {% if listing.live_in_super and listing.live_in_super|string|lower in ['true', '1', 'yes', 't', 'y'] %}
-                            <div class="feature-badge">
-                                <i class="fas fa-tools"></i> Super
-                            </div>
-                            {% endif %}
-                            
-                            {% if listing.concierge and listing.concierge|string|lower in ['true', '1', 'yes', 't', 'y'] %}
-                            <div class="feature-badge">
-                                <i class="fas fa-concierge-bell"></i> Concierge
-                            </div>
+                            {% if request.args.get('v') == '2' %}
+                                {% if listing.laundry_in_unit and listing.laundry_in_unit|string|lower in ['true', '1', 'yes', 't', 'y'] %}
+                                <div class="feature-badge">
+                                    <i class="fas fa-tshirt"></i> In-Unit Laundry
+                                </div>
+                                {% endif %}
+
+                                {% if listing.dishwasher and listing.dishwasher|string|lower in ['true', '1', 'yes', 't', 'y'] %}
+                                <div class="feature-badge">
+                                    <i class="fas fa-utensils"></i> Dishwasher
+                                </div>
+                                {% endif %}
+
+                                {% set ua_text = (listing.unit_amenities or [])|join(' ')|lower %}
+                                {% if (listing.outdoor_space and listing.outdoor_space|string|lower in ['true', '1', 'yes', 't', 'y'])
+                                   or ('balcony' in ua_text)
+                                   or ('terrace' in ua_text)
+                                   or ('patio' in ua_text)
+                                   or ('outdoor' in ua_text)
+                                   or ('deck' in ua_text) %}
+                                <div class="feature-badge">
+                                    <i class="fas fa-sun"></i> Outdoor Space
+                                </div>
+                                {% endif %}
+                            {% else %}
+                                {% if listing.wheelchair_access and listing.wheelchair_access|string|lower in ['true', '1', 'yes', 't', 'y'] %}
+                                <div class="feature-badge">
+                                    <i class="fas fa-wheelchair"></i> Accessible
+                                </div>
+                                {% endif %}
+                                
+                                {% if listing.smoke_free and listing.smoke_free|string|lower in ['true', '1', 'yes', 't', 'y'] %}
+                                <div class="feature-badge">
+                                    <i class="fas fa-smoking-ban"></i> Smoke-Free
+                                </div>
+                                {% endif %}
+                                
+                                {% if listing.laundry_in_building and listing.laundry_in_building|string|lower in ['true', '1', 'yes', 't', 'y'] %}
+                                <div class="feature-badge">
+                                    <i class="fas fa-tshirt"></i> Laundry
+                                </div>
+                                {% endif %}
+                                
+                                {% if listing.pet_friendly and listing.pet_friendly|string|lower in ['true', '1', 'yes', 't', 'y'] %}
+                                <div class="feature-badge">
+                                    <i class="fas fa-paw"></i> Pet-Friendly
+                                </div>
+                                {% endif %}
+                                
+                                {% if listing.live_in_super and listing.live_in_super|string|lower in ['true', '1', 'yes', 't', 'y'] %}
+                                <div class="feature-badge">
+                                    <i class="fas fa-tools"></i> Super
+                                </div>
+                                {% endif %}
+                                
+                                {% if listing.concierge and listing.concierge|string|lower in ['true', '1', 'yes', 't', 'y'] %}
+                                <div class="feature-badge">
+                                    <i class="fas fa-concierge-bell"></i> Concierge
+                                </div>
+                                {% endif %}
                             {% endif %}
                         </div>
                         
@@ -808,7 +835,7 @@
         {% else %}
         <div class="filter-panel p-5 text-center">
             <h3>No properties matching your criteria.</h3>
-            <p>Please adjust your filters or <a href="{{ url_for('listings') }}" class="text-primary">view all properties</a>.</p>
+            <p>Please adjust your filters or <a href="{{ url_for('listings', v=request.args.get('v')) if request.args.get('v') else url_for('listings') }}" class="text-primary">view all properties</a>.</p>
         </div>
         {% endif %}
     </div>

@@ -273,6 +273,8 @@ def get_listing(listing_id):
                     item.get('dishwasher', ''),
                     "laundry_in_unit":
                     item.get('laundry_in_unit', ''),
+                    "outdoor_space":
+                    item.get('outdoor_space', ''),
                     "wheelchair_access":
                     item.get('wheelchair_access', ''),
                     "smoke_free":
@@ -457,11 +459,12 @@ def get_all_listings(address=None,
                 "listing_status": item.get('listing_status', '-'),
                 "description": f"Unit {item.get('unit', '-')} at {item.get('address', '-')}",
                 "features": [],
-                "unit_amenities": [],
+                "unit_amenities": safe_json_loads(item.get('unit_amenities'), []),
                 "floor_type": item.get('floor_type', ''),
                 "countertop_type": item.get('countertop_type', ''),
                 "dishwasher": item.get('dishwasher', ''),
                 "laundry_in_unit": item.get('laundry_in_unit', ''),
+                "outdoor_space": item.get('outdoor_space', ''),
                 "wheelchair_access": item.get('wheelchair_access', ''),
                 "smoke_free": item.get('smoke_free', ''),
                 "laundry_in_building": item.get('laundry_in_building', ''),
