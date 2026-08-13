@@ -984,8 +984,7 @@
                 'summary': listing.preview_summary if listing.preview_summary else '',
                 'highlights': listing.preview_highlights if listing.preview_highlights else [],
                 'detailUrl': url_for('listing_detail', listing_id=listing.unit_id),
-                'tourUrl': tour_schedule_url(unit_id=listing.unit_id),
-                'applyUrl': url_for('apply', listing_id=listing.unit_id)
+                'tourUrl': tour_schedule_url(unit_id=listing.unit_id)
             } %}
             <div class="col-lg-4 col-md-6">
                 <div class="listing-card h-100 d-flex flex-column{% if request.args.get('v') == '2' %} listing-card--preview{% endif %}"
@@ -1191,7 +1190,7 @@
                 <a href="#" target="_blank" rel="noopener noreferrer" class="btn listing-preview-tour" id="listingPreviewTour">
                     Schedule a Tour
                 </a>
-                <a href="#" class="btn listing-preview-apply" id="listingPreviewApply">
+                <a href="#" target="_blank" rel="noopener noreferrer" class="btn listing-preview-apply" id="listingPreviewApply">
                     Apply Now
                 </a>
                 <a href="#" class="listing-preview-more" id="listingPreviewMore">
@@ -1258,7 +1257,7 @@
         }
 
         tourBtn.href = data.tourUrl || '#';
-        applyBtn.href = data.applyUrl || '#';
+        applyBtn.href = data.tourUrl || '#';
         moreBtn.href = data.detailUrl || '#';
 
         overlay.hidden = false;
@@ -1304,11 +1303,17 @@
         });
     });
 
-    // Leave the listings page for full listing / apply — close popup first.
-    [moreBtn, applyBtn].forEach((link) => {
-        link.addEventListener('click', () => {
-            closePreview();
-        });
+    // View full listing leaves this page for the real listing detail.
+    moreBtn.addEventListener('click', (event) => {
+        const href = moreBtn.getAttribute('href');
+        if (!href || href === '#') {
+            event.preventDefault();
+            return;
+        }
+        closePreview();
+        // Force same-tab navigation to the listing page.
+        event.preventDefault();
+        window.location.assign(href);
     });
 
     closeBtn.addEventListener('click', closePreview);
