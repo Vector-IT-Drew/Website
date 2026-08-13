@@ -519,16 +519,38 @@
         border-color: #ffffff;
     }
 
-    .listing-preview-more {
-        background: transparent;
+    .listing-preview-apply {
+        background: rgba(42, 127, 255, 0.22);
         color: #fff;
         border: 1px solid rgba(42, 127, 255, 0.45);
     }
 
-    .listing-preview-more:hover {
-        background: rgba(42, 127, 255, 0.16);
+    .listing-preview-apply:hover {
+        background: rgba(42, 127, 255, 0.34);
         color: #fff;
         border-color: rgba(42, 127, 255, 0.7);
+    }
+
+    .listing-preview-more {
+        display: inline-block;
+        margin-top: 0.15rem;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.58);
+        font-size: 0.86rem;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        background: none;
+        border: none;
+        padding: 0.35rem 0.25rem;
+        letter-spacing: 0;
+        text-transform: none;
+        font-weight: 400;
+    }
+
+    .listing-preview-more:hover {
+        color: rgba(255, 255, 255, 0.9);
+        background: none;
+        border: none;
     }
 
     body.listing-preview-open {
@@ -962,7 +984,8 @@
                 'summary': listing.preview_summary if listing.preview_summary else '',
                 'highlights': listing.preview_highlights if listing.preview_highlights else [],
                 'detailUrl': url_for('listing_detail', listing_id=listing.unit_id),
-                'tourUrl': tour_schedule_url(unit_id=listing.unit_id)
+                'tourUrl': tour_schedule_url(unit_id=listing.unit_id),
+                'applyUrl': url_for('apply', listing_id=listing.unit_id)
             } %}
             <div class="col-lg-4 col-md-6">
                 <div class="listing-card h-100 d-flex flex-column{% if request.args.get('v') == '2' %} listing-card--preview{% endif %}"
@@ -1168,8 +1191,11 @@
                 <a href="#" target="_blank" rel="noopener noreferrer" class="btn listing-preview-tour" id="listingPreviewTour">
                     Schedule a Tour
                 </a>
-                <a href="#" class="btn listing-preview-more" id="listingPreviewMore">
-                    View More Info
+                <a href="#" class="btn listing-preview-apply" id="listingPreviewApply">
+                    Apply Now
+                </a>
+                <a href="#" class="listing-preview-more" id="listingPreviewMore">
+                    View full listing
                 </a>
             </div>
         </div>
@@ -1196,6 +1222,7 @@
     const summaryEl = document.getElementById('listingPreviewSummary');
     const highlightsEl = document.getElementById('listingPreviewHighlights');
     const tourBtn = document.getElementById('listingPreviewTour');
+    const applyBtn = document.getElementById('listingPreviewApply');
     const moreBtn = document.getElementById('listingPreviewMore');
     const closeBtn = document.getElementById('listingPreviewClose');
     let lastFocus = null;
@@ -1231,6 +1258,7 @@
         }
 
         tourBtn.href = data.tourUrl || '#';
+        applyBtn.href = data.applyUrl || '#';
         moreBtn.href = data.detailUrl || '#';
 
         overlay.hidden = false;
@@ -1273,6 +1301,13 @@
                 event.preventDefault();
                 openPreview(getPreviewData(card), card);
             }
+        });
+    });
+
+    // Leave the listings page for full listing / apply — close popup first.
+    [moreBtn, applyBtn].forEach((link) => {
+        link.addEventListener('click', () => {
+            closePreview();
         });
     });
 

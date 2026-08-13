@@ -343,6 +343,24 @@ def listing_detail(listing_id):
     return render_template('listing.html', listing=listing, DASH_SERVICES_ENDPOINT=DASH_SERVICES_ENDPOINT)
 
 
+@app.route('/apply/<listing_id>', methods=['GET', 'POST'])
+def apply(listing_id):
+    """Application form for a specific listing"""
+    listing = get_listing(listing_id)
+    if not listing:
+        flash('Listing not found', 'danger')
+        return redirect(url_for('index'))
+
+    form = ApplicationForm()
+    if form.validate_on_submit():
+        flash(
+            'Your application has been submitted successfully! Our team will contact you soon.',
+            'success')
+        return redirect(url_for('listing_detail', listing_id=listing_id))
+
+    return render_template('apply.html', form=form, listing=listing)
+
+
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
