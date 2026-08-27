@@ -247,39 +247,50 @@ def listings():
         except ValueError:
             pass
 
-    # Get beds/baths (exact or min/max) if provided
+    # Bed/bath filters: UI options are "N+" (minimum), except Studio (exact 0).
     beds = None
     baths = None
     min_beds = None
     max_beds = None
     min_baths = None
     max_baths = None
-    if request.args.get('beds'):
+
+    if request.args.get('beds') not in (None, ''):
         try:
-            beds = float(request.args.get('beds'))
+            beds_val = float(request.args.get('beds'))
+            if beds_val == 0:
+                # Studio is an exact match
+                beds = 0
+            else:
+                min_beds = beds_val
         except ValueError:
             pass
-    if request.args.get('baths'):
+    if request.args.get('baths') not in (None, ''):
         try:
-            baths = float(request.args.get('baths'))
+            # All bath options are labeled "N+ Baths"
+            min_baths = float(request.args.get('baths'))
         except ValueError:
             pass
-    if request.args.get('min_beds'):
+
+    # Explicit min/max from chatbot/URL still win when provided
+    if request.args.get('min_beds') not in (None, ''):
         try:
             min_beds = float(request.args.get('min_beds'))
+            beds = None
         except ValueError:
             pass
-    if request.args.get('max_beds'):
+    if request.args.get('max_beds') not in (None, ''):
         try:
             max_beds = float(request.args.get('max_beds'))
         except ValueError:
             pass
-    if request.args.get('min_baths'):
+    if request.args.get('min_baths') not in (None, ''):
         try:
             min_baths = float(request.args.get('min_baths'))
+            baths = None
         except ValueError:
             pass
-    if request.args.get('max_baths'):
+    if request.args.get('max_baths') not in (None, ''):
         try:
             max_baths = float(request.args.get('max_baths'))
         except ValueError:
@@ -304,6 +315,10 @@ def listings():
                                      max_price=max_price,
                                      beds=beds,
                                      baths=baths,
+                                     min_beds=min_beds,
+                                     max_beds=max_beds,
+                                     min_baths=min_baths,
+                                     max_baths=max_baths,
                                      available=available,
                                      portfolio=portfolio,
                                      sort=sort_option,
