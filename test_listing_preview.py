@@ -33,6 +33,6 @@ def test_enrich_listing_preview_falls_back_to_unit_flags():
         'unit_amenities': [],
     }
     enrich_listing_preview(listing)
-    assert 'Upper East Side' in listing['preview_summary']
+    assert listing['preview_summary'] == ''
     assert any('washer' in h.lower() for h in listing['preview_highlights'])
     assert any('dishwasher' in h.lower() for h in listing['preview_highlights'])

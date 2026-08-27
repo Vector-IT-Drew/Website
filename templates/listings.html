@@ -1311,8 +1311,36 @@
     let galleryImages = [];
     let galleryIndex = 0;
 
+    function hasContent(value) {
+        if (value === 0) return true;
+        if (value === null || value === undefined || value === false) return false;
+        const text = String(value).trim();
+        if (!text) return false;
+        return !['0', '0.0', '-', 'n/a', 'na', 'null', 'none', 'nan', '—'].includes(text.toLowerCase());
+    }
+
     function fillText(el, value, fallback) {
-        el.textContent = (value === 0 || value) ? String(value) : (fallback || '—');
+        if (hasContent(value)) {
+            el.textContent = String(value);
+            el.hidden = false;
+            return true;
+        }
+        if (fallback) {
+            el.textContent = fallback;
+            el.hidden = false;
+            return true;
+        }
+        el.textContent = '';
+        el.hidden = true;
+        return false;
+    }
+
+    function fillStat(el, value) {
+        const item = el.closest('.listing-preview-stat');
+        const ok = hasContent(value);
+        el.textContent = ok ? String(value) : '';
+        if (item) item.hidden = !ok;
+        return ok;
     }
 
     function normalizeImages(data) {
@@ -1357,17 +1385,18 @@
         lastFocus = trigger || document.activeElement;
         galleryImages = normalizeImages(data);
         showGalleryImage(0);
-        fillText(locationEl, data.location, 'New York');
+        fillText(locationEl, data.location);
         fillText(addressEl, data.address, 'Listing');
         fillText(priceEl, data.price, 'Price on request');
-        fillText(bedsEl, data.beds);
-        fillText(bathsEl, data.baths);
-        fillText(sqftEl, data.sqft);
-        fillText(exposureEl, data.exposure);
-        fillText(summaryEl, data.summary, 'Explore this Vector residence.');
+        fillStat(bedsEl, data.beds);
+        fillStat(bathsEl, data.baths);
+        fillStat(sqftEl, data.sqft);
+        fillStat(exposureEl, data.exposure);
+        fillText(summaryEl, data.summary);
 
         highlightsEl.innerHTML = '';
-        const highlights = Array.isArray(data.highlights) ? data.highlights : [];
+        const highlights = (Array.isArray(data.highlights) ? data.highlights : [])
+            .filter((item) => hasContent(item));
         if (highlights.length) {
             highlights.forEach((item) => {
                 const li = document.createElement('li');

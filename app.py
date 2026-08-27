@@ -42,6 +42,30 @@ def from_json(value):
         return []
 
 
+_BLANK_TOKENS = {
+    '', '0', '0.0', '-', 'n/a', 'na', 'null', 'none', 'nan', 'undefined', '[]', '{}'
+}
+
+
+@app.template_filter('has_content')
+def has_content(value):
+    """True when a listing field has meaningful display content."""
+    if value is None or value is False:
+        return False
+    if isinstance(value, (list, tuple, set)):
+        return any(has_content(item) for item in value)
+    if isinstance(value, dict):
+        return any(has_content(item) for item in value.values())
+    text = str(value).strip()
+    return text.lower() not in _BLANK_TOKENS
+
+
+@app.template_filter('is_true')
+def is_true(value):
+    """True for common truthy flag strings/numbers from the listings API."""
+    return str(value).strip().lower() in {'1', 'true', 'yes', 't', 'y'}
+
+
 # Add context processor to inject current date into all templates
 @app.context_processor
 def inject_globals():

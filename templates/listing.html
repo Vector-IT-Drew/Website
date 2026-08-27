@@ -454,12 +454,12 @@
         <div class="row align-items-end">
             <div class="col-lg-8">
                 <div class="mb-3">
-                    {% if listing.neighborhood %}
+                    {% if listing.neighborhood|has_content %}
                         <span class="neighborhood-badge">
                             <i class="fas fa-map-marker-alt me-1"></i> {{ listing.neighborhood }}
                         </span>
                     {% endif %}
-                    {% if listing.borough %}
+                    {% if listing.borough|has_content %}
                         <span class="neighborhood-badge">
                             <i class="fas fa-city me-1"></i> {{ listing.borough }}
                         </span>
@@ -467,18 +467,18 @@
                 </div>
                 
                 <h1 class="property-title mb-2">
-                    {% if listing.building_name and listing.building_name|trim not in ['-', ' - '] %}
+                    {% if listing.building_name|has_content %}
                         {{ listing.building_name }}
                     {% else %}
                         {{ listing.address }}
                     {% endif %}
-                    {% if listing.unit %}
+                    {% if listing.unit|has_content %}
                         <span style="color: var(--accent);">#{{ listing.unit }}</span>
                     {% endif %}
                 </h1>
                 
                 <p class="property-address">
-                    {{ listing.address }}{% if listing.zip_code %}, {{ listing.zip_code }}{% endif %}
+                    {{ listing.address }}{% if listing.zip_code|has_content %}, {{ listing.zip_code }}{% endif %}
                 </p>
             </div>
             
@@ -521,31 +521,32 @@
         </div>
         {% endif %}
         
-        {% if listing.sqft %}
+        {% if listing.sqft|has_content and listing.sqft|float > 0 %}
         <div class="meta-item">
             <div class="meta-icon">
                 <i class="fas fa-ruler-combined"></i>
             </div>
             <div>
                 <p class="meta-label">Square Feet</p>
-                <p class="meta-value">{{ "{:,}".format(listing.sqft) }}</p>
+                <p class="meta-value">{{ "{:,}".format(listing.sqft|float|int) }}</p>
             </div>
         </div>
         {% endif %}
         
-        {% if listing.floor_num or listing.floor and (listing.floor_num|string not in ['0', '0.0', 'N/A', 'NA', '-', ''] or listing.floor|string not in ['0', '0.0', 'N/A', 'NA', '-', '']) %}
+        {% set floor_val = listing.floor_num if listing.floor_num|has_content else listing.floor %}
+        {% if floor_val|has_content %}
         <div class="meta-item">
             <div class="meta-icon">
                 <i class="fas fa-level-up-alt"></i>
             </div>
             <div>
                 <p class="meta-label">Floor</p>
-                <p class="meta-value">{{ listing.floor_num if listing.floor_num and listing.floor_num|string not in ['0', 'N/A', 'NA', '-', ''] else listing.floor }}</p>
+                <p class="meta-value">{{ floor_val }}</p>
             </div>
         </div>
         {% endif %}
         
-        {% if listing.exposure is defined and listing.exposure and listing.exposure|string not in ['0', 'N/A', 'NA', '-', ''] %}
+        {% if listing.exposure|has_content %}
         <div class="meta-item">
             <div class="meta-icon">
                 <i class="fas fa-compass"></i>
@@ -561,41 +562,29 @@
         <!-- Left Column: Property Details -->
         <div class="col-lg-8">
             <!-- Property Description -->
+            {% if listing.description|has_content %}
             <div class="detail-section">
                 <h3 class="detail-title">About This Property</h3>
-                {% if listing.description %}
-                    <div class="detail-text">
-                        {% if listing.description is string %}
-                            {{ listing.description | markdown | safe }}
-                        {% else %}
-                            {{ listing.description | safe }}
-                        {% endif %}
-                    </div>
-                {% else %}
-                    <div class="detail-text">
-                        <p>This exceptional {% if listing.beds %}{{ listing.beds }}-bedroom{% endif %} {% if listing.baths %}{{ listing.baths }}-bathroom{% endif %} residence is located in {% if listing.neighborhood %}{{ listing.neighborhood }}{% else %}{{ listing.borough if listing.borough else 'New York' }}{% endif %}. 
-                        
-                        {% if listing.actual_rent is defined and listing.actual_rent and listing.actual_rent != 0 %}Offered at ${{ "{:,}".format(listing.actual_rent) }} per month, this {% endif %}property features spacious rooms with modern finishes throughout.
-                        
-                        {% if listing.sqft is defined and listing.sqft and listing.sqft > 0 %}With {{ "{:,}".format(listing.sqft) }} square feet of living space, {% endif %}this home provides comfort and style in one of New York's most desirable locations.</p>
-                        
-                        <p>Contact us today to schedule a viewing of this exclusive Vector property.</p>
-                    </div>
-                {% endif %}
+                <div class="detail-text">
+                    {% if listing.description is string %}
+                        {{ listing.description | markdown | safe }}
+                    {% else %}
+                        {{ listing.description | safe }}
+                    {% endif %}
+                </div>
             </div>
+            {% endif %}
             
             <!-- Unit Amenities -->
-            {% if (listing.unit_amenities and listing.unit_amenities|length > 0) or 
-                  (listing.floor_type) or
-                  (listing.countertop_type) or
-                  (listing.dishwasher) or 
-                  (listing.laundry_in_unit) %}
+            {% set has_unit_amenity_list = listing.unit_amenities|has_content %}
+            {% set has_unit_flags = listing.floor_type|has_content or listing.countertop_type|has_content or listing.dishwasher|is_true or listing.laundry_in_unit|is_true or listing.outdoor_space|is_true %}
+            {% if has_unit_amenity_list or has_unit_flags %}
             <div class="detail-section">
                 <h3 class="detail-title">Unit Amenities</h3>
                 <div class="feature-list">
-                    {% if listing.unit_amenities and listing.unit_amenities|length > 0 %}
+                    {% if listing.unit_amenities %}
                         {% for amenity in listing.unit_amenities %}
-                            {% if amenity and amenity|string not in ['0', '0.0', 'N/A', 'NA', '-', ''] %}
+                            {% if amenity|has_content %}
                             <div class="feature-item">
                                 <div class="amenity-item">
                                     <div class="amenity-icon">
@@ -627,48 +616,48 @@
                             {% endif %}
                         {% endfor %}
                     {% endif %}
-                    
-                    <!-- Additional unit features from specific fields -->
-                    {% if listing.floor_type %}
+
+                    {% if listing.floor_type|has_content %}
                     <div class="feature-item">
                         <div class="amenity-item">
-                            <div class="amenity-icon">
-                                <i class="fas fa-border-all"></i>
-                            </div>
+                            <div class="amenity-icon"><i class="fas fa-border-all"></i></div>
                             <span>{{ listing.floor_type }} Flooring</span>
                         </div>
                     </div>
                     {% endif %}
-                    
-                    {% if listing.countertop_type %}
+
+                    {% if listing.countertop_type|has_content %}
                     <div class="feature-item">
                         <div class="amenity-item">
-                            <div class="amenity-icon">
-                                <i class="fas fa-th-large"></i>
-                            </div>
+                            <div class="amenity-icon"><i class="fas fa-th-large"></i></div>
                             <span>{{ listing.countertop_type }} Countertops</span>
                         </div>
                     </div>
                     {% endif %}
-                    
-                    {% if listing.dishwasher %}
+
+                    {% if listing.dishwasher|is_true %}
                     <div class="feature-item">
                         <div class="amenity-item">
-                            <div class="amenity-icon">
-                                <i class="fas fa-utensils"></i>
-                            </div>
+                            <div class="amenity-icon"><i class="fas fa-utensils"></i></div>
                             <span>Dishwasher</span>
                         </div>
                     </div>
                     {% endif %}
-                    
-                    {% if listing.laundry_in_unit  %}
+
+                    {% if listing.laundry_in_unit|is_true %}
                     <div class="feature-item">
                         <div class="amenity-item">
-                            <div class="amenity-icon">
-                                <i class="fas fa-tshirt"></i>
-                            </div>
+                            <div class="amenity-icon"><i class="fas fa-tshirt"></i></div>
                             <span>In-Unit Laundry</span>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if listing.outdoor_space|is_true %}
+                    <div class="feature-item">
+                        <div class="amenity-item">
+                            <div class="amenity-icon"><i class="fas fa-sun"></i></div>
+                            <span>Outdoor Space</span>
                         </div>
                     </div>
                     {% endif %}
@@ -677,142 +666,125 @@
             {% endif %}
 
             <!-- Building Amenities -->
+            {% set has_building_amenity_list = listing.building_amenities|has_content %}
+            {% set has_building_flags = listing.elevator|is_true or listing.wheelchair_access|is_true or listing.smoke_free|is_true or listing.laundry_in_building|is_true or listing.live_in_super|is_true or listing.concierge|is_true %}
+            {% if has_building_amenity_list or has_building_flags %}
             <div class="detail-section">
                 <h3 class="detail-title">Building Amenities</h3>
-                {% if (listing.building_amenities and listing.building_amenities|length > 0) or 
-                      (listing.elevator) or 
-                      (listing.wheelchair_access) or 
-                      (listing.smoke_free) or 
-                      (listing.laundry_in_building) or
-                      (listing.live_in_super) or
-                      (listing.concierge) %}
-                    <div class="feature-list">
-                        {% if listing.building_amenities and listing.building_amenities|length > 0 %}
-                            {% for amenity in listing.building_amenities %}
-                                {% if amenity and amenity|string not in ['0', '0.0', 'N/A', 'NA', '-', ''] %}
-                                <div class="feature-item">
-                                    <div class="amenity-item">
-                                        <div class="amenity-icon">
-                                            {% if 'pool' in amenity|lower %}
-                                                <i class="fas fa-swimming-pool"></i>
-                                            {% elif 'gym' in amenity|lower or 'fitness' in amenity|lower %}
-                                                <i class="fas fa-dumbbell"></i>
-                                            {% elif 'door' in amenity|lower or 'concierge' in amenity|lower %}
-                                                <i class="fas fa-user-shield"></i>
-                                            {% elif 'lounge' in amenity|lower %}
-                                                <i class="fas fa-couch"></i>
-                                            {% elif 'sauna' in amenity|lower %}
-                                                <i class="fas fa-hot-tub"></i>
-                                            {% elif 'children' in amenity|lower or 'play' in amenity|lower %}
-                                                <i class="fas fa-child"></i>
-                                            {% elif 'locker' in amenity|lower %}
-                                                <i class="fas fa-lock"></i>
-                                            {% elif 'storage' in amenity|lower and 'bike' not in amenity|lower %}
-                                                <i class="fas fa-box"></i>
-                                            {% elif 'bike' in amenity|lower %}
-                                                <i class="fas fa-bicycle"></i>
-                                            {% elif 'garage' in amenity|lower or 'parking' in amenity|lower %}
-                                                <i class="fas fa-car"></i>
-                                            {% elif 'court' in amenity|lower or 'padel' in amenity|lower or 'tennis' in amenity|lower %}
-                                                <i class="fas fa-table-tennis"></i>
-                                            {% elif 'roof' in amenity|lower or 'terrace' in amenity|lower %}
-                                                <i class="fas fa-umbrella-beach"></i>
-                                            {% elif 'garden' in amenity|lower or 'outdoor' in amenity|lower %}
-                                                <i class="fas fa-tree"></i>
-                                            {% elif 'laundry' in amenity|lower or 'washer' in amenity|lower %}
-                                                <i class="fas fa-tshirt"></i>
-                                            {% elif 'elevator' in amenity|lower %}
-                                                <i class="fas fa-arrow-alt-circle-up"></i>
-                                            {% elif 'wifi' in amenity|lower or 'internet' in amenity|lower %}
-                                                <i class="fas fa-wifi"></i>
-                                            {% elif 'doorman' in amenity|lower or 'security' in amenity|lower %}
-                                                <i class="fas fa-user-shield"></i>
-                                            {% elif 'cinema' in amenity|lower or 'theater' in amenity|lower or 'media' in amenity|lower %}
-                                                <i class="fas fa-film"></i>
-                                            {% elif 'conference' in amenity|lower or 'business' in amenity|lower %}
-                                                <i class="fas fa-briefcase"></i>
-                                            {% elif 'pet' in amenity|lower or 'dog' in amenity|lower %}
-                                                <i class="fas fa-paw"></i>
-                                            {% else %}
-                                                <i class="fas fa-check"></i>
-                                            {% endif %}
-                                        </div>
-                                        <span>{{ amenity }}</span>
+                <div class="feature-list">
+                    {% if listing.building_amenities %}
+                        {% for amenity in listing.building_amenities %}
+                            {% if amenity|has_content %}
+                            <div class="feature-item">
+                                <div class="amenity-item">
+                                    <div class="amenity-icon">
+                                        {% if 'pool' in amenity|lower %}
+                                            <i class="fas fa-swimming-pool"></i>
+                                        {% elif 'gym' in amenity|lower or 'fitness' in amenity|lower %}
+                                            <i class="fas fa-dumbbell"></i>
+                                        {% elif 'door' in amenity|lower or 'concierge' in amenity|lower %}
+                                            <i class="fas fa-user-shield"></i>
+                                        {% elif 'lounge' in amenity|lower %}
+                                            <i class="fas fa-couch"></i>
+                                        {% elif 'sauna' in amenity|lower %}
+                                            <i class="fas fa-hot-tub"></i>
+                                        {% elif 'children' in amenity|lower or 'play' in amenity|lower %}
+                                            <i class="fas fa-child"></i>
+                                        {% elif 'locker' in amenity|lower %}
+                                            <i class="fas fa-lock"></i>
+                                        {% elif 'storage' in amenity|lower and 'bike' not in amenity|lower %}
+                                            <i class="fas fa-box"></i>
+                                        {% elif 'bike' in amenity|lower %}
+                                            <i class="fas fa-bicycle"></i>
+                                        {% elif 'garage' in amenity|lower or 'parking' in amenity|lower %}
+                                            <i class="fas fa-car"></i>
+                                        {% elif 'court' in amenity|lower or 'padel' in amenity|lower or 'tennis' in amenity|lower %}
+                                            <i class="fas fa-table-tennis"></i>
+                                        {% elif 'roof' in amenity|lower or 'terrace' in amenity|lower %}
+                                            <i class="fas fa-umbrella-beach"></i>
+                                        {% elif 'garden' in amenity|lower or 'outdoor' in amenity|lower %}
+                                            <i class="fas fa-tree"></i>
+                                        {% elif 'laundry' in amenity|lower or 'washer' in amenity|lower %}
+                                            <i class="fas fa-tshirt"></i>
+                                        {% elif 'elevator' in amenity|lower %}
+                                            <i class="fas fa-arrow-alt-circle-up"></i>
+                                        {% elif 'wifi' in amenity|lower or 'internet' in amenity|lower %}
+                                            <i class="fas fa-wifi"></i>
+                                        {% elif 'doorman' in amenity|lower or 'security' in amenity|lower %}
+                                            <i class="fas fa-user-shield"></i>
+                                        {% elif 'cinema' in amenity|lower or 'theater' in amenity|lower or 'media' in amenity|lower %}
+                                            <i class="fas fa-film"></i>
+                                        {% elif 'conference' in amenity|lower or 'business' in amenity|lower %}
+                                            <i class="fas fa-briefcase"></i>
+                                        {% elif 'pet' in amenity|lower or 'dog' in amenity|lower %}
+                                            <i class="fas fa-paw"></i>
+                                        {% else %}
+                                            <i class="fas fa-check"></i>
+                                        {% endif %}
                                     </div>
+                                    <span>{{ amenity }}</span>
                                 </div>
-                                {% endif %}
-                            {% endfor %}
-                        {% endif %}
-                        
-                        <!-- Additional building features from specific fields -->
-                        {% if listing.elevator %}
-                        <div class="feature-item">
-                            <div class="amenity-item">
-                                <div class="amenity-icon">
-                                    <i class="fas fa-arrow-alt-circle-up"></i>
-                                </div>
-                                <span>Elevator Access</span>
                             </div>
-                        </div>
-                        {% endif %}
-                        
-                        {% if listing.wheelchair_access %}
-                        <div class="feature-item">
-                            <div class="amenity-item">
-                                <div class="amenity-icon">
-                                    <i class="fas fa-wheelchair"></i>
-                                </div>
-                                <span>Wheelchair Accessible</span>
-                            </div>
-                        </div>
-                        {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
 
-                        {% if listing.smoke_free %}
-                        <div class="feature-item">
-                            <div class="amenity-item">
-                                <div class="amenity-icon">
-                                    <i class="fas fa-smoking-ban"></i>
-                                </div>
-                                <span>Smoke-Free Environment</span>
-                            </div>
+                    {% if listing.elevator|is_true %}
+                    <div class="feature-item">
+                        <div class="amenity-item">
+                            <div class="amenity-icon"><i class="fas fa-arrow-alt-circle-up"></i></div>
+                            <span>Elevator Access</span>
                         </div>
-                        {% endif %}
-
-                        {% if listing.laundry_in_building %}
-                        <div class="feature-item">
-                            <div class="amenity-item">
-                                <div class="amenity-icon">
-                                    <i class="fas fa-tshirt"></i>
-                                </div>
-                                <span>Laundry in Building</span>
-                            </div>
-                        </div>
-                        {% endif %}
-
-                        {% if listing.live_in_super %}
-                        <div class="feature-item">
-                            <div class="amenity-item">
-                                <div class="amenity-icon">
-                                    <i class="fas fa-user-tie"></i>
-                                </div>
-                                <span>Live-in Super</span>
-                            </div>
-                        </div>
-                        {% endif %}
-
-                        {% if listing.concierge %}
-                        <div class="feature-item">
-                            <div class="amenity-item">
-                                <div class="amenity-icon">
-                                    <i class="fas fa-concierge-bell"></i>
-                                </div>
-                                <span>Concierge Service</span>
-                            </div>
-                        </div>
-                        {% endif %}
                     </div>
-                {% endif %}
+                    {% endif %}
+
+                    {% if listing.wheelchair_access|is_true %}
+                    <div class="feature-item">
+                        <div class="amenity-item">
+                            <div class="amenity-icon"><i class="fas fa-wheelchair"></i></div>
+                            <span>Wheelchair Accessible</span>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if listing.smoke_free|is_true %}
+                    <div class="feature-item">
+                        <div class="amenity-item">
+                            <div class="amenity-icon"><i class="fas fa-smoking-ban"></i></div>
+                            <span>Smoke-Free Environment</span>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if listing.laundry_in_building|is_true %}
+                    <div class="feature-item">
+                        <div class="amenity-item">
+                            <div class="amenity-icon"><i class="fas fa-tshirt"></i></div>
+                            <span>Laundry in Building</span>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if listing.live_in_super|is_true %}
+                    <div class="feature-item">
+                        <div class="amenity-item">
+                            <div class="amenity-icon"><i class="fas fa-tools"></i></div>
+                            <span>Live-in Super</span>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if listing.concierge|is_true %}
+                    <div class="feature-item">
+                        <div class="amenity-item">
+                            <div class="amenity-icon"><i class="fas fa-concierge-bell"></i></div>
+                            <span>Concierge</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
             </div>
+            {% endif %}
             
             <!-- Additional Information -->
             <div class="detail-section">
@@ -820,17 +792,15 @@
                 <div class="row g-2">
                     <div class="col-md-6">
                         <div class="amenity-item">
-                            <div class="amenity-icon">
-                                <i class="fas fa-calendar-alt"></i>
-                            </div>
+                            <div class="amenity-icon"><i class="fas fa-calendar-alt"></i></div>
                             <div>
                                 <span class="text-white-50">Availability:</span>
                                 <div class="fw-semibold">
-                                    {% if listing.move_out %}
+                                    {% if listing.move_out|has_content %}
                                         {% if listing.move_out == "09/09/1999" %}
                                             Available Now
                                         {% else %}
-                                            {{ listing.move_out}}
+                                            {{ listing.move_out }}
                                         {% endif %}
                                     {% else %}
                                         Available Now
@@ -840,12 +810,10 @@
                         </div>
                     </div>
                     
-                    {% if listing.lease_type %}
+                    {% if listing.lease_type|has_content %}
                     <div class="col-md-6">
                         <div class="amenity-item">
-                            <div class="amenity-icon">
-                                <i class="fas fa-file-contract"></i>
-                            </div>
+                            <div class="amenity-icon"><i class="fas fa-file-contract"></i></div>
                             <div>
                                 <span class="text-white-50">Lease Type:</span>
                                 <div class="fw-semibold">{{ listing.lease_type }}</div>
@@ -856,13 +824,11 @@
                     
                     <div class="col-md-6">
                         <div class="amenity-item">
-                            <div class="amenity-icon">
-                                <i class="fas fa-paw"></i>
-                            </div>
+                            <div class="amenity-icon"><i class="fas fa-paw"></i></div>
                             <div>
                                 <span class="text-white-50">Pet Policy:</span>
                                 <div class="fw-semibold">
-                                    {% if listing.pets_policy == 1 %}
+                                    {% if listing.pets_policy == 1 or listing.pet_friendly|is_true %}
                                         Pets Allowed
                                     {% else %}
                                         No Pets Allowed
@@ -872,12 +838,10 @@
                         </div>
                     </div>
                     
-                    {% if listing.lease_term %}
+                    {% if listing.lease_term|has_content %}
                     <div class="col-md-6">
                         <div class="amenity-item">
-                            <div class="amenity-icon">
-                                <i class="fas fa-file-signature"></i>
-                            </div>
+                            <div class="amenity-icon"><i class="fas fa-file-signature"></i></div>
                             <div>
                                 <span class="text-white-50">Lease Term:</span>
                                 <div class="fw-semibold">{{ listing.lease_term }}</div>
@@ -888,53 +852,62 @@
                 </div>
             </div>
             
-            <!-- Location Map -->
+            <!-- Location -->
+            {% set has_coords = listing.latitude|has_content and listing.longitude|has_content and listing.latitude|float != 0 and listing.longitude|float != 0 %}
+            {% set has_location_meta = listing.neighborhood|has_content or listing.borough|has_content or listing.address|has_content %}
+            {% if has_coords or has_location_meta %}
             <div class="detail-section">
                 <h3 class="detail-title">Location</h3>
+                {% if has_coords %}
                 <div class="location-map rounded overflow-hidden" style="height: 300px; position: relative;">
-                    <!-- Use actual latitude and longitude from the listing data -->
-                    {% if listing.latitude and listing.longitude %}
-                        <iframe id="osm-map" width="100%" height="100%" frameborder="0" 
-                                src="https://www.openstreetmap.org/export/embed.html?bbox={{ (listing.longitude - 0.001)|float }}%2C{{ (listing.latitude - 0.001)|float }}%2C{{ (listing.longitude + 0.001)|float }}%2C{{ (listing.latitude + 0.001)|float }}&amp;layer=mapnik&amp;marker={{ listing.latitude }}%2C{{ listing.longitude }}&amp;zoom=18" 
-                                style="border: none; border-radius: 4px;">
-                        </iframe>
-                    {% else %}
-                       
-                    {% endif %}
+                    <iframe id="osm-map" width="100%" height="100%" frameborder="0"
+                            src="https://www.openstreetmap.org/export/embed.html?bbox={{ (listing.longitude - 0.001)|float }}%2C{{ (listing.latitude - 0.001)|float }}%2C{{ (listing.longitude + 0.001)|float }}%2C{{ (listing.latitude + 0.001)|float }}&amp;layer=mapnik&amp;marker={{ listing.latitude }}%2C{{ listing.longitude }}&amp;zoom=18"
+                            style="border: none; border-radius: 4px;">
+                    </iframe>
                     <div class="position-absolute" style="bottom: 15px; right: 15px; z-index: 5;">
                         <a href="https://www.google.com/maps/search/?api=1&query={{ (listing.full_address if listing.full_address else listing.address) | urlencode }}" target="_blank" class="btn btn-sm text-white px-3 py-1" style="background-color: rgba(42, 127, 255, 0.8); border-radius: 4px;">
                             <i class="fas fa-external-link-alt me-2"></i>View on Google Maps
                         </a>
                     </div>
                 </div>
-                
+                {% elif listing.address|has_content %}
+                <div class="mb-3">
+                    <a href="https://www.google.com/maps/search/?api=1&query={{ (listing.full_address if listing.full_address else listing.address) | urlencode }}" target="_blank" class="btn btn-sm text-white px-3 py-1" style="background-color: rgba(42, 127, 255, 0.8); border-radius: 4px;">
+                        <i class="fas fa-external-link-alt me-2"></i>View on Google Maps
+                    </a>
+                </div>
+                {% endif %}
+
+                {% if listing.neighborhood|has_content or listing.borough|has_content %}
                 <div class="neighborhood-info mt-3">
                     <div class="row">
+                        {% if listing.neighborhood|has_content %}
                         <div class="col-md-6">
                             <div class="amenity-item">
-                                <div class="amenity-icon">
-                                    <i class="fas fa-map-marked-alt"></i>
-                                </div>
+                                <div class="amenity-icon"><i class="fas fa-map-marked-alt"></i></div>
                                 <div>
                                     <span class="text-white-50">Neighborhood:</span>
-                                    <div class="fw-semibold">{{ listing.neighborhood if listing.neighborhood and listing.neighborhood != '0' else 'N/A' }}</div>
+                                    <div class="fw-semibold">{{ listing.neighborhood }}</div>
                                 </div>
                             </div>
                         </div>
+                        {% endif %}
+                        {% if listing.borough|has_content %}
                         <div class="col-md-6">
                             <div class="amenity-item">
-                                <div class="amenity-icon">
-                                    <i class="fas fa-city"></i>
-                                </div>
+                                <div class="amenity-icon"><i class="fas fa-city"></i></div>
                                 <div>
                                     <span class="text-white-50">Borough:</span>
-                                    <div class="fw-semibold">{{ listing.borough if listing.borough else 'Manhattan' }}</div>
+                                    <div class="fw-semibold">{{ listing.borough }}</div>
                                 </div>
                             </div>
                         </div>
+                        {% endif %}
                     </div>
                 </div>
+                {% endif %}
             </div>
+            {% endif %}
         </div>
         
         <!-- Right Column: Contact Card -->

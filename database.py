@@ -232,7 +232,10 @@ def get_listing(listing_id):
                     "state":
                     "NY",
                     "zip_code":
-                    int(item.get('zip_code')) if item.get('zip_code') and str(item.get('zip_code')).isdigit() else '-',
+                    int(float(item.get('zip_code')))
+                    if item.get('zip_code') not in [None, '', 'null', 'nan', '0', 0]
+                    and str(item.get('zip_code')).replace('.', '', 1).isdigit()
+                    else '',
                     "price":
                     item.get('listed_price'),
                     "actual_rent":
@@ -448,7 +451,10 @@ def get_all_listings(address=None,
                 "borough": item.get('borough', '-') if item.get('borough') not in ['0', 'null', 'nan', None] else '-',
                 "city": "New York",
                 "state": "NY",
-                "zip_code": int(item.get('zip_code')) if item.get('zip_code') and str(item.get('zip_code')).isdigit() else '-',
+                "zip_code": int(float(item.get('zip_code')))
+                if item.get('zip_code') not in [None, '', 'null', 'nan', '0', 0]
+                and str(item.get('zip_code')).replace('.', '', 1).isdigit()
+                else '',
                 "actual_rent": item.get('listed_net', 'N/A'),
                 "beds": item.get('beds', 'N/A'),
                 "baths": item.get('baths', 'N/A'),

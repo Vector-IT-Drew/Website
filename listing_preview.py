@@ -17,6 +17,8 @@ def _clean_text(value):
     text = _MARKUP_RE.sub('', text)
     text = re.sub(r'\s+', ' ', text).strip()
     text = text.strip(' -–—')
+    if text.lower() in {'0', '0.0', 'n/a', 'na', 'null', 'none', 'nan', '-'}:
+        return ''
     return text
 
 
@@ -97,22 +99,7 @@ def enrich_listing_preview(listing):
         if item not in highlights and len(highlights) < 4:
             highlights.append(item)
 
-    if not summary:
-        beds = listing.get('beds')
-        if beds == 0 or str(beds) == '0':
-            bed_label = 'Studio'
-        else:
-            try:
-                bed_num = float(beds)
-                bed_label = '1 Bedroom' if bed_num == 1 else f'{bed_num:g} Bedrooms'
-            except (TypeError, ValueError):
-                bed_label = 'Residence'
-
-        hood = listing.get('neighborhood')
-        if hood in (None, '', '-', '0'):
-            hood = 'New York'
-        summary = f'{bed_label} in {hood}.'
-
+    # Do not invent marketing copy when description is blank/placeholder.
     listing['preview_summary'] = summary
     listing['preview_highlights'] = highlights[:4]
     return listing
