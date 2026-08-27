@@ -210,15 +210,28 @@ function initSmoothScrolling() {
         });
     }
     
-    // Handle all other anchor links
+    // Handle in-page hash links only (never hijack external/absolute URLs)
     document.querySelectorAll('a[href^="#"]:not(.nav-link):not(.scroll-down-link)').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
-            e.preventDefault();
-            
             const targetId = this.getAttribute('href');
-            if (targetId === '#') return;
-            
-            const targetElement = document.querySelector(targetId);
+            // Ignore placeholders and anything that is not a simple in-page hash.
+            // Preview modal CTAs start as href="#" then get swapped to full Dash URLs;
+            // those must open normally (including target="_blank").
+            if (!targetId || targetId === '#') {
+                e.preventDefault();
+                return;
+            }
+            if (!targetId.startsWith('#') || targetId.includes('://') || targetId.includes('?') || targetId.includes('/')) {
+                return;
+            }
+
+            e.preventDefault();
+            let targetElement = null;
+            try {
+                targetElement = document.querySelector(targetId);
+            } catch (err) {
+                return;
+            }
             if (targetElement) {
                 const offsetPosition = targetElement.offsetTop - 70; // Account for navbar
                 window.scrollTo({

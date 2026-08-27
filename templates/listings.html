@@ -1267,10 +1267,10 @@
             <p class="listing-preview-summary" id="listingPreviewSummary"></p>
             <ul class="listing-preview-highlights" id="listingPreviewHighlights"></ul>
             <div class="listing-preview-actions">
-                <a href="#" target="_blank" rel="noopener noreferrer" class="btn listing-preview-tour" id="listingPreviewTour">
+                <a href="https://dash-production-b25c.up.railway.app/tour-schedule" target="_blank" rel="noopener noreferrer" class="btn listing-preview-tour" id="listingPreviewTour" data-fallback-href="https://dash-production-b25c.up.railway.app/tour-schedule">
                     Schedule a Tour
                 </a>
-                <a href="#" target="_blank" rel="noopener noreferrer" class="btn listing-preview-apply" id="listingPreviewApply">
+                <a href="https://dash-production-b25c.up.railway.app/rental-app/rental-application" target="_blank" rel="noopener noreferrer" class="btn listing-preview-apply" id="listingPreviewApply" data-fallback-href="https://dash-production-b25c.up.railway.app/rental-app/rental-application">
                     Apply Now
                 </a>
                 <a href="#" class="listing-preview-more" id="listingPreviewMore">
@@ -1408,9 +1408,13 @@
             highlightsEl.hidden = true;
         }
 
-        tourBtn.href = data.tourUrl || '#';
-        applyBtn.href = data.applyUrl || '#';
+        tourBtn.href = data.tourUrl || tourBtn.getAttribute('data-fallback-href') || tourBtn.href;
+        applyBtn.href = data.applyUrl || applyBtn.getAttribute('data-fallback-href') || applyBtn.href;
         moreBtn.href = data.detailUrl || '#';
+        tourBtn.target = '_blank';
+        applyBtn.target = '_blank';
+        tourBtn.rel = 'noopener noreferrer';
+        applyBtn.rel = 'noopener noreferrer';
 
         overlay.hidden = false;
         overlay.setAttribute('aria-hidden', 'false');
@@ -1462,6 +1466,20 @@
     nextBtn.addEventListener('click', (event) => {
         event.stopPropagation();
         showGalleryImage(galleryIndex + 1);
+    });
+
+    function openExternal(url) {
+        if (!url) return;
+        window.open(url, '_blank', 'noopener,noreferrer');
+    }
+
+    // Force Dash CTAs into a new tab even if another script tries to hijack <a> clicks.
+    [tourBtn, applyBtn].forEach((btn) => {
+        btn.addEventListener('click', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            openExternal(btn.href);
+        });
     });
 
     // View full listing leaves this page for the real listing detail.
