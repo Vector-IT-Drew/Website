@@ -365,6 +365,7 @@
         position: relative;
         min-height: 100%;
         background: #0b1a2e center/cover no-repeat;
+        transition: background-image 0.25s ease;
     }
 
     .listing-preview-media::after {
@@ -373,6 +374,65 @@
         inset: 0;
         background: linear-gradient(180deg, rgba(4, 12, 22, 0.05), rgba(4, 12, 22, 0.35));
         pointer-events: none;
+    }
+
+    .listing-preview-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 3;
+        width: 40px;
+        height: 40px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        background: rgba(7, 15, 30, 0.55);
+        color: #fff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        backdrop-filter: blur(6px);
+        transition: background 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+    }
+
+    .listing-preview-nav:hover {
+        background: rgba(42, 127, 255, 0.45);
+        border-color: rgba(42, 127, 255, 0.7);
+    }
+
+    .listing-preview-nav:disabled {
+        opacity: 0.35;
+        cursor: default;
+    }
+
+    .listing-preview-nav-prev {
+        left: 0.75rem;
+    }
+
+    .listing-preview-nav-next {
+        right: 0.75rem;
+    }
+
+    .listing-preview-counter {
+        position: absolute;
+        left: 50%;
+        bottom: 0.85rem;
+        transform: translateX(-50%);
+        z-index: 3;
+        padding: 0.25rem 0.65rem;
+        border-radius: 999px;
+        background: rgba(7, 15, 30, 0.65);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 0.72rem;
+        letter-spacing: 0.04em;
+        backdrop-filter: blur(6px);
+        white-space: nowrap;
+    }
+
+    .listing-preview-media.is-single .listing-preview-nav,
+    .listing-preview-media.is-single .listing-preview-counter {
+        display: none;
     }
 
     .listing-preview-body {
@@ -931,12 +991,22 @@
         <div class="row g-4">
             {% for listing in listings %}
             {% set default_images = ['https://dl.dropboxusercontent.com/scl/fi/fy2wl340lre6y2gm84m13/img-coming-soon-2.jpeg?rlkey=xkao9jz2p6mrznqhb8e3hf7w6&st=k3gwz5kj&dl=0', 'https://dl.dropboxusercontent.com/scl/fi/5kqjpn1lqdt6p73zo5xkj/img-coming-soon-3.jpeg?rlkey=ngk4iu9pvl6jusqps220pi2uv&st=ttncu3xt&dl=0', 'https://dl.dropboxusercontent.com/scl/fi/in5oflurzeui3k61z2vh6/img-coming-soon-4.jpeg?rlkey=rp9ucjxfih59yldqgsib9ukdl&st=x5td7577&dl=0', 'https://dl.dropboxusercontent.com/scl/fi/erhz52z0z7lskr8ru5v1h/img-coming-soon-5.jpeg?rlkey=bf8j1tpvtqb2q02tcjy0mdp3v&st=r7mtn0d7&dl=0'] %}
-            {% set background_url = default_images|random %}
-            {% if listing.unit_images and (listing.unit_images|length > 0) and listing.unit_images[0] %}
-                {% set background_url = listing.unit_images[0] %}
-            {% elif listing.building_image %}
-                {% set background_url = listing.building_image %}
+            {% set ns = namespace(images=[]) %}
+            {% if listing.unit_images %}
+                {% for img in listing.unit_images %}
+                    {% if img and img|string not in ['0', '0.0', 'N/A', 'NA', '-', '', 'null', 'None'] %}
+                        {% set _ = ns.images.append(img) %}
+                    {% endif %}
+                {% endfor %}
             {% endif %}
+            {% if not ns.images and listing.building_image and listing.building_image|string not in ['0', '', '-', 'null', 'None'] %}
+                {% set _ = ns.images.append(listing.building_image) %}
+            {% endif %}
+            {% if not ns.images %}
+                {% set _ = ns.images.append(default_images|random) %}
+            {% endif %}
+            {% set gallery_images = ns.images %}
+            {% set background_url = gallery_images[0] %}
             {% if listing.actual_rent is none %}
                 {% set price_label = 'Price on request' %}
             {% elif listing.actual_rent == 'N/A' %}
@@ -974,6 +1044,7 @@
             {% set preview_payload = {
                 'unitId': listing.unit_id,
                 'imageUrl': background_url,
+                'imageUrls': gallery_images,
                 'location': location_label,
                 'address': listing.address ~ (', #' ~ listing.unit if listing.unit and listing.unit != '-' else ''),
                 'price': price_label ~ (' / mo' if price_label not in ['Price on request', 'N/A'] else ''),
@@ -1159,7 +1230,15 @@
 {% if request.args.get('v') == '2' %}
 <div class="listing-preview-overlay" id="listingPreviewOverlay" hidden aria-hidden="true">
     <div class="listing-preview-modal" role="dialog" aria-modal="true" aria-labelledby="listingPreviewAddress">
-        <div class="listing-preview-media" id="listingPreviewMedia" aria-hidden="true"></div>
+        <div class="listing-preview-media is-single" id="listingPreviewMedia" aria-hidden="true">
+            <button type="button" class="listing-preview-nav listing-preview-nav-prev" id="listingPreviewPrev" aria-label="Previous photo">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button type="button" class="listing-preview-nav listing-preview-nav-next" id="listingPreviewNext" aria-label="Next photo">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+            <div class="listing-preview-counter" id="listingPreviewCounter">1 / 1</div>
+        </div>
         <div class="listing-preview-body">
             <button type="button" class="listing-preview-close" id="listingPreviewClose" aria-label="Close preview">
                 <i class="fas fa-times"></i>
@@ -1212,6 +1291,9 @@
     if (!overlay) return;
 
     const media = document.getElementById('listingPreviewMedia');
+    const prevBtn = document.getElementById('listingPreviewPrev');
+    const nextBtn = document.getElementById('listingPreviewNext');
+    const counterEl = document.getElementById('listingPreviewCounter');
     const locationEl = document.getElementById('listingPreviewLocation');
     const addressEl = document.getElementById('listingPreviewAddress');
     const priceEl = document.getElementById('listingPreviewPrice');
@@ -1226,15 +1308,55 @@
     const moreBtn = document.getElementById('listingPreviewMore');
     const closeBtn = document.getElementById('listingPreviewClose');
     let lastFocus = null;
+    let galleryImages = [];
+    let galleryIndex = 0;
 
     function fillText(el, value, fallback) {
         el.textContent = (value === 0 || value) ? String(value) : (fallback || '—');
     }
 
+    function normalizeImages(data) {
+        const urls = [];
+        const seen = new Set();
+        const candidates = Array.isArray(data.imageUrls) && data.imageUrls.length
+            ? data.imageUrls
+            : (data.imageUrl ? [data.imageUrl] : []);
+        candidates.forEach((url) => {
+            const cleaned = String(url || '').trim();
+            if (!cleaned || seen.has(cleaned)) return;
+            if (['0', '0.0', 'n/a', 'na', '-', 'null', 'none'].includes(cleaned.toLowerCase())) return;
+            seen.add(cleaned);
+            urls.push(cleaned);
+        });
+        return urls;
+    }
+
+    function showGalleryImage(index) {
+        if (!galleryImages.length) {
+            media.style.backgroundImage = '';
+            media.classList.add('is-single');
+            counterEl.textContent = '';
+            return;
+        }
+        galleryIndex = ((index % galleryImages.length) + galleryImages.length) % galleryImages.length;
+        const url = galleryImages[galleryIndex];
+        media.style.backgroundImage = `url('${url}')`;
+        counterEl.textContent = `${galleryIndex + 1} / ${galleryImages.length}`;
+        media.classList.toggle('is-single', galleryImages.length < 2);
+        // Preload neighbors for snappier arrows
+        [galleryIndex - 1, galleryIndex + 1].forEach((i) => {
+            const neighbor = galleryImages[(i + galleryImages.length) % galleryImages.length];
+            if (!neighbor) return;
+            const img = new Image();
+            img.src = neighbor;
+        });
+    }
+
     function openPreview(data, trigger) {
         if (!data) return;
         lastFocus = trigger || document.activeElement;
-        media.style.backgroundImage = data.imageUrl ? `url('${data.imageUrl}')` : '';
+        galleryImages = normalizeImages(data);
+        showGalleryImage(0);
         fillText(locationEl, data.location, 'New York');
         fillText(addressEl, data.address, 'Listing');
         fillText(priceEl, data.price, 'Price on request');
@@ -1304,6 +1426,15 @@
         });
     });
 
+    prevBtn.addEventListener('click', (event) => {
+        event.stopPropagation();
+        showGalleryImage(galleryIndex - 1);
+    });
+    nextBtn.addEventListener('click', (event) => {
+        event.stopPropagation();
+        showGalleryImage(galleryIndex + 1);
+    });
+
     // View full listing leaves this page for the real listing detail.
     moreBtn.addEventListener('click', (event) => {
         const href = moreBtn.getAttribute('href');
@@ -1312,7 +1443,6 @@
             return;
         }
         closePreview();
-        // Force same-tab navigation to the listing page.
         event.preventDefault();
         window.location.assign(href);
     });
@@ -1322,8 +1452,17 @@
         if (event.target === overlay) closePreview();
     });
     document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape' && overlay.classList.contains('is-open')) {
+        if (!overlay.classList.contains('is-open')) return;
+        if (event.key === 'Escape') {
             closePreview();
+            return;
+        }
+        if (event.key === 'ArrowLeft') {
+            event.preventDefault();
+            showGalleryImage(galleryIndex - 1);
+        } else if (event.key === 'ArrowRight') {
+            event.preventDefault();
+            showGalleryImage(galleryIndex + 1);
         }
     });
 })();
