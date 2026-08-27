@@ -1,4 +1,4 @@
-from tour_schedule import build_tour_schedule_url
+from tour_schedule import build_tour_schedule_url, build_rental_application_url
 
 DASH_HOST = 'https://dash.example.com'
 
@@ -27,3 +27,15 @@ def test_unit_id_takes_priority_over_address_id():
     url = build_tour_schedule_url(DASH_HOST, unit_id=344, address_id=534)
     assert 'unit_id=344' in url
     assert 'address_id' not in url
+
+
+def test_rental_application_url_with_unit():
+    url = build_rental_application_url(DASH_HOST, unit_id=5496)
+    assert url == (
+        'https://dash.example.com/rental-app/rental-application?unit_id=5496'
+    )
+
+
+def test_rental_application_url_without_unit():
+    url = build_rental_application_url(DASH_HOST)
+    assert url == 'https://dash.example.com/rental-app/rental-application'

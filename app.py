@@ -7,7 +7,7 @@ from flask import Flask, render_template, redirect, url_for, flash, request, ses
 from werkzeug.security import generate_password_hash, check_password_hash
 from forms import LoginForm, ListingForm, ApplicationForm
 from database import get_listing, get_all_listings, filter_listings_by_budget, filter_listings_by_bedrooms, filter_listings_by_location
-from tour_schedule import build_tour_schedule_url
+from tour_schedule import build_tour_schedule_url, build_rental_application_url
 from listing_preview import enrich_listing_preview
 from functools import wraps
 import markdown2
@@ -53,11 +53,18 @@ def inject_globals():
             email_address=email_address,
         )
 
+    def rental_application_url(unit_id=None):
+        return build_rental_application_url(
+            DASH_SERVICES_ENDPOINT,
+            unit_id=unit_id,
+        )
+
     return {
         'now': datetime.datetime.now(),
         'DASH_SERVICES_ENDPOINT': DASH_SERVICES_ENDPOINT,
         'tour_schedule_general_url': tour_schedule_url(),
         'tour_schedule_url': tour_schedule_url,
+        'rental_application_url': rental_application_url,
     }
 
 

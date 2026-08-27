@@ -1,4 +1,4 @@
-"""Helpers for Dash tour-schedule deep links."""
+"""Helpers for Dash tour-schedule and rental-application deep links."""
 
 from urllib.parse import quote, urlencode
 
@@ -26,3 +26,16 @@ def build_tour_schedule_url(dash_host, unit_id=None, address_id=None, email_addr
         return base
 
     return f"{base}?{urlencode(params, quote_via=quote)}"
+
+
+def build_rental_application_url(dash_host, unit_id=None):
+    """
+    Build a Dash rental-application URL for a unit.
+
+    Example:
+    https://dash-production-b25c.up.railway.app/rental-app/rental-application?unit_id=5496
+    """
+    base = f"{dash_host.rstrip('/')}/rental-app/rental-application"
+    if unit_id is None or not str(unit_id).strip():
+        return base
+    return f"{base}?{urlencode({'unit_id': str(unit_id).strip()}, quote_via=quote)}"
