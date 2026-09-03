@@ -68,9 +68,9 @@ def test_listings_v2_uses_new_grid_and_default_stays_old(monkeypatch):
     assert 'repeat(3, minmax(0, 1fr))' in html
     assert 'listing-card h-100' not in html
     assert 'v2l-amenity' in html
-    assert 'Laundry' in html
+    assert 'In-Unit Laundry' in html
     assert 'Dishwasher' in html
-    assert 'Outdoor' in html
+    assert 'Outdoor Space' in html
 
     default = client.get('/listings')
     assert default.status_code == 200

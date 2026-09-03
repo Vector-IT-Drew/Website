@@ -253,18 +253,18 @@
         flex-direction: column;
         align-items: center;
         text-align: center;
-        padding: 1.55rem 1.4rem 1.7rem;
-        gap: 0.35rem;
+        padding: 1.35rem 1.1rem 1.45rem;
+        gap: 0.3rem;
         flex: 1;
     }
 
     .v2l-price {
         font-family: 'Playfair Display', Georgia, serif;
-        font-size: clamp(1.55rem, 2.4vw, 2rem);
+        font-size: clamp(1.35rem, 1.7vw, 1.85rem);
         color: #f3d19c;
         font-weight: 600;
         line-height: 1.1;
-        margin: 0.15rem 0 0.35rem;
+        margin: 0.1rem 0 0.3rem;
     }
 
     .v2l-price span {
@@ -301,26 +301,27 @@
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
-        gap: 0.35rem;
-        margin-top: 0.85rem;
-        max-width: 92%;
+        gap: 0.3rem;
+        margin-top: 0.75rem;
+        max-width: 96%;
     }
 
     .v2l-amenity {
         display: inline-flex;
         align-items: center;
-        gap: 0.28rem;
-        padding: 0.22rem 0.5rem;
-        border: 1px solid rgba(168, 140, 96, 0.28);
+        gap: 0.26rem;
+        padding: 0.2rem 0.45rem;
+        border: 1px solid rgba(168, 140, 96, 0.26);
         color: #d7c09a;
-        font-size: 0.68rem;
-        letter-spacing: 0.04em;
+        font-size: 0.62rem;
+        letter-spacing: 0.06em;
         text-transform: uppercase;
-        background: rgba(24, 43, 67, 0.45);
+        background: rgba(24, 43, 67, 0.5);
+        white-space: nowrap;
     }
 
     .v2l-amenity i {
-        font-size: 0.62rem;
+        font-size: 0.58rem;
         color: #d59563;
     }
 
@@ -861,9 +862,9 @@
                     </div>
                     {% endif %}
                     {% set ua_text = (listing.unit_amenities or [])|join(' ')|lower %}
-                    {% set has_laundry = listing.laundry_in_unit and listing.laundry_in_unit|string|lower in ['true', '1', 'yes', 't', 'y'] %}
-                    {% set has_dishwasher = listing.dishwasher and listing.dishwasher|string|lower in ['true', '1', 'yes', 't', 'y'] %}
-                    {% set has_outdoor = (listing.outdoor_space and listing.outdoor_space|string|lower in ['true', '1', 'yes', 't', 'y'])
+                    {% set has_laundry = listing.laundry_in_unit|is_true or 'laundry' in ua_text or 'washer' in ua_text %}
+                    {% set has_dishwasher = listing.dishwasher|is_true or 'dishwasher' in ua_text %}
+                    {% set has_outdoor = listing.outdoor_space|is_true
                         or ('balcony' in ua_text)
                         or ('terrace' in ua_text)
                         or ('patio' in ua_text)
@@ -872,13 +873,13 @@
                     {% if has_laundry or has_dishwasher or has_outdoor %}
                     <div class="v2l-amenities">
                         {% if has_laundry %}
-                        <span class="v2l-amenity"><i class="fas fa-tshirt"></i> Laundry</span>
+                        <span class="v2l-amenity"><i class="fas fa-tshirt"></i> In-Unit Laundry</span>
                         {% endif %}
                         {% if has_dishwasher %}
                         <span class="v2l-amenity"><i class="fas fa-utensils"></i> Dishwasher</span>
                         {% endif %}
                         {% if has_outdoor %}
-                        <span class="v2l-amenity"><i class="fas fa-sun"></i> Outdoor</span>
+                        <span class="v2l-amenity"><i class="fas fa-sun"></i> Outdoor Space</span>
                         {% endif %}
                     </div>
                     {% endif %}
