@@ -71,6 +71,9 @@ def test_listings_v2_uses_new_grid_and_default_stays_old(monkeypatch):
     assert 'In-Unit Laundry' in html
     assert 'Dishwasher' in html
     assert 'Outdoor Space' in html
+    assert 'Sq Ft' in html
+    assert 'v2l-amenities' in html
+    assert html.index('v2l-amenities') < html.index('v2l-badge')
 
     default = client.get('/listings')
     assert default.status_code == 200
