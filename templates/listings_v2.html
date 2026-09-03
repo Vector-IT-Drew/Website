@@ -196,7 +196,7 @@
 
     .v2l-grid {
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         border-top: 1px solid var(--v2-line);
         border-left: 1px solid var(--v2-line);
     }
@@ -295,6 +295,33 @@
         font-size: 0.84rem;
         margin-top: 0.55rem;
         letter-spacing: 0.02em;
+    }
+
+    .v2l-amenities {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.35rem;
+        margin-top: 0.85rem;
+        max-width: 92%;
+    }
+
+    .v2l-amenity {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.28rem;
+        padding: 0.22rem 0.5rem;
+        border: 1px solid rgba(168, 140, 96, 0.28);
+        color: #d7c09a;
+        font-size: 0.68rem;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        background: rgba(24, 43, 67, 0.45);
+    }
+
+    .v2l-amenity i {
+        font-size: 0.62rem;
+        color: #d59563;
     }
 
     .v2l-empty {
@@ -539,10 +566,19 @@
         border-top: 1px solid rgba(168, 140, 96, 0.16);
     }
 
-    @media (max-width: 900px) {
+    @media (max-width: 1100px) {
+        .v2l-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 700px) {
         .v2l-grid {
             grid-template-columns: 1fr;
         }
+    }
+
+    @media (max-width: 900px) {
 
         .v2l-preview-modal {
             grid-template-columns: 1fr;
@@ -822,6 +858,28 @@
                         {% if beds_spec %}{{ beds_spec }}{% endif %}
                         {% if beds_spec and baths_spec %}&nbsp;&nbsp;{% endif %}
                         {% if baths_spec %}{{ baths_spec }}{% endif %}
+                    </div>
+                    {% endif %}
+                    {% set ua_text = (listing.unit_amenities or [])|join(' ')|lower %}
+                    {% set has_laundry = listing.laundry_in_unit and listing.laundry_in_unit|string|lower in ['true', '1', 'yes', 't', 'y'] %}
+                    {% set has_dishwasher = listing.dishwasher and listing.dishwasher|string|lower in ['true', '1', 'yes', 't', 'y'] %}
+                    {% set has_outdoor = (listing.outdoor_space and listing.outdoor_space|string|lower in ['true', '1', 'yes', 't', 'y'])
+                        or ('balcony' in ua_text)
+                        or ('terrace' in ua_text)
+                        or ('patio' in ua_text)
+                        or ('outdoor' in ua_text)
+                        or ('deck' in ua_text) %}
+                    {% if has_laundry or has_dishwasher or has_outdoor %}
+                    <div class="v2l-amenities">
+                        {% if has_laundry %}
+                        <span class="v2l-amenity"><i class="fas fa-tshirt"></i> Laundry</span>
+                        {% endif %}
+                        {% if has_dishwasher %}
+                        <span class="v2l-amenity"><i class="fas fa-utensils"></i> Dishwasher</span>
+                        {% endif %}
+                        {% if has_outdoor %}
+                        <span class="v2l-amenity"><i class="fas fa-sun"></i> Outdoor</span>
+                        {% endif %}
                     </div>
                     {% endif %}
                 </div>

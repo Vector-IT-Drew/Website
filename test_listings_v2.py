@@ -17,6 +17,10 @@ SAMPLE_LISTINGS = [
         'unit_images': ['https://example.com/a.jpg'],
         'building_image': '',
         'move_out': '',
+        'laundry_in_unit': '1',
+        'dishwasher': '1',
+        'outdoor_space': '0',
+        'unit_amenities': [],
         'preview_summary': 'Bright residence',
         'preview_highlights': ['Washer dryer'],
     },
@@ -35,6 +39,10 @@ SAMPLE_LISTINGS = [
         'unit_images': [],
         'building_image': '',
         'move_out': '04/01/2026',
+        'laundry_in_unit': '0',
+        'dishwasher': '0',
+        'outdoor_space': '1',
+        'unit_amenities': ['Balcony'],
         'preview_summary': '',
         'preview_highlights': [],
     },
@@ -57,7 +65,12 @@ def test_listings_v2_uses_new_grid_and_default_stays_old(monkeypatch):
     assert 'Available Now' in html
     assert 'Available on 04/01/2026' in html
     assert 'Find Residences' in html
+    assert 'repeat(3, minmax(0, 1fr))' in html
     assert 'listing-card h-100' not in html
+    assert 'v2l-amenity' in html
+    assert 'Laundry' in html
+    assert 'Dishwasher' in html
+    assert 'Outdoor' in html
 
     default = client.get('/listings')
     assert default.status_code == 200
