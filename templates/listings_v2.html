@@ -1,0 +1,1145 @@
+{% extends 'base.html' %}
+
+{% block title %}Vector New York - Residences{% endblock %}
+
+{% block extra_css %}
+<style>
+    body.v2-listings {
+        --v2-navy: #182b43;
+        --v2-land: #24354c;
+        --v2-panel: #1f3046;
+        --v2-gold: #d59563;
+        --v2-gold-soft: #a88c60;
+        --v2-cream: #f3d19c;
+        --v2-muted: #9ca5b3;
+        --v2-line: rgba(168, 140, 96, 0.22);
+        background: #182b43;
+        color: #f3d19c;
+    }
+
+    body.v2-listings .navbar {
+        background-color: rgba(24, 43, 67, 0.98) !important;
+        border-bottom: 1px solid rgba(168, 140, 96, 0.18);
+    }
+
+    body.v2-listings .nav-link::after {
+        background-color: #d59563;
+    }
+
+    .v2l-page {
+        padding: 0.4rem 0 4.5rem;
+    }
+
+    .v2l-filters {
+        border: 1px solid var(--v2-line);
+        background: rgba(31, 48, 70, 0.92);
+        padding: 1.15rem 1.2rem 0.85rem;
+        margin-bottom: 1.75rem;
+    }
+
+    .v2l-filters .filter-title {
+        font-size: 0.68rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--v2-gold-soft);
+        margin-bottom: 0.45rem;
+    }
+
+    .v2l-filters .form-control,
+    .v2l-filters .form-select {
+        background: rgba(24, 43, 67, 0.85);
+        border: 1px solid rgba(168, 140, 96, 0.22);
+        color: #f8f4ea;
+        border-radius: 0;
+    }
+
+    .v2l-filters .form-control:focus,
+    .v2l-filters .form-select:focus {
+        background: rgba(24, 43, 67, 0.95);
+        border-color: rgba(213, 149, 99, 0.55);
+        box-shadow: 0 0 0 0.2rem rgba(213, 149, 99, 0.15);
+        color: #fff;
+    }
+
+    .v2l-filters .form-select option {
+        background: #1f3046;
+        color: #f8f4ea;
+    }
+
+    .v2l-filters .form-check-label {
+        color: #c9d0d8;
+        font-size: 0.9rem;
+    }
+
+    .v2l-filters .form-check-input {
+        background-color: #24354c;
+        border-color: rgba(168, 140, 96, 0.4);
+    }
+
+    .v2l-filters .form-check-input:checked {
+        background-color: #d59563;
+        border-color: #d59563;
+    }
+
+    .v2l-price-display {
+        font-weight: 500;
+        text-align: center;
+        color: var(--v2-cream);
+        font-size: 0.9rem;
+        margin-bottom: 0.45rem;
+    }
+
+    .v2l-price-range {
+        position: relative;
+        height: 36px;
+        margin: 0 6px;
+    }
+
+    .v2l-range {
+        -webkit-appearance: none;
+        appearance: none;
+        position: absolute;
+        width: 100%;
+        height: 4px;
+        border-radius: 0;
+        background: rgba(243, 209, 156, 0.14);
+        outline: none;
+        pointer-events: none;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .v2l-range::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: #f3d19c;
+        cursor: pointer;
+        pointer-events: auto;
+        border: 2px solid #182b43;
+    }
+
+    .v2l-range::-moz-range-thumb {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: #f3d19c;
+        cursor: pointer;
+        pointer-events: auto;
+        border: 2px solid #182b43;
+    }
+
+    .v2l-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.7rem 1.35rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        font-size: 0.72rem;
+        font-weight: 700;
+        border-radius: 0;
+        text-decoration: none;
+        border: 1px solid transparent;
+    }
+
+    .v2l-btn-gold {
+        background: #f3d19c;
+        color: #182b43;
+        border-color: #f3d19c;
+    }
+
+    .v2l-btn-gold:hover {
+        background: #fff1d6;
+        color: #182b43;
+    }
+
+    .v2l-btn-ghost {
+        background: transparent;
+        color: #f3d19c;
+        border-color: rgba(213, 149, 99, 0.45);
+    }
+
+    .v2l-btn-ghost:hover {
+        background: rgba(213, 149, 99, 0.14);
+        color: #fff;
+    }
+
+    .v2l-actions-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-top: 0.35rem;
+    }
+
+    .v2l-count {
+        text-align: center;
+        color: #9ca5b3;
+        font-size: 0.92rem;
+        letter-spacing: 0.02em;
+        margin: 0.35rem 0 1.5rem;
+    }
+
+    .v2l-count strong {
+        color: #f3d19c;
+        font-weight: 600;
+    }
+
+    .v2l-building-tour {
+        text-align: center;
+        margin: -0.6rem 0 1.4rem;
+    }
+
+    .v2l-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        border-top: 1px solid var(--v2-line);
+        border-left: 1px solid var(--v2-line);
+    }
+
+    .v2l-card {
+        display: flex;
+        flex-direction: column;
+        min-height: 100%;
+        background: #1b2b40;
+        border-right: 1px solid var(--v2-line);
+        border-bottom: 1px solid var(--v2-line);
+        cursor: pointer;
+        transition: background 0.25s ease, transform 0.25s ease;
+        outline: none;
+    }
+
+    .v2l-card:hover,
+    .v2l-card:focus-visible {
+        background: #203148;
+        transform: translateY(-2px);
+    }
+
+    .v2l-media {
+        position: relative;
+        aspect-ratio: 4 / 3;
+        background: #132338 center/cover no-repeat;
+        overflow: hidden;
+    }
+
+    .v2l-media::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, transparent 55%, rgba(24, 43, 67, 0.55) 100%);
+        pointer-events: none;
+    }
+
+    .v2l-badge {
+        position: absolute;
+        z-index: 2;
+        left: 1rem;
+        bottom: 1rem;
+        padding: 0.32rem 0.55rem;
+        border: 1px solid rgba(213, 149, 99, 0.7);
+        color: #f3d19c;
+        font-size: 0.62rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        background: rgba(24, 43, 67, 0.55);
+    }
+
+    .v2l-body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 1.55rem 1.4rem 1.7rem;
+        gap: 0.35rem;
+        flex: 1;
+    }
+
+    .v2l-price {
+        font-family: 'Playfair Display', Georgia, serif;
+        font-size: clamp(1.55rem, 2.4vw, 2rem);
+        color: #f3d19c;
+        font-weight: 600;
+        line-height: 1.1;
+        margin: 0.15rem 0 0.35rem;
+    }
+
+    .v2l-price span {
+        font-family: sans-serif;
+        font-size: 0.78rem;
+        color: rgba(255, 255, 255, 0.78);
+        font-weight: 400;
+        letter-spacing: 0.02em;
+        margin-left: 0.2rem;
+    }
+
+    .v2l-name {
+        color: #fff;
+        font-size: 1.02rem;
+        font-weight: 600;
+        margin: 0;
+        letter-spacing: 0.01em;
+    }
+
+    .v2l-address {
+        color: #9ca5b3;
+        font-size: 0.9rem;
+        margin: 0;
+    }
+
+    .v2l-specs {
+        color: #8b95a3;
+        font-size: 0.84rem;
+        margin-top: 0.55rem;
+        letter-spacing: 0.02em;
+    }
+
+    .v2l-empty {
+        border: 1px solid var(--v2-line);
+        background: #1f3046;
+        padding: 3rem 1.5rem;
+        text-align: center;
+        color: #9ca5b3;
+    }
+
+    .v2l-empty h3 {
+        font-family: 'Playfair Display', Georgia, serif;
+        color: #f3d19c;
+        margin-bottom: 0.6rem;
+    }
+
+    .v2l-empty a {
+        color: #f3d19c;
+    }
+
+    /* Preview modal */
+    .v2l-preview-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 2000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.25rem;
+        background: rgba(10, 18, 30, 0.78);
+        backdrop-filter: blur(10px);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.28s ease;
+    }
+
+    .v2l-preview-overlay.is-open {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .v2l-preview-modal {
+        width: min(980px, 100%);
+        max-height: min(88vh, 720px);
+        display: grid;
+        grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+        overflow: hidden;
+        background: #1f3046;
+        border: 1px solid rgba(168, 140, 96, 0.28);
+        box-shadow: 0 28px 80px rgba(0, 0, 0, 0.45);
+        transform: translateY(14px);
+        transition: transform 0.28s ease;
+    }
+
+    .v2l-preview-overlay.is-open .v2l-preview-modal {
+        transform: translateY(0);
+    }
+
+    .v2l-preview-media {
+        position: relative;
+        min-height: 320px;
+        background: #132338 center/cover no-repeat;
+    }
+
+    .v2l-preview-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 38px;
+        height: 38px;
+        border-radius: 999px;
+        border: 1px solid rgba(243, 209, 156, 0.28);
+        background: rgba(24, 43, 67, 0.62);
+        color: #f3d19c;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 2;
+    }
+
+    .v2l-preview-nav:hover {
+        background: rgba(213, 149, 99, 0.35);
+        color: #fff;
+    }
+
+    .v2l-preview-nav-prev { left: 0.85rem; }
+    .v2l-preview-nav-next { right: 0.85rem; }
+
+    .v2l-preview-counter {
+        position: absolute;
+        left: 50%;
+        bottom: 0.85rem;
+        transform: translateX(-50%);
+        padding: 0.22rem 0.7rem;
+        border-radius: 999px;
+        background: rgba(24, 43, 67, 0.72);
+        border: 1px solid rgba(243, 209, 156, 0.2);
+        color: #f3d19c;
+        font-size: 0.72rem;
+        z-index: 2;
+    }
+
+    .v2l-preview-media.is-single .v2l-preview-nav,
+    .v2l-preview-media.is-single .v2l-preview-counter {
+        display: none;
+    }
+
+    .v2l-preview-body {
+        position: relative;
+        padding: 1.6rem 1.5rem 1.4rem;
+        overflow: auto;
+    }
+
+    .v2l-preview-close {
+        position: absolute;
+        top: 0.85rem;
+        right: 0.85rem;
+        width: 34px;
+        height: 34px;
+        border: 1px solid rgba(168, 140, 96, 0.28);
+        background: transparent;
+        color: #f3d19c;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+    .v2l-preview-close:hover {
+        background: rgba(213, 149, 99, 0.16);
+        color: #fff;
+    }
+
+    .v2l-preview-kicker {
+        color: #d59563;
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        margin-bottom: 0.45rem;
+    }
+
+    .v2l-preview-address {
+        font-family: 'Playfair Display', Georgia, serif;
+        color: #fff;
+        font-size: 1.55rem;
+        margin-bottom: 0.35rem;
+    }
+
+    .v2l-preview-price {
+        font-family: 'Playfair Display', Georgia, serif;
+        color: #f3d19c;
+        font-size: 1.45rem;
+        margin-bottom: 1rem;
+    }
+
+    .v2l-preview-stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0.5rem;
+        padding: 0.85rem 0;
+        margin-bottom: 0.85rem;
+        border-top: 1px solid rgba(168, 140, 96, 0.22);
+        border-bottom: 1px solid rgba(168, 140, 96, 0.22);
+    }
+
+    .v2l-preview-stat {
+        text-align: center;
+    }
+
+    .v2l-preview-stat strong {
+        display: block;
+        font-family: 'Playfair Display', Georgia, serif;
+        color: #fff;
+        font-size: 1.15rem;
+    }
+
+    .v2l-preview-stat span {
+        display: block;
+        margin-top: 0.15rem;
+        font-size: 0.62rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: #9ca5b3;
+    }
+
+    .v2l-preview-summary {
+        color: rgba(255, 255, 255, 0.82);
+        line-height: 1.6;
+        margin-bottom: 0.75rem;
+    }
+
+    .v2l-preview-highlights {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 1rem;
+    }
+
+    .v2l-preview-highlights li {
+        position: relative;
+        padding: 0.28rem 0 0.28rem 1rem;
+        color: rgba(255, 255, 255, 0.82);
+    }
+
+    .v2l-preview-highlights li::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0.72rem;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: #d59563;
+    }
+
+    .v2l-preview-actions {
+        display: grid;
+        gap: 0.65rem;
+    }
+
+    .v2l-preview-more {
+        display: inline-flex;
+        justify-content: center;
+        color: #a88c60;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        font-size: 0.86rem;
+        margin-top: 0.2rem;
+    }
+
+    .v2l-preview-more:hover {
+        color: #f3d19c;
+    }
+
+    body.listing-preview-open {
+        overflow: hidden;
+    }
+
+    footer {
+        background: #132338 !important;
+        border-top: 1px solid rgba(168, 140, 96, 0.16);
+    }
+
+    @media (max-width: 900px) {
+        .v2l-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .v2l-preview-modal {
+            grid-template-columns: 1fr;
+            max-height: min(92vh, 860px);
+            overflow: auto;
+        }
+
+        .v2l-preview-media {
+            min-height: 240px;
+        }
+
+        .v2l-preview-stats {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+{% set ns_boroughs = namespace(seen=[], labels=[]) %}
+{% if listings %}
+    {% for listing in listings %}
+        {% if listing.borough and listing.borough|string not in ['-', '', '0', 'null', 'None', 'nan'] and listing.borough not in ns_boroughs.seen %}
+            {% set _ = ns_boroughs.seen.append(listing.borough) %}
+            {% set _ = ns_boroughs.labels.append(listing.borough) %}
+        {% endif %}
+    {% endfor %}
+{% endif %}
+{% set borough_line = ns_boroughs.labels %}
+<section class="v2l-page">
+    <div class="container">
+        <div class="v2l-filters">
+            <form action="{{ url_for('listings') }}" method="GET" id="v2lFilterForm">
+                {% if request.args.get('borough') %}<input type="hidden" name="borough" value="{{ request.args.get('borough') }}">{% endif %}
+                {% if request.args.get('exposure') %}<input type="hidden" name="exposure" value="{{ request.args.get('exposure') }}">{% endif %}
+                {% if request.args.get('amenities') %}<input type="hidden" name="amenities" value="{{ request.args.get('amenities') }}">{% endif %}
+                {% if request.args.get('doorman') %}<input type="hidden" name="doorman" value="{{ request.args.get('doorman') }}">{% endif %}
+                {% if request.args.get('elevator') %}<input type="hidden" name="elevator" value="{{ request.args.get('elevator') }}">{% endif %}
+                {% if request.args.get('pet_friendly') %}<input type="hidden" name="pet_friendly" value="{{ request.args.get('pet_friendly') }}">{% endif %}
+                {% if request.args.get('wheelchair_access') %}<input type="hidden" name="wheelchair_access" value="{{ request.args.get('wheelchair_access') }}">{% endif %}
+                {% if request.args.get('smoke_free') %}<input type="hidden" name="smoke_free" value="{{ request.args.get('smoke_free') }}">{% endif %}
+                {% if request.args.get('laundry_in_building') %}<input type="hidden" name="laundry_in_building" value="{{ request.args.get('laundry_in_building') }}">{% endif %}
+                {% if request.args.get('laundry_in_unit') %}<input type="hidden" name="laundry_in_unit" value="{{ request.args.get('laundry_in_unit') }}">{% endif %}
+                {% if request.args.get('live_in_super') %}<input type="hidden" name="live_in_super" value="{{ request.args.get('live_in_super') }}">{% endif %}
+                {% if request.args.get('concierge') %}<input type="hidden" name="concierge" value="{{ request.args.get('concierge') }}">{% endif %}
+                {% if request.args.get('portfolio') %}<input type="hidden" name="portfolio" value="{{ request.args.get('portfolio') }}">{% endif %}
+                <input type="hidden" name="v" value="2">
+
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="filter-title" for="neighborhood">Neighborhood</label>
+                        <select name="neighborhood" id="neighborhood" class="form-select">
+                            <option value="">Any</option>
+                            {% for neighborhood in unique_neighborhoods %}
+                            <option value="{{ neighborhood }}" {% if request.args.get('neighborhood') == neighborhood %}selected{% endif %}>{{ neighborhood }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="filter-title" for="address">Address</label>
+                        <select name="address" id="address" class="form-select">
+                            <option value="">Any</option>
+                            {% for address in unique_addresses %}
+                            <option value="{{ address }}" {% if request.args.get('address') == address %}selected{% endif %}>{{ address }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="filter-title" for="beds">Bedrooms</label>
+                        <select name="beds" id="beds" class="form-select">
+                            <option value="">Any</option>
+                            <option value="0" {% if request.args.get('beds') == '0' %}selected{% endif %}>Studio</option>
+                            <option value="1" {% if request.args.get('beds') == '1' %}selected{% endif %}>1+ Bed</option>
+                            <option value="2" {% if request.args.get('beds') == '2' %}selected{% endif %}>2+ Beds</option>
+                            <option value="3" {% if request.args.get('beds') == '3' %}selected{% endif %}>3+ Beds</option>
+                            <option value="4" {% if request.args.get('beds') == '4' %}selected{% endif %}>4+ Beds</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="filter-title" for="baths">Bathrooms</label>
+                        <select name="baths" id="baths" class="form-select">
+                            <option value="">Any</option>
+                            <option value="1" {% if request.args.get('baths') == '1' %}selected{% endif %}>1+ Bath</option>
+                            <option value="1.5" {% if request.args.get('baths') == '1.5' %}selected{% endif %}>1.5+ Baths</option>
+                            <option value="2" {% if request.args.get('baths') == '2' %}selected{% endif %}>2+ Baths</option>
+                            <option value="3" {% if request.args.get('baths') == '3' %}selected{% endif %}>3+ Baths</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="filter-title">Price Range</label>
+                        <div class="v2l-price-display" id="priceRangeDisplay">
+                            ${{ "{:,}".format(request.args.get('min_price', 700)|int) }} – ${{ "{:,}".format(request.args.get('max_price', 25000)|int) }}
+                        </div>
+                        <div class="v2l-price-range">
+                            <input type="range" id="min-price-slider" class="v2l-range"
+                                   min="700" max="25000" step="100"
+                                   value="{{ request.args.get('min_price', 700) }}">
+                            <input type="range" id="max-price-slider" class="v2l-range"
+                                   min="700" max="25000" step="100"
+                                   value="{{ request.args.get('max_price', 25000) }}">
+                        </div>
+                        <input type="hidden" name="min_price" id="min-price-input" value="{{ request.args.get('min_price', 700) }}">
+                        <input type="hidden" name="max_price" id="max-price-input" value="{{ request.args.get('max_price', 25000) }}">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="filter-title">Availability</label>
+                        <div class="d-flex gap-4 mt-2">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="availability" id="availability_any" value="" {% if not request.args.get('availability') %}checked{% endif %}>
+                                <label class="form-check-label" for="availability_any">All Units</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="availability" id="availability_now" value="available" {% if request.args.get('availability') == 'available' %}checked{% endif %}>
+                                <label class="form-check-label" for="availability_now">Available Now</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="filter-title" for="sort">Sort By</label>
+                        <select name="sort" id="sort" class="form-select">
+                            <option value="" {% if not request.args.get('sort') %}selected{% endif %}>Featured</option>
+                            <option value="price_asc" {% if request.args.get('sort') == 'price_asc' %}selected{% endif %}>Price (Low to High)</option>
+                            <option value="price_desc" {% if request.args.get('sort') == 'price_desc' %}selected{% endif %}>Price (High to Low)</option>
+                            <option value="size_desc" {% if request.args.get('sort') == 'size_desc' %}selected{% endif %}>Largest</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="v2l-actions-row">
+                            <button type="submit" class="v2l-btn v2l-btn-gold">Find Residences</button>
+                            <a href="{{ url_for('listings', v=2) }}" class="v2l-btn v2l-btn-ghost">Reset Filters</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <p class="v2l-count">
+            {% if listings %}
+                <strong>{{ listings|length }}</strong>
+                {% if listings|length == 1 %}residence{% else %}residences{% endif %}
+                available
+                {% if borough_line %}
+                    across {{ borough_line|join(' and ') if borough_line|length <= 2 else (borough_line[:-1]|join(', ') ~ ', and ' ~ borough_line[-1]) }}
+                {% endif %}
+            {% else %}
+                No residences match these filters
+            {% endif %}
+        </p>
+
+        {% if building_tour_url %}
+        <div class="v2l-building-tour">
+            <a href="{{ building_tour_url }}" target="_blank" rel="noopener noreferrer" class="v2l-btn v2l-btn-ghost">Schedule Building Tour</a>
+        </div>
+        {% endif %}
+
+        {% if listings %}
+        <div class="v2l-grid">
+            {% for listing in listings %}
+            {% set default_images = [
+                'https://dl.dropboxusercontent.com/scl/fi/fy2wl340lre6y2gm84m13/img-coming-soon-2.jpeg?rlkey=xkao9jz2p6mrznqhb8e3hf7w6&st=k3gwz5kj&dl=0',
+                'https://dl.dropboxusercontent.com/scl/fi/5kqjpn1lqdt6p73zo5xkj/img-coming-soon-3.jpeg?rlkey=ngk4iu9pvl6jusqps220pi2uv&st=ttncu3xt&dl=0',
+                'https://dl.dropboxusercontent.com/scl/fi/in5oflurzeui3k61z2vh6/img-coming-soon-4.jpeg?rlkey=rp9ucjxfih59yldqgsib9ukdl&st=x5td7577&dl=0',
+                'https://dl.dropboxusercontent.com/scl/fi/erhz52z0z7lskr8ru5v1h/img-coming-soon-5.jpeg?rlkey=bf8j1tpvtqb2q02tcjy0mdp3v&st=r7mtn0d7&dl=0'
+            ] %}
+            {% set ns = namespace(images=[]) %}
+            {% if listing.unit_images %}
+                {% for img in listing.unit_images %}
+                    {% if img and img|string not in ['0', '0.0', 'N/A', 'NA', '-', '', 'null', 'None'] %}
+                        {% set _ = ns.images.append(img) %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            {% if not ns.images and listing.building_image and listing.building_image|string not in ['0', '', '-', 'null', 'None'] %}
+                {% set _ = ns.images.append(listing.building_image) %}
+            {% endif %}
+            {% if not ns.images %}
+                {% set _ = ns.images.append(default_images|random) %}
+            {% endif %}
+            {% set gallery_images = ns.images %}
+            {% set background_url = gallery_images[0] %}
+
+            {% if listing.actual_rent is none %}
+                {% set price_main = 'Price on request' %}
+                {% set price_suffix = '' %}
+                {% set price_label = 'Price on request' %}
+            {% elif listing.actual_rent == 'N/A' %}
+                {% set price_main = 'N/A' %}
+                {% set price_suffix = '' %}
+                {% set price_label = 'N/A' %}
+            {% else %}
+                {% set price_main = '${:,.0f}'.format(listing.actual_rent|float) %}
+                {% set price_suffix = '/ mo' %}
+                {% set price_label = price_main %}
+            {% endif %}
+
+            {% if listing.beds == 0 or listing.beds == '0' %}
+                {% set beds_stat = 'Studio' %}
+                {% set beds_spec = 'Studio' %}
+            {% elif listing.beds and listing.beds != 'N/A' %}
+                {% set beds_stat = listing.beds %}
+                {% set beds_spec = (listing.beds|string ~ ' Bed') ~ ('' if listing.beds|string in ['1', '1.0'] else 's') %}
+            {% else %}
+                {% set beds_stat = '—' %}
+                {% set beds_spec = '' %}
+            {% endif %}
+
+            {% if listing.baths and listing.baths != 'N/A' %}
+                {% set baths_stat = listing.baths %}
+                {% set baths_spec = (listing.baths|string ~ ' Bath') ~ ('' if listing.baths|string in ['1', '1.0'] else 's') %}
+            {% else %}
+                {% set baths_stat = '—' %}
+                {% set baths_spec = '' %}
+            {% endif %}
+
+            {% if listing.sqft and listing.sqft != 'N/A' and listing.sqft != 0 %}
+                {% set sqft_stat = "{:,.0f}".format(listing.sqft|float) %}
+            {% else %}
+                {% set sqft_stat = '—' %}
+            {% endif %}
+
+            {% set exposure_stat = listing.exposure if listing.exposure and listing.exposure|string not in ['0', '', '-', 'nan', 'N/A'] else '—' %}
+            {% set location_label = listing.neighborhood if listing.neighborhood and listing.neighborhood != '-' else (listing.borough if listing.borough and listing.borough != '-' else 'New York') %}
+            {% if listing.borough and listing.borough != '-' and listing.neighborhood and listing.neighborhood != '-' and listing.borough|lower not in listing.neighborhood|lower %}
+                {% set location_label = listing.neighborhood ~ ', ' ~ listing.borough %}
+            {% endif %}
+
+            {% if listing.building_name and listing.building_name|string not in ['-', '0', '', 'null', 'None', 'nan'] %}
+                {% set display_name = listing.building_name %}
+            {% elif listing.neighborhood and listing.neighborhood != '-' %}
+                {% set display_name = listing.neighborhood %}
+            {% else %}
+                {% set display_name = listing.address %}
+            {% endif %}
+
+            {% set unit_line = listing.address ~ (', #' ~ listing.unit if listing.unit and listing.unit != '-' else '') %}
+            {% set move_out = listing.move_out if listing.move_out and listing.move_out|string not in ['-', '0', '', 'null', 'None', 'nan', '09/09/1999'] else '' %}
+            {% set availability_label = 'Available on ' ~ move_out if move_out else 'Available Now' %}
+
+            {% set preview_payload = {
+                'unitId': listing.unit_id,
+                'imageUrl': background_url,
+                'imageUrls': gallery_images,
+                'location': location_label,
+                'address': unit_line,
+                'price': price_label ~ (' / mo' if price_suffix else ''),
+                'beds': beds_stat,
+                'baths': baths_stat,
+                'sqft': sqft_stat,
+                'exposure': exposure_stat,
+                'summary': listing.preview_summary if listing.preview_summary else '',
+                'highlights': listing.preview_highlights if listing.preview_highlights else [],
+                'detailUrl': url_for('listing_detail', listing_id=listing.unit_id, v=2),
+                'tourUrl': tour_schedule_url(unit_id=listing.unit_id),
+                'applyUrl': rental_application_url(unit_id=listing.unit_id)
+            } %}
+
+            <article class="v2l-card"
+                     role="button"
+                     tabindex="0"
+                     data-listing-preview='{{ preview_payload|tojson }}'
+                     aria-label="Preview {{ unit_line }}">
+                <div class="v2l-media" style="background-image: url('{{ background_url }}');">
+                    <div class="v2l-badge">{{ availability_label }}</div>
+                </div>
+                <div class="v2l-body">
+                    <div class="v2l-price">
+                        {{ price_main }}{% if price_suffix %}<span>{{ price_suffix }}</span>{% endif %}
+                    </div>
+                    <h3 class="v2l-name">{{ display_name }}</h3>
+                    <p class="v2l-address">{{ unit_line }}</p>
+                    {% if beds_spec or baths_spec %}
+                    <div class="v2l-specs">
+                        {% if beds_spec %}{{ beds_spec }}{% endif %}
+                        {% if beds_spec and baths_spec %}&nbsp;&nbsp;{% endif %}
+                        {% if baths_spec %}{{ baths_spec }}{% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="v2l-empty">
+            <h3>No residences match</h3>
+            <p>Adjust your filters or <a href="{{ url_for('listings', v=2) }}">view all residences</a>.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<div class="v2l-preview-overlay" id="listingPreviewOverlay" hidden aria-hidden="true">
+    <div class="v2l-preview-modal" role="dialog" aria-modal="true" aria-labelledby="listingPreviewAddress">
+        <div class="v2l-preview-media is-single" id="listingPreviewMedia" aria-hidden="true">
+            <button type="button" class="v2l-preview-nav v2l-preview-nav-prev" id="listingPreviewPrev" aria-label="Previous photo">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button type="button" class="v2l-preview-nav v2l-preview-nav-next" id="listingPreviewNext" aria-label="Next photo">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+            <div class="v2l-preview-counter" id="listingPreviewCounter">1 / 1</div>
+        </div>
+        <div class="v2l-preview-body">
+            <button type="button" class="v2l-preview-close" id="listingPreviewClose" aria-label="Close preview">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="v2l-preview-kicker" id="listingPreviewLocation"></div>
+            <h3 class="v2l-preview-address" id="listingPreviewAddress"></h3>
+            <div class="v2l-preview-price" id="listingPreviewPrice"></div>
+            <div class="v2l-preview-stats">
+                <div class="v2l-preview-stat">
+                    <strong id="listingPreviewBeds">—</strong>
+                    <span>Bedrooms</span>
+                </div>
+                <div class="v2l-preview-stat">
+                    <strong id="listingPreviewBaths">—</strong>
+                    <span>Bathrooms</span>
+                </div>
+                <div class="v2l-preview-stat">
+                    <strong id="listingPreviewSqft">—</strong>
+                    <span>Sq. Feet</span>
+                </div>
+                <div class="v2l-preview-stat">
+                    <strong id="listingPreviewExposure">—</strong>
+                    <span>Exposure</span>
+                </div>
+            </div>
+            <p class="v2l-preview-summary" id="listingPreviewSummary"></p>
+            <ul class="v2l-preview-highlights" id="listingPreviewHighlights"></ul>
+            <div class="v2l-preview-actions">
+                <a href="https://dash-production-b25c.up.railway.app/tour-schedule" target="_blank" rel="noopener noreferrer" class="v2l-btn v2l-btn-gold" id="listingPreviewTour" data-fallback-href="https://dash-production-b25c.up.railway.app/tour-schedule">Schedule a Tour</a>
+                <a href="https://dash-production-b25c.up.railway.app/rental-app/rental-application" target="_blank" rel="noopener noreferrer" class="v2l-btn v2l-btn-ghost" id="listingPreviewApply" data-fallback-href="https://dash-production-b25c.up.railway.app/rental-app/rental-application">Apply Now</a>
+                <a href="#" class="v2l-preview-more" id="listingPreviewMore">View full listing</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+    document.body.classList.add('v2-listings');
+
+    const minSlider = document.getElementById('min-price-slider');
+    const maxSlider = document.getElementById('max-price-slider');
+    const minInput = document.getElementById('min-price-input');
+    const maxInput = document.getElementById('max-price-input');
+    const priceRangeDisplay = document.getElementById('priceRangeDisplay');
+    const form = document.getElementById('v2lFilterForm');
+
+    function formatPrice(price) {
+        return '$' + Number(price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+
+    function updatePriceDisplay() {
+        if (!minSlider || !maxSlider) return;
+        let minPrice = parseInt(minSlider.value, 10);
+        let maxPrice = parseInt(maxSlider.value, 10);
+        if (minPrice > maxPrice) {
+            minSlider.value = maxPrice;
+            minPrice = maxPrice;
+        }
+        minInput.value = minPrice;
+        maxInput.value = maxPrice;
+        priceRangeDisplay.textContent = formatPrice(minPrice) + ' – ' + formatPrice(maxPrice);
+    }
+
+    if (minSlider && maxSlider) {
+        minSlider.addEventListener('input', updatePriceDisplay);
+        maxSlider.addEventListener('input', updatePriceDisplay);
+        updatePriceDisplay();
+        form.addEventListener('submit', function () {
+            minInput.value = minSlider.value;
+            maxInput.value = maxSlider.value;
+        });
+    }
+
+    const overlay = document.getElementById('listingPreviewOverlay');
+    if (!overlay) return;
+
+    const media = document.getElementById('listingPreviewMedia');
+    const prevBtn = document.getElementById('listingPreviewPrev');
+    const nextBtn = document.getElementById('listingPreviewNext');
+    const counterEl = document.getElementById('listingPreviewCounter');
+    const locationEl = document.getElementById('listingPreviewLocation');
+    const addressEl = document.getElementById('listingPreviewAddress');
+    const priceEl = document.getElementById('listingPreviewPrice');
+    const bedsEl = document.getElementById('listingPreviewBeds');
+    const bathsEl = document.getElementById('listingPreviewBaths');
+    const sqftEl = document.getElementById('listingPreviewSqft');
+    const exposureEl = document.getElementById('listingPreviewExposure');
+    const summaryEl = document.getElementById('listingPreviewSummary');
+    const highlightsEl = document.getElementById('listingPreviewHighlights');
+    const tourBtn = document.getElementById('listingPreviewTour');
+    const applyBtn = document.getElementById('listingPreviewApply');
+    const moreBtn = document.getElementById('listingPreviewMore');
+    const closeBtn = document.getElementById('listingPreviewClose');
+    let lastFocus = null;
+    let galleryImages = [];
+    let galleryIndex = 0;
+
+    function hasContent(value) {
+        if (value === 0) return true;
+        if (value === null || value === undefined || value === false) return false;
+        const text = String(value).trim();
+        if (!text) return false;
+        return !['0', '0.0', '-', 'n/a', 'na', 'null', 'none', 'nan', '—'].includes(text.toLowerCase());
+    }
+
+    function fillText(el, value, fallback) {
+        if (hasContent(value)) {
+            el.textContent = String(value);
+            el.hidden = false;
+            return true;
+        }
+        if (fallback) {
+            el.textContent = fallback;
+            el.hidden = false;
+            return true;
+        }
+        el.textContent = '';
+        el.hidden = true;
+        return false;
+    }
+
+    function fillStat(el, value) {
+        const item = el.closest('.v2l-preview-stat');
+        const ok = hasContent(value);
+        el.textContent = ok ? String(value) : '';
+        if (item) item.hidden = !ok;
+        return ok;
+    }
+
+    function normalizeImages(data) {
+        const urls = [];
+        const seen = new Set();
+        const candidates = Array.isArray(data.imageUrls) && data.imageUrls.length
+            ? data.imageUrls
+            : (data.imageUrl ? [data.imageUrl] : []);
+        candidates.forEach((url) => {
+            const cleaned = String(url || '').trim();
+            if (!cleaned || seen.has(cleaned)) return;
+            if (['0', '0.0', 'n/a', 'na', '-', 'null', 'none'].includes(cleaned.toLowerCase())) return;
+            seen.add(cleaned);
+            urls.push(cleaned);
+        });
+        return urls;
+    }
+
+    function showGalleryImage(index) {
+        if (!galleryImages.length) {
+            media.style.backgroundImage = '';
+            media.classList.add('is-single');
+            counterEl.textContent = '';
+            return;
+        }
+        galleryIndex = ((index % galleryImages.length) + galleryImages.length) % galleryImages.length;
+        media.style.backgroundImage = `url('${galleryImages[galleryIndex]}')`;
+        counterEl.textContent = `${galleryIndex + 1} / ${galleryImages.length}`;
+        media.classList.toggle('is-single', galleryImages.length < 2);
+        [galleryIndex - 1, galleryIndex + 1].forEach((i) => {
+            const neighbor = galleryImages[(i + galleryImages.length) % galleryImages.length];
+            if (!neighbor) return;
+            const img = new Image();
+            img.src = neighbor;
+        });
+    }
+
+    function openPreview(data, trigger) {
+        if (!data) return;
+        lastFocus = trigger || document.activeElement;
+        galleryImages = normalizeImages(data);
+        showGalleryImage(0);
+        fillText(locationEl, data.location);
+        fillText(addressEl, data.address, 'Listing');
+        fillText(priceEl, data.price, 'Price on request');
+        fillStat(bedsEl, data.beds);
+        fillStat(bathsEl, data.baths);
+        fillStat(sqftEl, data.sqft);
+        fillStat(exposureEl, data.exposure);
+        fillText(summaryEl, data.summary);
+
+        highlightsEl.innerHTML = '';
+        const highlights = (Array.isArray(data.highlights) ? data.highlights : []).filter((item) => hasContent(item));
+        if (highlights.length) {
+            highlights.forEach((item) => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                highlightsEl.appendChild(li);
+            });
+            highlightsEl.hidden = false;
+        } else {
+            highlightsEl.hidden = true;
+        }
+
+        tourBtn.href = data.tourUrl || tourBtn.getAttribute('data-fallback-href') || tourBtn.href;
+        applyBtn.href = data.applyUrl || applyBtn.getAttribute('data-fallback-href') || applyBtn.href;
+        moreBtn.href = data.detailUrl || '#';
+        tourBtn.target = '_blank';
+        applyBtn.target = '_blank';
+        tourBtn.rel = 'noopener noreferrer';
+        applyBtn.rel = 'noopener noreferrer';
+
+        overlay.hidden = false;
+        overlay.setAttribute('aria-hidden', 'false');
+        requestAnimationFrame(() => overlay.classList.add('is-open'));
+        document.body.classList.add('listing-preview-open');
+        closeBtn.focus();
+    }
+
+    function closePreview() {
+        overlay.classList.remove('is-open');
+        document.body.classList.remove('listing-preview-open');
+        overlay.setAttribute('aria-hidden', 'true');
+        window.setTimeout(() => {
+            if (!overlay.classList.contains('is-open')) overlay.hidden = true;
+        }, 280);
+        if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus();
+    }
+
+    function getPreviewData(card) {
+        try {
+            return JSON.parse(card.getAttribute('data-listing-preview') || '{}');
+        } catch (err) {
+            console.error('Unable to parse listing preview data', err);
+            return null;
+        }
+    }
+
+    document.querySelectorAll('.v2l-card').forEach((card) => {
+        card.addEventListener('click', (event) => {
+            if (event.target.closest('a')) return;
+            openPreview(getPreviewData(card), card);
+        });
+        card.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                openPreview(getPreviewData(card), card);
+            }
+        });
+    });
+
+    prevBtn.addEventListener('click', (event) => {
+        event.stopPropagation();
+        showGalleryImage(galleryIndex - 1);
+    });
+    nextBtn.addEventListener('click', (event) => {
+        event.stopPropagation();
+        showGalleryImage(galleryIndex + 1);
+    });
+
+    function openExternal(url) {
+        if (!url) return;
+        window.open(url, '_blank', 'noopener,noreferrer');
+    }
+
+    [tourBtn, applyBtn].forEach((btn) => {
+        btn.addEventListener('click', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            openExternal(btn.href);
+        });
+    });
+
+    moreBtn.addEventListener('click', (event) => {
+        const href = moreBtn.getAttribute('href');
+        if (!href || href === '#') {
+            event.preventDefault();
+            return;
+        }
+        event.preventDefault();
+        closePreview();
+        window.location.assign(href);
+    });
+
+    closeBtn.addEventListener('click', closePreview);
+    overlay.addEventListener('click', (event) => {
+        if (event.target === overlay) closePreview();
+    });
+    document.addEventListener('keydown', (event) => {
+        if (!overlay.classList.contains('is-open')) return;
+        if (event.key === 'Escape') {
+            closePreview();
+            return;
+        }
+        if (event.key === 'ArrowLeft') {
+            event.preventDefault();
+            showGalleryImage(galleryIndex - 1);
+        } else if (event.key === 'ArrowRight') {
+            event.preventDefault();
+            showGalleryImage(galleryIndex + 1);
+        }
+    });
+})();
+</script>
+{% endblock %}

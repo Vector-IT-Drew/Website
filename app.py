@@ -371,8 +371,9 @@ def listings():
     if listings_ui_v == '2' and listings_data:
         listings_data = [enrich_listing_preview(listing) for listing in listings_data]
 
+    template_name = 'listings_v2.html' if listings_ui_v == '2' else 'listings.html'
     return render_template(
-        'listings.html',
+        template_name,
         listings=listings_data,
         listings_ui_v=listings_ui_v,
         unique_neighborhoods=unique_values.get('unique_neighborhoods', []),
