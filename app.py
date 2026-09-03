@@ -8,7 +8,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from forms import LoginForm, ListingForm, ApplicationForm
 from database import get_listing, get_all_listings, filter_listings_by_budget, filter_listings_by_bedrooms, filter_listings_by_location
 from tour_schedule import build_tour_schedule_url, build_rental_application_url
-from listing_preview import enrich_listing_preview
+from listing_preview import enrich_listing_preview, ensure_listing_coords, format_zip_code
 from functools import wraps
 import markdown2
 from dotenv import load_dotenv
@@ -64,6 +64,11 @@ def has_content(value):
 def is_true(value):
     """True for common truthy flag strings/numbers from the listings API."""
     return str(value).strip().lower() in {'1', 'true', 'yes', 't', 'y'}
+
+
+@app.template_filter('display_zip')
+def display_zip(value):
+    return format_zip_code(value)
 
 
 # Add context processor to inject current date into all templates
@@ -386,6 +391,13 @@ def listing_detail(listing_id):
     if not listing:
         flash('Listing not found', 'danger')
         return redirect(url_for('index'))
+    if request.args.get('v') == '2':
+        listing = enrich_listing_preview(ensure_listing_coords(listing))
+        return render_template(
+            'listing_v2.html',
+            listing=listing,
+            DASH_SERVICES_ENDPOINT=DASH_SERVICES_ENDPOINT,
+        )
     return render_template('listing.html', listing=listing, DASH_SERVICES_ENDPOINT=DASH_SERVICES_ENDPOINT)
 
 

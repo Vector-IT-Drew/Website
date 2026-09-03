@@ -1054,7 +1054,7 @@
                 'exposure': exposure_stat,
                 'summary': listing.preview_summary if listing.preview_summary else '',
                 'highlights': listing.preview_highlights if listing.preview_highlights else [],
-                'detailUrl': url_for('listing_detail', listing_id=listing.unit_id),
+                'detailUrl': url_for('listing_detail', listing_id=listing.unit_id, v=2) if request.args.get('v') == '2' else url_for('listing_detail', listing_id=listing.unit_id),
                 'tourUrl': tour_schedule_url(unit_id=listing.unit_id),
                 'applyUrl': rental_application_url(unit_id=listing.unit_id)
             } %}
@@ -1208,7 +1208,7 @@
                                 Quick Preview
                             </button>
                             {% else %}
-                            <a href="{{ url_for('listing_detail', listing_id=listing.unit_id) }}" class="btn btn-sm view-details-btn w-100 py-1">
+                            <a href="{{ url_for('listing_detail', listing_id=listing.unit_id, v=2) if request.args.get('v') == '2' else url_for('listing_detail', listing_id=listing.unit_id) }}" class="btn btn-sm view-details-btn w-100 py-1">
                                 View Details
                             </a>
                             {% endif %}

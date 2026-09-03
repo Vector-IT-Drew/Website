@@ -1,4 +1,9 @@
-from listing_preview import enrich_listing_preview, parse_description_preview
+from listing_preview import (
+    enrich_listing_preview,
+    ensure_listing_coords,
+    format_zip_code,
+    parse_description_preview,
+)
 
 
 def test_parse_description_preview_extracts_summary_and_bullets():
@@ -36,3 +41,15 @@ def test_enrich_listing_preview_falls_back_to_unit_flags():
     assert listing['preview_summary'] == ''
     assert any('washer' in h.lower() for h in listing['preview_highlights'])
     assert any('dishwasher' in h.lower() for h in listing['preview_highlights'])
+
+
+def test_format_zip_code_strips_decimal():
+    assert format_zip_code('10038.0') == '10038'
+    assert format_zip_code(10022) == '10022'
+    assert format_zip_code(None) == ''
+    assert format_zip_code('0') == ''
+
+
+def test_ensure_listing_coords_keeps_existing_values():
+    listing = {'address': '1 Sutton Place', 'latitude': 40.7571553, 'longitude': -73.9601282}
+    assert ensure_listing_coords(listing)['latitude'] == 40.7571553

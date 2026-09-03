@@ -103,3 +103,55 @@ def enrich_listing_preview(listing):
     listing['preview_summary'] = summary
     listing['preview_highlights'] = highlights[:4]
     return listing
+
+
+def format_zip_code(value):
+    """Turn API zip values like 10038.0 into a clean 5-digit display zip."""
+    if value is None or value is False:
+        return ''
+    text = str(value).strip()
+    if not text or text.lower() in {'0', '0.0', '-', 'n/a', 'na', 'null', 'none', 'nan'}:
+        return ''
+    try:
+        zip_int = int(float(text))
+    except (TypeError, ValueError):
+        return ''
+    if zip_int <= 0:
+        return ''
+    return f'{zip_int:05d}' if zip_int < 100000 else str(zip_int)
+
+
+def _has_coords(listing):
+    try:
+        lat = float(listing.get('latitude'))
+        lng = float(listing.get('longitude'))
+    except (TypeError, ValueError):
+        return False
+    return lat != 0 and lng != 0
+
+
+def ensure_listing_coords(listing):
+    """Fill lat/lng from Nominatim when the API leaves them blank."""
+    if not listing or _has_coords(listing):
+        return listing
+
+    address = listing.get('full_address') or listing.get('address')
+    if not address:
+        return listing
+
+    query = f"{address}, New York, NY"
+    try:
+        import requests
+        response = requests.get(
+            'https://nominatim.openstreetmap.org/search',
+            params={'q': query, 'format': 'json', 'limit': 1},
+            headers={'User-Agent': 'VectorNY-Website/1.0'},
+            timeout=6,
+        )
+        data = response.json() if response.ok else []
+        if data:
+            listing['latitude'] = float(data[0]['lat'])
+            listing['longitude'] = float(data[0]['lon'])
+    except Exception:
+        pass
+    return listing

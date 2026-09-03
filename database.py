@@ -321,12 +321,26 @@ def get_listing(listing_id):
             logger.error(f"Error from detail API: {response.status_code}")
 
         logger.warning(f"Unit ID {listing_id} not found in any API")
-        return None
+        return _listing_from_filtered_index(listing_id)
 
     except Exception as e:
         logger.error(f"Error getting listing from API: {e}")
+        return _listing_from_filtered_index(listing_id)
 
-        return None
+
+def _listing_from_filtered_index(listing_id):
+    """Fallback when /get_listing is unavailable: find the unit in the listings index."""
+    try:
+        wanted = str(listing_id)
+        for listing in get_all_listings():
+            if str(listing.get('unit_id')) == wanted or str(listing.get('id')) == wanted:
+                logger.warning(
+                    f"Using listings index fallback for unit ID {listing_id}"
+                )
+                return listing
+    except Exception as e:
+        logger.error(f"Listings index fallback failed for {listing_id}: {e}")
+    return None
 
 def get_all_listings(address=None,
                      unit=None,
@@ -486,7 +500,11 @@ def get_all_listings(address=None,
                 "expiry": item.get('expiry', '-'),
                 "move_out": item.get('move_out', '-'),
                 "portfolio_email": item.get('portfolio_email'),
-                "address_id": item.get('address_id')
+                "address_id": item.get('address_id'),
+                "floorplan": item.get('floorplan'),
+                "full_address": item.get('full_address') or item.get('addr_address'),
+                "latitude": item.get('latitude'),
+                "longitude": item.get('longitude'),
             }
             listings.append(listing)
 
