@@ -135,6 +135,8 @@ def index():
     session.clear()
 
     logging.debug("Returning Homepage")
+    if request.args.get('v') == '2':
+        return render_template('index_v2.html')
     return render_template('index.html')
 
 

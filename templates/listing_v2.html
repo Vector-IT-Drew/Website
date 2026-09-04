@@ -4,20 +4,12 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/vectorny_v2.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/vectorny_map.css') }}">
 <style>
     body.v2-listing {
         background: #182b43;
         color: #f3d19c;
-    }
-
-    body.v2-listing .navbar {
-        background-color: rgba(24, 43, 67, 0.98) !important;
-        border-bottom: 1px solid rgba(168, 140, 96, 0.18);
-    }
-
-    body.v2-listing .nav-link::after {
-        background-color: #d59563;
     }
 
     .v2-page {
@@ -597,13 +589,17 @@
 <script src="{{ url_for('static', filename='js/vectorny_map.js') }}"></script>
 <script>
 (function () {
-    document.body.classList.add('v2-listing');
-    document.querySelectorAll('.navbar .nav-link[href*="/listings"]').forEach(function (link) {
-        if (link.getAttribute('href') && !link.getAttribute('href').includes('v=2')) {
+    document.body.classList.add('v2-listing', 'v2-site');
+    document.querySelectorAll('.navbar a[href]').forEach(function (link) {
+        try {
             const url = new URL(link.href, window.location.origin);
-            url.searchParams.set('v', '2');
-            link.href = url.pathname + url.search;
-        }
+            if (url.origin !== window.location.origin) return;
+            const path = url.pathname.replace(/\/$/, '') || '/';
+            if (path === '/' || path === '/listings' || path.startsWith('/listings/')) {
+                url.searchParams.set('v', '2');
+                link.href = url.pathname + url.search + url.hash;
+            }
+        } catch (e) {}
     });
 
     const gallery = document.getElementById('v2Gallery');

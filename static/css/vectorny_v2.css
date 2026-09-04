@@ -1,0 +1,102 @@
+/* Shared VectorNY v=2 design tokens / utilities */
+:root {
+    --v2-navy: #182b43;
+    --v2-navy-deep: #132338;
+    --v2-land: #24354c;
+    --v2-panel: #1f3046;
+    --v2-gold: #d59563;
+    --v2-gold-soft: #a88c60;
+    --v2-cream: #f3d19c;
+    --v2-muted: #9ca5b3;
+    --v2-line: rgba(168, 140, 96, 0.22);
+    --v2-text: rgba(255, 255, 255, 0.88);
+}
+
+body.v2-site {
+    background: var(--v2-navy);
+    color: var(--v2-cream);
+}
+
+body.v2-site .navbar {
+    background-color: rgba(24, 43, 67, 0.98) !important;
+    border-bottom: 1px solid rgba(168, 140, 96, 0.18);
+}
+
+body.v2-site .nav-link::after {
+    background-color: var(--v2-gold);
+}
+
+body.v2-site footer {
+    background: var(--v2-navy-deep) !important;
+    border-top: 1px solid rgba(168, 140, 96, 0.16);
+}
+
+.v2-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.85rem 1.35rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    font-weight: 700;
+    border-radius: 0;
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.v2-btn-gold {
+    background: var(--v2-cream);
+    color: var(--v2-navy);
+    border-color: var(--v2-cream);
+}
+
+.v2-btn-gold:hover {
+    background: #fff1d6;
+    color: var(--v2-navy);
+}
+
+.v2-btn-ghost {
+    background: transparent;
+    color: var(--v2-cream);
+    border-color: rgba(213, 149, 99, 0.5);
+}
+
+.v2-btn-ghost:hover {
+    background: rgba(213, 149, 99, 0.14);
+    color: #fff;
+}
+
+.v2-kicker {
+    color: var(--v2-gold);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+}
+
+.v2-display {
+    font-family: 'Playfair Display', Georgia, serif;
+    color: #fff;
+    font-weight: 500;
+    line-height: 1.15;
+}
+
+.v2-fade-up {
+    opacity: 0;
+    transform: translateY(18px);
+    animation: v2FadeUp 0.9s ease forwards;
+}
+
+.v2-fade-up-delay-1 { animation-delay: 0.12s; }
+.v2-fade-up-delay-2 { animation-delay: 0.24s; }
+.v2-fade-up-delay-3 { animation-delay: 0.36s; }
+
+@keyframes v2FadeUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

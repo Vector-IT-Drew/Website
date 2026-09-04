@@ -3,6 +3,7 @@
 {% block title %}Vector New York - Residences{% endblock %}
 
 {% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/vectorny_v2.css') }}">
 <style>
     body.v2-listings {
         --v2-navy: #182b43;
@@ -15,15 +16,6 @@
         --v2-line: rgba(168, 140, 96, 0.22);
         background: #182b43;
         color: #f3d19c;
-    }
-
-    body.v2-listings .navbar {
-        background-color: rgba(24, 43, 67, 0.98) !important;
-        border-bottom: 1px solid rgba(168, 140, 96, 0.18);
-    }
-
-    body.v2-listings .nav-link::after {
-        background-color: #d59563;
     }
 
     .v2l-page {
@@ -958,7 +950,18 @@
 {% block extra_js %}
 <script>
 (function () {
-    document.body.classList.add('v2-listings');
+    document.body.classList.add('v2-listings', 'v2-site');
+    document.querySelectorAll('.navbar a[href]').forEach(function (link) {
+        try {
+            const url = new URL(link.href, window.location.origin);
+            if (url.origin !== window.location.origin) return;
+            const path = url.pathname.replace(/\/$/, '') || '/';
+            if (path === '/' || path === '/listings' || path.startsWith('/listings/')) {
+                url.searchParams.set('v', '2');
+                link.href = url.pathname + url.search + url.hash;
+            }
+        } catch (e) {}
+    });
 
     const minSlider = document.getElementById('min-price-slider');
     const maxSlider = document.getElementById('max-price-slider');

@@ -1,0 +1,411 @@
+{% extends 'base.html' %}
+
+{% block title %}Vector New York — Residences Across NYC{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/vectorny_v2.css') }}">
+<style>
+    body.v2-site .container.mt-5.pt-4:has(.alert) {
+        margin-top: 4.5rem !important;
+    }
+
+    .v2h-hero {
+        position: relative;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+        background:
+            linear-gradient(180deg, rgba(24, 43, 67, 0.55) 0%, rgba(24, 43, 67, 0.72) 42%, rgba(24, 43, 67, 0.96) 100%),
+            url('{{ url_for('static', filename='images/nyc-skyline (2).png') }}') center bottom / cover no-repeat;
+    }
+
+    .v2h-hero::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background:
+            radial-gradient(ellipse 70% 55% at 50% 18%, rgba(213, 149, 99, 0.12), transparent 70%),
+            linear-gradient(90deg, rgba(19, 35, 56, 0.35), transparent 45%, rgba(19, 35, 56, 0.2));
+        pointer-events: none;
+    }
+
+    .v2h-hero-inner {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        padding: 7rem 0 5.5rem;
+        text-align: center;
+    }
+
+    .v2h-brand {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.65rem;
+        margin-bottom: 1.6rem;
+    }
+
+    .v2h-brand-icon {
+        height: clamp(72px, 10vw, 110px);
+        width: auto;
+        filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.35));
+    }
+
+    .v2h-brand-wordmark {
+        height: clamp(34px, 4.5vw, 52px);
+        width: auto;
+    }
+
+    .v2h-hero h1 {
+        font-size: clamp(2rem, 4.2vw, 3.35rem);
+        max-width: 14ch;
+        margin: 0 auto 0.85rem;
+    }
+
+    .v2h-hero-copy {
+        color: var(--v2-muted);
+        font-size: clamp(1rem, 1.5vw, 1.15rem);
+        max-width: 34rem;
+        margin: 0 auto 1.75rem;
+        line-height: 1.55;
+    }
+
+    .v2h-ctas {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.75rem;
+    }
+
+    .v2h-scroll {
+        position: absolute;
+        left: 50%;
+        bottom: 1.4rem;
+        transform: translateX(-50%);
+        z-index: 2;
+        color: var(--v2-gold-soft);
+        text-decoration: none;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        font-size: 0.65rem;
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.35rem;
+        animation: v2Bob 2.4s ease-in-out infinite;
+    }
+
+    .v2h-scroll:hover {
+        color: var(--v2-cream);
+    }
+
+    @keyframes v2Bob {
+        0%, 100% { transform: translate(-50%, 0); }
+        50% { transform: translate(-50%, 6px); }
+    }
+
+    .v2h-section {
+        padding: 4.5rem 0;
+        border-top: 1px solid var(--v2-line);
+    }
+
+    .v2h-section-head {
+        text-align: center;
+        max-width: 40rem;
+        margin: 0 auto 2.75rem;
+    }
+
+    .v2h-section-head h2 {
+        font-size: clamp(1.7rem, 3vw, 2.35rem);
+        margin-bottom: 0.65rem;
+    }
+
+    .v2h-section-head p {
+        color: var(--v2-muted);
+        margin: 0;
+        line-height: 1.6;
+    }
+
+    .v2h-paths {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        border: 1px solid var(--v2-line);
+    }
+
+    .v2h-path {
+        display: flex;
+        flex-direction: column;
+        min-height: 100%;
+        padding: 1.6rem 1.35rem 1.5rem;
+        background: rgba(31, 48, 70, 0.55);
+        border-right: 1px solid var(--v2-line);
+        text-decoration: none;
+        color: inherit;
+        cursor: pointer;
+        transition: background 0.25s ease;
+    }
+
+    .v2h-path:last-child {
+        border-right: none;
+    }
+
+    .v2h-path:hover,
+    .v2h-path:focus-visible {
+        background: rgba(36, 53, 76, 0.95);
+        outline: none;
+    }
+
+    .v2h-path-visual {
+        height: 150px;
+        margin-bottom: 1.15rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(19, 35, 56, 0.55);
+        border: 1px solid rgba(168, 140, 96, 0.14);
+    }
+
+    .v2h-path-visual img {
+        max-height: 118px;
+        width: auto;
+    }
+
+    .v2h-path h3 {
+        font-family: 'Playfair Display', Georgia, serif;
+        color: #fff;
+        font-size: 1.25rem;
+        margin-bottom: 0.55rem;
+    }
+
+    .v2h-path p {
+        color: var(--v2-muted);
+        font-size: 0.92rem;
+        line-height: 1.55;
+        margin: 0 0 1.1rem;
+        flex: 1;
+    }
+
+    .v2h-path-link {
+        color: var(--v2-gold);
+        font-size: 0.68rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+
+    .v2h-investor {
+        position: relative;
+        overflow: hidden;
+        background:
+            linear-gradient(105deg, rgba(24, 43, 67, 0.94) 0%, rgba(24, 43, 67, 0.78) 48%, rgba(24, 43, 67, 0.55) 100%),
+            url('{{ url_for('static', filename='images/vector-services.jpeg') }}') center / cover no-repeat;
+        border-top: 1px solid var(--v2-line);
+        border-bottom: 1px solid var(--v2-line);
+    }
+
+    .v2h-investor-inner {
+        padding: 4.2rem 0;
+        max-width: 34rem;
+    }
+
+    .v2h-investor h2 {
+        font-size: clamp(1.7rem, 3vw, 2.3rem);
+        margin-bottom: 0.75rem;
+    }
+
+    .v2h-investor p {
+        color: rgba(255, 255, 255, 0.78);
+        line-height: 1.6;
+        margin-bottom: 1.4rem;
+    }
+
+    .v2h-modal .modal-content {
+        background: #1f3046;
+        border: 1px solid rgba(168, 140, 96, 0.28);
+        border-radius: 0;
+        color: #f3d19c;
+    }
+
+    .v2h-modal .modal-header,
+    .v2h-modal .modal-footer {
+        border-color: rgba(168, 140, 96, 0.22);
+    }
+
+    .v2h-modal .modal-title {
+        font-family: 'Playfair Display', Georgia, serif;
+        color: #fff;
+    }
+
+    .v2h-modal .list-group-item {
+        background: transparent;
+        color: rgba(255, 255, 255, 0.84);
+        border-color: rgba(168, 140, 96, 0.16);
+    }
+
+    .v2h-modal .list-group-item i {
+        color: var(--v2-gold);
+    }
+
+    @media (max-width: 900px) {
+        .v2h-paths {
+            grid-template-columns: 1fr;
+        }
+
+        .v2h-path {
+            border-right: none;
+            border-bottom: 1px solid var(--v2-line);
+        }
+
+        .v2h-path:last-child {
+            border-bottom: none;
+        }
+
+        .v2h-hero-inner {
+            padding: 6.5rem 0 4.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="v2h-hero" aria-label="Vector New York">
+    <div class="container v2h-hero-inner">
+        <div class="v2h-brand v2-fade-up">
+            <img class="v2h-brand-icon" src="{{ url_for('static', filename='images/Vector Icon.png') }}" alt="Vector">
+            <img class="v2h-brand-wordmark" src="{{ url_for('static', filename='images/Vector Text.png') }}" alt="Vector New York">
+        </div>
+        <p class="v2-kicker v2-fade-up v2-fade-up-delay-1">New York Residences</p>
+        <h1 class="v2-display v2-fade-up v2-fade-up-delay-1">Leasing, simplified for the city that never stops.</h1>
+        <p class="v2h-hero-copy v2-fade-up v2-fade-up-delay-2">
+            Browse available homes across Manhattan, Brooklyn, and beyond—or let Vector guide you from first look to signed lease.
+        </p>
+        <div class="v2h-ctas v2-fade-up v2-fade-up-delay-3">
+            <a class="v2-btn v2-btn-gold" href="{{ url_for('listings', v=2) }}">Browse Residences</a>
+            <a class="v2-btn v2-btn-ghost" href="{{ tour_schedule_general_url }}" target="_blank" rel="noopener noreferrer">Schedule a Tour</a>
+            <button type="button" class="v2-btn v2-btn-ghost" data-bs-toggle="modal" data-bs-target="#vectorAssistantModal">Find Your Next Home</button>
+        </div>
+    </div>
+    <a class="v2h-scroll" href="#v2h-paths" aria-label="Scroll to explore">
+        Explore
+        <i class="fas fa-chevron-down"></i>
+    </a>
+</section>
+
+<section class="v2h-section" id="v2h-paths">
+    <div class="container">
+        <div class="v2h-section-head">
+            <p class="v2-kicker">The Vector Difference</p>
+            <h2 class="v2-display">Search smarter. Tour easier. Sign faster.</h2>
+            <p>Built for New York renters who want clarity—and for owners who need leasing that actually keeps buildings full.</p>
+        </div>
+
+        <div class="v2h-paths">
+            <div class="v2h-path" role="button" tabindex="0" data-bs-toggle="modal" data-bs-target="#vectorAssistantModal" aria-label="Open Vector Assistant">
+                <div class="v2h-path-visual">
+                    <img src="{{ url_for('static', filename='images/ai-assistant-galaxy.png') }}" alt="">
+                </div>
+                <h3>Preferences first</h3>
+                <p>Tell Vector what matters—neighborhood, budget, layout—and get a focused shortlist instead of endless scrolling.</p>
+                <span class="v2h-path-link">Open Assistant</span>
+            </div>
+
+            <a class="v2h-path" href="{{ url_for('listings', v=2) }}">
+                <div class="v2h-path-visual">
+                    <img src="{{ url_for('static', filename='images/application-blue-glow.png') }}" alt="">
+                </div>
+                <h3>Search &amp; sign</h3>
+                <p>Explore live residences, preview homes, schedule tours, and move into application without the usual leasing circus.</p>
+                <span class="v2h-path-link">View Listings</span>
+            </a>
+
+            <div class="v2h-path" role="button" tabindex="0" data-bs-toggle="modal" data-bs-target="#virtualToursModal" aria-label="Learn about virtual tours">
+                <div class="v2h-path-visual">
+                    <img src="{{ url_for('static', filename='images/ai-headset-galaxy.png') }}" alt="">
+                </div>
+                <h3>Tour on your time</h3>
+                <p>Walk through homes virtually, review floor plans, then book in-person visits when you are ready to decide.</p>
+                <span class="v2h-path-link">See How Tours Work</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="v2h-investor">
+    <div class="container">
+        <div class="v2h-investor-inner">
+            <p class="v2-kicker">For Owners &amp; Investors</p>
+            <h2 class="v2-display">A leasing partner built for New York portfolios.</h2>
+            <p>Vector operates like a dedicated leasing department—automation, real-time tracking, and consistent execution across buildings of every type.</p>
+            <a class="v2-btn v2-btn-ghost" href="{{ url_for('investor_services') }}">Investor Services</a>
+        </div>
+    </div>
+</section>
+
+<div class="modal fade v2h-modal" id="virtualToursModal" tabindex="-1" aria-labelledby="virtualToursModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="virtualToursModalLabel">Tour from anywhere</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-4 align-items-center">
+                    <div class="col-md-5 text-center">
+                        <img src="{{ url_for('static', filename='images/ai-headset-galaxy.png') }}" alt="" class="img-fluid" style="max-height: 220px;">
+                    </div>
+                    <div class="col-md-7">
+                        <p style="color: rgba(255,255,255,0.84); line-height: 1.6;">
+                            Explore apartments on your schedule with immersive virtual tours—3D walkthroughs, detailed floor plans, and high-quality video—then self-schedule in-person visits when you are ready.
+                        </p>
+                        <ul class="list-group list-group-flush mb-0">
+                            <li class="list-group-item"><i class="fas fa-check me-2"></i>Room-by-room exploration</li>
+                            <li class="list-group-item"><i class="fas fa-check me-2"></i>Interactive floor plans</li>
+                            <li class="list-group-item"><i class="fas fa-check me-2"></i>View at your own pace</li>
+                            <li class="list-group-item"><i class="fas fa-check me-2"></i>Easy path to an in-person tour</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="v2-btn v2-btn-ghost" data-bs-dismiss="modal">Close</button>
+                <a href="{{ url_for('listings', v=2) }}" class="v2-btn v2-btn-gold">Browse Residences</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+    document.body.classList.add('v2-site');
+
+    function withV2(href) {
+        try {
+            const url = new URL(href, window.location.origin);
+            if (url.origin !== window.location.origin) return href;
+            const path = url.pathname.replace(/\/$/, '') || '/';
+            if (path === '/' || path === '/listings' || path.startsWith('/listings/')) {
+                url.searchParams.set('v', '2');
+                return url.pathname + url.search + url.hash;
+            }
+        } catch (e) {}
+        return href;
+    }
+
+    document.querySelectorAll('.navbar a[href]').forEach((link) => {
+        link.href = withV2(link.href);
+    });
+
+    document.querySelectorAll('.v2h-path[role="button"]').forEach((el) => {
+        el.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                el.click();
+            }
+        });
+    });
+})();
+</script>
+{% endblock %}
