@@ -499,12 +499,14 @@ def get_all_listings(address=None,
                 "building_image": item.get('building_image', ''),
                 "expiry": item.get('expiry', '-'),
                 "move_out": item.get('move_out', '-'),
+                "portfolio": item.get('portfolio'),
                 "portfolio_email": item.get('portfolio_email'),
                 "address_id": item.get('address_id'),
                 "floorplan": item.get('floorplan'),
                 "full_address": item.get('full_address') or item.get('addr_address'),
                 "latitude": item.get('latitude'),
                 "longitude": item.get('longitude'),
+                "website_image": item.get('website_image', ''),
             }
             listings.append(listing)
 
