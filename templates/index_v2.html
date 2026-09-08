@@ -145,6 +145,7 @@
 
     .v2h-featured-viewport {
         overflow: hidden;
+        padding: 0 2.6rem;
     }
 
     .v2h-featured-track {
@@ -162,7 +163,7 @@
 
     .v2h-featured-card {
         flex: 0 0 calc((100% - 1.8rem) / 3);
-        min-width: 240px;
+        min-width: 220px;
         scroll-snap-align: start;
         text-decoration: none;
         color: inherit;
@@ -256,29 +257,35 @@
         top: 38%;
         transform: translateY(-50%);
         z-index: 3;
-        width: 38px;
-        height: 38px;
+        width: 40px;
+        height: 40px;
         border-radius: 999px;
-        border: 1px solid rgba(243, 209, 156, 0.3);
-        background: rgba(24, 43, 67, 0.78);
+        border: 1px solid rgba(243, 209, 156, 0.35);
+        background: rgba(10, 22, 40, 0.92);
         color: #f3d19c;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
+        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35);
+        transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
     }
 
     .v2h-featured-nav:hover {
         background: rgba(213, 149, 99, 0.35);
+        border-color: rgba(243, 209, 156, 0.65);
         color: #fff;
+        transform: translateY(-50%) scale(1.04);
     }
 
-    .v2h-featured-nav.prev { left: -0.35rem; }
-    .v2h-featured-nav.next { right: -0.35rem; }
+    .v2h-featured-nav.prev { left: 0.15rem; }
+    .v2h-featured-nav.next { right: 0.15rem; }
 
     .v2h-featured-nav:disabled {
         opacity: 0.35;
         cursor: default;
+        transform: translateY(-50%);
+        box-shadow: none;
     }
 
     .v2h-paths-head {
@@ -437,8 +444,11 @@
         .v2h-featured-card {
             flex-basis: 85%;
         }
-        .v2h-featured-nav.prev { left: 0.2rem; }
-        .v2h-featured-nav.next { right: 0.2rem; }
+        .v2h-featured-viewport {
+            padding: 0 2.2rem;
+        }
+        .v2h-featured-nav.prev { left: 0.05rem; }
+        .v2h-featured-nav.next { right: 0.05rem; }
     }
 </style>
 {% endblock %}

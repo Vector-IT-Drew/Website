@@ -7,19 +7,34 @@ from database import get_all_listings
 FEATURED_PORTFOLIOS = ('SMK', 'Aspen')
 
 
+def _clean_image_url(raw):
+    url = str(raw or '').strip()
+    if not url:
+        return ''
+    if url.lower() in {'0', '0.0', 'n/a', 'na', '-', 'null', 'none'}:
+        return ''
+    return url
+
+
 def _listing_images(listing):
     images = []
     seen = set()
+
+    # Prefer marketing/website hero image when present.
+    website = _clean_image_url(listing.get('website_image'))
+    if website and website not in seen:
+        seen.add(website)
+        images.append(website)
+
     for raw in (listing.get('unit_images') or []):
-        url = str(raw or '').strip()
+        url = _clean_image_url(raw)
         if not url or url in seen:
-            continue
-        if url.lower() in {'0', '0.0', 'n/a', 'na', '-', 'null', 'none'}:
             continue
         seen.add(url)
         images.append(url)
-    building = str(listing.get('building_image') or '').strip()
-    if building and building not in seen and building.lower() not in {'0', '-', 'null', 'none'}:
+
+    building = _clean_image_url(listing.get('building_image'))
+    if building and building not in seen:
         images.append(building)
     return images
 

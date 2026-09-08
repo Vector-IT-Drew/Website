@@ -81,3 +81,27 @@ def test_homepage_featured_prefers_named_portfolios(monkeypatch):
     assert featured[0]['unit_id'] == '99'
     assert featured[0]['is_featured_portfolio'] is True
     assert featured[1]['unit_id'] == '1'
+
+
+def test_homepage_featured_prefers_website_image(monkeypatch):
+    def fake_get_all_listings(portfolio=None, **kwargs):
+        if portfolio:
+            return []
+        return [{
+            'unit_id': '7',
+            'address': '7 Test Ave',
+            'unit': '7C',
+            'building_name': 'Web House',
+            'neighborhood': 'Chelsea',
+            'portfolio': '525',
+            'actual_rent': 4800,
+            'beds': 1,
+            'baths': 1,
+            'website_image': 'https://example.com/website.jpg',
+            'unit_images': ['https://example.com/unit.jpg'],
+            'building_image': 'https://example.com/building.jpg',
+        }]
+
+    monkeypatch.setattr('listing_featured.get_all_listings', fake_get_all_listings)
+    featured = get_homepage_featured_listings(limit=1)
+    assert featured[0]['featured_image'] == 'https://example.com/website.jpg'
