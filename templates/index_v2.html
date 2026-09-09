@@ -21,10 +21,10 @@
     }
 
     /*
-      Height-first skyline framing:
-      - scale by height (not width) so building tops are never chopped on wide screens
-      - slight overflow below crops empty navy under the art so the base sits on the bottom edge
-      - left/right crop naturally when the viewport is narrower than the scaled art
+      Smart skyline framing:
+      - Prefer height fit so tops stay visible and the art pins to the bottom
+      - On wide/landscape viewports, fill width instead (crop sides only when needed)
+        and shift slightly down to keep spires in frame while removing empty navy under the base
     */
     .v2h-hero-bg {
         position: absolute;
@@ -38,6 +38,20 @@
         pointer-events: none;
         user-select: none;
     }
+
+    @media (min-aspect-ratio: 1.15 / 1) {
+        .v2h-hero-bg {
+            left: 0;
+            right: 0;
+            /* width-fill: shift down enough to put building bases on the bottom edge */
+            bottom: -24%;
+            width: 100%;
+            height: auto;
+            min-height: 0;
+            transform: none;
+        }
+    }
+
 
     .v2h-hero::before {
         content: '';
