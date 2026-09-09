@@ -11,23 +11,39 @@
 
     .v2h-hero {
         position: relative;
-        min-height: 92vh;
+        min-height: 100vh;
+        min-height: 100dvh;
         display: flex;
         align-items: center;
         overflow: hidden;
-        background:
-            linear-gradient(180deg, rgba(24, 43, 67, 0.62) 0%, rgba(24, 43, 67, 0.78) 48%, rgba(24, 43, 67, 0.97) 100%),
-            url('{{ url_for('static', filename='images/marbleskyline-darknavy.png') }}') center bottom / cover no-repeat;
+        background-color: #182b43;
     }
 
-    .v2h-hero::before {
-        content: '';
+    .v2h-hero-bg {
+        position: absolute;
+        left: 50%;
+        top: 52%;
+        width: 160%;
+        height: 160%;
+        max-width: none;
+        transform: translate(-50%, -50%);
+        object-fit: cover;
+        object-position: center center;
+        z-index: 0;
+        pointer-events: none;
+        user-select: none;
+    }
+
+    .v2h-hero-overlay {
         position: absolute;
         inset: 0;
-        background:
-            radial-gradient(ellipse 65% 50% at 50% 20%, rgba(213, 149, 99, 0.14), transparent 70%);
+        z-index: 1;
         pointer-events: none;
+        background:
+            linear-gradient(180deg, rgba(24, 43, 67, 0.32) 0%, rgba(24, 43, 67, 0.22) 50%, rgba(24, 43, 67, 0.28) 100%),
+            radial-gradient(ellipse 65% 50% at 50% 20%, rgba(213, 149, 99, 0.12), transparent 70%);
     }
+
 
     .v2h-hero-inner {
         position: relative;
@@ -455,6 +471,13 @@
 
 {% block content %}
 <section class="v2h-hero" aria-label="Vector New York">
+    <img class="v2h-hero-bg"
+         src="{{ url_for('static', filename='images/marbleskyline-darknavy.png') }}"
+         alt=""
+         aria-hidden="true"
+         decoding="async"
+         fetchpriority="high">
+    <div class="v2h-hero-overlay" aria-hidden="true"></div>
     <div class="container v2h-hero-inner">
         <div class="v2h-brand v2-fade-up">
             <img class="v2h-brand-icon" src="{{ url_for('static', filename='images/Vector Icon.png') }}" alt="Vector">
@@ -516,7 +539,9 @@
                                 <img src="{{ listing.featured_image }}"
                                      alt="{{ unit_line }}"
                                      loading="{% if loop.index <= 3 %}eager{% else %}lazy{% endif %}"
-                                     decoding="async">
+                                     decoding="async"
+                                     data-fallback="{{ url_for('static', filename='images/listing-coming-soon.jpg') }}"
+                                     onerror="if (this.dataset.fallback && this.src !== this.dataset.fallback) { this.onerror=null; this.src=this.dataset.fallback; }">
                                 {% if listing.is_featured_portfolio %}
                                 <div class="v2h-featured-badge">Featured</div>
                                 {% endif %}
@@ -693,11 +718,16 @@
     window.addEventListener('resize', updateNav);
     updateNav();
 
-    // Preload nearby carousel images once cards are in view.
-    track.querySelectorAll('img[loading="lazy"]').forEach((img) => {
-        if ('loading' in HTMLImageElement.prototype) return;
-        const probe = new Image();
-        probe.src = img.currentSrc || img.src;
+    // Swap broken carousel photos to the local coming-soon image.
+    const fallbackSrc = "{{ url_for('static', filename='images/listing-coming-soon.jpg') }}";
+    track.querySelectorAll('.v2h-featured-media img').forEach((img) => {
+        const applyFallback = () => {
+            if (!fallbackSrc || img.dataset.failed === '1') return;
+            img.dataset.failed = '1';
+            img.src = fallbackSrc;
+        };
+        img.addEventListener('error', applyFallback);
+        if (img.complete && img.naturalWidth === 0) applyFallback();
     });
 })();
 </script>

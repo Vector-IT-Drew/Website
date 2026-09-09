@@ -47,10 +47,7 @@ def _normalize_listing(listing):
     listing = dict(listing or {})
     images = _listing_images(listing)
     listing['unit_images'] = images
-    listing['featured_image'] = images[0] if images else (
-        'https://dl.dropboxusercontent.com/scl/fi/in5oflurzeui3k61z2vh6/img-coming-soon-4.jpeg'
-        '?rlkey=rp9ucjxfih59yldqgsib9ukdl&st=4byf8tgo&dl=0'
-    )
+    listing['featured_image'] = images[0] if images else '/static/images/listing-coming-soon.jpg'
     listing['is_featured_portfolio'] = str(listing.get('portfolio') or '').strip().lower() in {
         p.lower() for p in FEATURED_PORTFOLIOS
     }
