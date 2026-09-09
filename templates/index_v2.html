@@ -4,6 +4,7 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/vectorny_v2.css') }}">
+<link rel="preload" as="image" type="image/webp" href="{{ url_for('static', filename='images/marbleskyline-darknavy.webp') }}">
 <style>
     body.v2-site .container.mt-5.pt-4:has(.alert) {
         margin-top: 4.5rem !important;
@@ -17,31 +18,29 @@
         align-items: center;
         overflow: hidden;
         background-color: #182b43;
+        background-image:
+            linear-gradient(180deg, rgba(24, 43, 67, 0.62) 0%, rgba(24, 43, 67, 0.78) 48%, rgba(24, 43, 67, 0.97) 100%),
+            url('{{ url_for('static', filename='images/marbleskyline-darknavy.png') }}');
+        background-position: center bottom;
+        background-size: cover;
+        background-repeat: no-repeat;
     }
 
-    .v2h-hero-bg {
-        position: absolute;
-        left: 50%;
-        top: 52%;
-        width: 160%;
-        height: 160%;
-        max-width: none;
-        transform: translate(-50%, -50%);
-        object-fit: cover;
-        object-position: center center;
-        z-index: 0;
-        pointer-events: none;
-        user-select: none;
+    @supports (background-image: url('x.webp')) {
+        .v2h-hero {
+            background-image:
+                linear-gradient(180deg, rgba(24, 43, 67, 0.62) 0%, rgba(24, 43, 67, 0.78) 48%, rgba(24, 43, 67, 0.97) 100%),
+                url('{{ url_for('static', filename='images/marbleskyline-darknavy.webp') }}');
+        }
     }
 
-    .v2h-hero-overlay {
+    .v2h-hero::before {
+        content: '';
         position: absolute;
         inset: 0;
-        z-index: 1;
-        pointer-events: none;
         background:
-            linear-gradient(180deg, rgba(24, 43, 67, 0.32) 0%, rgba(24, 43, 67, 0.22) 50%, rgba(24, 43, 67, 0.28) 100%),
-            radial-gradient(ellipse 65% 50% at 50% 20%, rgba(213, 149, 99, 0.12), transparent 70%);
+            radial-gradient(ellipse 65% 50% at 50% 20%, rgba(213, 149, 99, 0.14), transparent 70%);
+        pointer-events: none;
     }
 
 
@@ -471,13 +470,6 @@
 
 {% block content %}
 <section class="v2h-hero" aria-label="Vector New York">
-    <img class="v2h-hero-bg"
-         src="{{ url_for('static', filename='images/marbleskyline-darknavy.png') }}"
-         alt=""
-         aria-hidden="true"
-         decoding="async"
-         fetchpriority="high">
-    <div class="v2h-hero-overlay" aria-hidden="true"></div>
     <div class="container v2h-hero-inner">
         <div class="v2h-brand v2-fade-up">
             <img class="v2h-brand-icon" src="{{ url_for('static', filename='images/Vector Icon.png') }}" alt="Vector">
@@ -536,11 +528,18 @@
                         <a class="v2h-featured-card"
                            href="{{ url_for('listing_detail', listing_id=listing.unit_id, v=2) }}">
                             <div class="v2h-featured-media">
+                                {% set coming_soon_variants = [
+                                    'https://dl.dropboxusercontent.com/scl/fi/fy2wl340lre6y2gm84m13/img-coming-soon-2.jpeg?rlkey=xkao9jz2p6mrznqhb8e3hf7w6&st=k3gwz5kj&dl=0',
+                                    'https://dl.dropboxusercontent.com/scl/fi/5kqjpn1lqdt6p73zo5xkj/img-coming-soon-3.jpeg?rlkey=ngk4iu9pvl6jusqps220pi2uv&st=ttncu3xt&dl=0',
+                                    'https://dl.dropboxusercontent.com/scl/fi/in5oflurzeui3k61z2vh6/img-coming-soon-4.jpeg?rlkey=rp9ucjxfih59yldqgsib9ukdl&st=x5td7577&dl=0',
+                                    'https://dl.dropboxusercontent.com/scl/fi/erhz52z0z7lskr8ru5v1h/img-coming-soon-5.jpeg?rlkey=bf8j1tpvtqb2q02tcjy0mdp3v&st=r7mtn0d7&dl=0'
+                                ] %}
                                 <img src="{{ listing.featured_image }}"
                                      alt="{{ unit_line }}"
-                                     loading="{% if loop.index <= 3 %}eager{% else %}lazy{% endif %}"
+                                     loading="{% if loop.index <= 2 %}eager{% else %}lazy{% endif %}"
                                      decoding="async"
-                                     data-fallback="{{ url_for('static', filename='images/listing-coming-soon.jpg') }}"
+                                     {% if loop.index == 1 %}fetchpriority="high"{% endif %}
+                                     data-fallback="{{ coming_soon_variants[loop.index0 % (coming_soon_variants|length)] }}"
                                      onerror="if (this.dataset.fallback && this.src !== this.dataset.fallback) { this.onerror=null; this.src=this.dataset.fallback; }">
                                 {% if listing.is_featured_portfolio %}
                                 <div class="v2h-featured-badge">Featured</div>
@@ -718,10 +717,10 @@
     window.addEventListener('resize', updateNav);
     updateNav();
 
-    // Swap broken carousel photos to the local coming-soon image.
-    const fallbackSrc = "{{ url_for('static', filename='images/listing-coming-soon.jpg') }}";
+    // Swap broken carousel photos to a coming-soon variant.
     track.querySelectorAll('.v2h-featured-media img').forEach((img) => {
         const applyFallback = () => {
+            const fallbackSrc = img.dataset.fallback;
             if (!fallbackSrc || img.dataset.failed === '1') return;
             img.dataset.failed = '1';
             img.src = fallbackSrc;

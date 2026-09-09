@@ -6,6 +6,26 @@ from database import get_all_listings
 # Portfolios highlighted on Vector Highlights / marketing surfaces.
 FEATURED_PORTFOLIOS = ('SMK', 'Aspen')
 
+COMING_SOON_IMAGES = (
+    'https://dl.dropboxusercontent.com/scl/fi/fy2wl340lre6y2gm84m13/img-coming-soon-2.jpeg'
+    '?rlkey=xkao9jz2p6mrznqhb8e3hf7w6&st=k3gwz5kj&dl=0',
+    'https://dl.dropboxusercontent.com/scl/fi/5kqjpn1lqdt6p73zo5xkj/img-coming-soon-3.jpeg'
+    '?rlkey=ngk4iu9pvl6jusqps220pi2uv&st=ttncu3xt&dl=0',
+    'https://dl.dropboxusercontent.com/scl/fi/in5oflurzeui3k61z2vh6/img-coming-soon-4.jpeg'
+    '?rlkey=rp9ucjxfih59yldqgsib9ukdl&st=4byf8tgo&dl=0',
+    'https://dl.dropboxusercontent.com/scl/fi/erhz52z0z7lskr8ru5v1h/img-coming-soon-5.jpeg'
+    '?rlkey=bf8j1tpvtqb2q02tcjy0mdp3v&st=r7mtn0d7&dl=0',
+)
+
+
+def _coming_soon_for(listing):
+    unit_id = str(listing.get('unit_id') or listing.get('id') or '0')
+    try:
+        idx = abs(hash(unit_id)) % len(COMING_SOON_IMAGES)
+    except Exception:
+        idx = 0
+    return COMING_SOON_IMAGES[idx]
+
 
 def _clean_image_url(raw):
     url = str(raw or '').strip()
@@ -47,7 +67,7 @@ def _normalize_listing(listing):
     listing = dict(listing or {})
     images = _listing_images(listing)
     listing['unit_images'] = images
-    listing['featured_image'] = images[0] if images else '/static/images/listing-coming-soon.jpg'
+    listing['featured_image'] = images[0] if images else _coming_soon_for(listing)
     listing['is_featured_portfolio'] = str(listing.get('portfolio') or '').strip().lower() in {
         p.lower() for p in FEATURED_PORTFOLIOS
     }
@@ -73,28 +93,34 @@ def get_homepage_featured_listings(limit=8):
     """
     Featured-first homepage strip.
 
-    1) Pull known featured portfolios (e.g. SMK / Aspen)
-    2) Prefer units with photos
-    3) Fill from the default listings feed (API featured/default order)
+    Uses a single listings API call (faster than per-portfolio fetches),
+    then prefers known featured portfolios and photo-rich units.
     """
     limit = max(1, int(limit or 8))
-    featured = []
-    for portfolio in FEATURED_PORTFOLIOS:
-        try:
-            featured.extend(get_all_listings(portfolio=portfolio) or [])
-        except Exception:
-            continue
-
     try:
         general = get_all_listings() or []
     except Exception:
         general = []
 
-    # Prefer photo-rich featured units, then any featured, then photo-rich general, then rest.
+    featured_names = {p.lower() for p in FEATURED_PORTFOLIOS}
+    featured = [
+        l for l in general
+        if str(l.get('portfolio') or '').strip().lower() in featured_names
+    ]
+    # Units already counted as featured should not be duplicated from general fill.
+    featured_ids = {
+        str(l.get('unit_id') or l.get('id') or '')
+        for l in featured
+    }
+    rest = [
+        l for l in general
+        if str(l.get('unit_id') or l.get('id') or '') not in featured_ids
+    ]
+
     featured_photos = [l for l in featured if _has_photo(l)]
     featured_rest = [l for l in featured if not _has_photo(l)]
-    general_photos = [l for l in general if _has_photo(l)]
-    general_rest = [l for l in general if not _has_photo(l)]
+    general_photos = [l for l in rest if _has_photo(l)]
+    general_rest = [l for l in rest if not _has_photo(l)]
 
     return _merge_unique(
         featured_photos + featured_rest + general_photos,

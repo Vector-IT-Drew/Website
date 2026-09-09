@@ -430,7 +430,7 @@ def get_all_listings(address=None,
                 params[key] = 'false'
 
         logger.debug(f"[{req_id}] API call params: {params}")
-        response = requests.get(LISTINGS_API_ENDPOINT, params=params)
+        response = requests.get(LISTINGS_API_ENDPOINT, params=params, timeout=12)
         logger.debug(f"[{req_id}] Response status: {response.status_code}")
         logger.debug(f"[{req_id}] Response text (first 500 chars): {response.text[:500]}")
 
@@ -444,7 +444,7 @@ def get_all_listings(address=None,
                 params_no_amen = dict(params)
                 params_no_amen.pop('amenities', None)
                 logger.warning(f"[{req_id}] Amenities filter returned 0 from API; retrying without amenities for local filtering.")
-                response2 = requests.get(LISTINGS_API_ENDPOINT, params=params_no_amen)
+                response2 = requests.get(LISTINGS_API_ENDPOINT, params=params_no_amen, timeout=12)
                 data2 = response2.json()
                 logger.debug(f"[{req_id}] Retry without amenities returned {len(data2.get('data', []))} listings")
                 data = data2

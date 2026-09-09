@@ -24,8 +24,9 @@ def test_index_v2_uses_new_homepage_and_default_stays_old(monkeypatch):
     html = v2.get_data(as_text=True)
     assert 'v2h-hero' in html
     assert '100vh' in html
-    assert 'listing-coming-soon.jpg' in html
-    assert 'v2h-hero-bg' in html
+    assert 'marbleskyline-darknavy.webp' in html
+    assert 'img-coming-soon' in html
+    assert 'rel="preload"' in html
     assert 'Leasing Simplified' in html
     assert 'Browse Residences' in html
     assert 'vectorny_v2.css' in html

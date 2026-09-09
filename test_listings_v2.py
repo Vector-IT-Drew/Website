@@ -67,7 +67,9 @@ def test_listings_v2_uses_new_grid_and_default_stays_old(monkeypatch):
     assert 'Find Residences' in html
     assert 'repeat(3, minmax(0, 1fr))' in html
     assert 'gap: 1.35rem' in html
-    assert 'listing-coming-soon.jpg' in html
+    assert 'v2l-photo' in html
+    assert 'loading=' in html
+    assert 'img-coming-soon' in html
     assert 'listing-card h-100' not in html
     assert 'v2l-amenity' in html
     assert 'In-Unit Laundry' in html

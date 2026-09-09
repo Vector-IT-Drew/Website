@@ -46,8 +46,22 @@ def test_homepage_featured_fills_from_general_when_portfolio_empty(monkeypatch):
 
 def test_homepage_featured_prefers_named_portfolios(monkeypatch):
     def fake_get_all_listings(portfolio=None, **kwargs):
-        if portfolio == 'SMK':
-            return [{
+        # Homepage featured now uses a single unfiltered listings fetch.
+        return [
+            {
+                'unit_id': '1',
+                'address': '1 Test Ave',
+                'unit': '1A',
+                'building_name': 'Test House',
+                'neighborhood': 'UES',
+                'portfolio': '525',
+                'actual_rent': 5000,
+                'beds': 1,
+                'baths': 1,
+                'unit_images': ['https://example.com/a.jpg'],
+                'building_image': '',
+            },
+            {
                 'unit_id': '99',
                 'address': '5 Sutton St',
                 'unit': 'PH',
@@ -59,22 +73,8 @@ def test_homepage_featured_prefers_named_portfolios(monkeypatch):
                 'baths': 1,
                 'unit_images': ['https://example.com/smk.jpg'],
                 'building_image': '',
-            }]
-        if portfolio:
-            return []
-        return [{
-            'unit_id': '1',
-            'address': '1 Test Ave',
-            'unit': '1A',
-            'building_name': 'Test House',
-            'neighborhood': 'UES',
-            'portfolio': '525',
-            'actual_rent': 5000,
-            'beds': 1,
-            'baths': 1,
-            'unit_images': ['https://example.com/a.jpg'],
-            'building_image': '',
-        }]
+            },
+        ]
 
     monkeypatch.setattr('listing_featured.get_all_listings', fake_get_all_listings)
     featured = get_homepage_featured_listings(limit=8)
