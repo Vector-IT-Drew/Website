@@ -25,6 +25,8 @@ def test_index_v2_uses_new_homepage_and_default_stays_old(monkeypatch):
     assert 'v2h-hero' in html
     assert '100vh' in html
     assert 'marbleskyline-darknavy.webp' in html
+    assert 'v2h-hero-bg' in html
+    assert 'height: 128%' in html
     assert 'img-coming-soon' in html
     assert 'rel="preload"' in html
     assert 'Leasing Simplified' in html

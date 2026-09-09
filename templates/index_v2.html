@@ -18,28 +18,35 @@
         align-items: center;
         overflow: hidden;
         background-color: #182b43;
-        background-image:
-            linear-gradient(180deg, rgba(24, 43, 67, 0.62) 0%, rgba(24, 43, 67, 0.78) 48%, rgba(24, 43, 67, 0.97) 100%),
-            url('{{ url_for('static', filename='images/marbleskyline-darknavy.png') }}');
-        background-position: center bottom;
-        background-size: cover;
-        background-repeat: no-repeat;
     }
 
-    @supports (background-image: url('x.webp')) {
-        .v2h-hero {
-            background-image:
-                linear-gradient(180deg, rgba(24, 43, 67, 0.62) 0%, rgba(24, 43, 67, 0.78) 48%, rgba(24, 43, 67, 0.97) 100%),
-                url('{{ url_for('static', filename='images/marbleskyline-darknavy.webp') }}');
-        }
+    /*
+      Height-first skyline framing:
+      - scale by height (not width) so building tops are never chopped on wide screens
+      - slight overflow below crops empty navy under the art so the base sits on the bottom edge
+      - left/right crop naturally when the viewport is narrower than the scaled art
+    */
+    .v2h-hero-bg {
+        position: absolute;
+        left: 50%;
+        bottom: -28%;
+        height: 128%;
+        width: auto;
+        max-width: none;
+        transform: translateX(-50%);
+        z-index: 0;
+        pointer-events: none;
+        user-select: none;
     }
 
     .v2h-hero::before {
         content: '';
         position: absolute;
         inset: 0;
+        z-index: 1;
         background:
-            radial-gradient(ellipse 65% 50% at 50% 20%, rgba(213, 149, 99, 0.14), transparent 70%);
+            linear-gradient(180deg, rgba(24, 43, 67, 0.5) 0%, rgba(24, 43, 67, 0.45) 55%, rgba(24, 43, 67, 0.55) 100%),
+            radial-gradient(ellipse 65% 50% at 50% 18%, rgba(213, 149, 99, 0.14), transparent 70%);
         pointer-events: none;
     }
 
@@ -470,6 +477,15 @@
 
 {% block content %}
 <section class="v2h-hero" aria-label="Vector New York">
+    <picture>
+        <source srcset="{{ url_for('static', filename='images/marbleskyline-darknavy.webp') }}" type="image/webp">
+        <img class="v2h-hero-bg"
+             src="{{ url_for('static', filename='images/marbleskyline-darknavy.png') }}"
+             alt=""
+             aria-hidden="true"
+             decoding="async"
+             fetchpriority="high">
+    </picture>
     <div class="container v2h-hero-inner">
         <div class="v2h-brand v2-fade-up">
             <img class="v2h-brand-icon" src="{{ url_for('static', filename='images/Vector Icon.png') }}" alt="Vector">
