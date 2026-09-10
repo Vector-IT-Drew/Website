@@ -20,27 +20,30 @@
 
     .v2h-hero {
         position: relative;
-        /* svh = visible viewport with browser chrome; avoids Explore being clipped */
+        /* Full visible viewport; padding-top clears fixed navbar without shifting fold */
         min-height: 100vh;
         min-height: 100dvh;
         min-height: 100svh;
         display: flex;
         align-items: center;
+        justify-content: center;
         overflow: hidden;
         background-color: #182b43;
+        /* Keep logo / CTAs in the band under the fixed nav (not under it) */
+        padding-top: 4.5rem;
+        box-sizing: border-box;
     }
 
     /*
-      Smart skyline framing:
-      - Prefer height fit so tops stay visible and the art pins to the bottom
-      - On wide/landscape viewports, fill width instead (crop sides only when needed)
-        and shift slightly down to keep spires in frame while removing empty navy under the base
+      Skyline framing:
+      - Height-first on tall screens: pin to bottom, slight overscan
+      - Landscape: width-fill + crop empty navy under building bases
     */
     .v2h-hero-bg {
         position: absolute;
         left: 50%;
-        bottom: -28%;
-        height: 128%;
+        bottom: -32%;
+        height: 132%;
         width: auto;
         max-width: none;
         transform: translateX(-50%);
@@ -53,15 +56,14 @@
         .v2h-hero-bg {
             left: 0;
             right: 0;
-            /* width-fill: shift down enough to put building bases on the bottom edge */
-            bottom: -24%;
+            /* Stronger pin so building bases meet the bottom edge (no navy gap) */
+            bottom: -32%;
             width: 100%;
             height: auto;
             min-height: 0;
             transform: none;
         }
     }
-
 
     .v2h-hero::before {
         content: '';
@@ -74,15 +76,15 @@
         pointer-events: none;
     }
 
-
     .v2h-hero-inner {
         position: relative;
         z-index: 2;
         width: 100%;
-        padding: 5.5rem 0 7.5rem;
+        /* Room above for nav clearance + room below for Explore */
+        padding: 1.25rem 0 6.5rem;
         text-align: center;
-        /* Raise hero copy ~25% of viewport above true center */
-        transform: translateY(-25vh);
+        /* Gentle raise only — -25vh was clipping under the navbar */
+        transform: translateY(-8vh);
     }
 
     .v2h-brand {
@@ -123,7 +125,8 @@
     .v2h-scroll {
         position: absolute;
         left: 50%;
-        bottom: calc(1.1rem + env(safe-area-inset-bottom, 0px));
+        /* Clearance for bob animation (moves +4px) + safe area */
+        bottom: calc(1.75rem + env(safe-area-inset-bottom, 0px));
         transform: translateX(-50%);
         z-index: 2;
         color: var(--v2-gold-soft);
@@ -142,7 +145,7 @@
 
     @keyframes v2Bob {
         0%, 100% { transform: translate(-50%, 0); }
-        50% { transform: translate(-50%, 6px); }
+        50% { transform: translate(-50%, 4px); }
     }
 
     .v2h-section {
