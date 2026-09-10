@@ -6,14 +6,24 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/vectorny_v2.css') }}">
 <link rel="preload" as="image" type="image/webp" href="{{ url_for('static', filename='images/marbleskyline-darknavy.webp') }}">
 <style>
+    body.v2-site .container.mt-5.pt-4 {
+        /* Empty flash wrapper still reserved ~navbar height and pushed the hero below the fold */
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+        min-height: 0;
+    }
+
     body.v2-site .container.mt-5.pt-4:has(.alert) {
         margin-top: 4.5rem !important;
+        padding-top: 1.5rem !important;
     }
 
     .v2h-hero {
         position: relative;
+        /* svh = visible viewport with browser chrome; avoids Explore being clipped */
         min-height: 100vh;
         min-height: 100dvh;
+        min-height: 100svh;
         display: flex;
         align-items: center;
         overflow: hidden;
@@ -113,7 +123,7 @@
     .v2h-scroll {
         position: absolute;
         left: 50%;
-        bottom: 1.35rem;
+        bottom: calc(1.1rem + env(safe-area-inset-bottom, 0px));
         transform: translateX(-50%);
         z-index: 2;
         color: var(--v2-gold-soft);
