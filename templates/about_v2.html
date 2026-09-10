@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+
+{% block title %}About Us - Vector New York{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/vectorny_v2.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="v2p-hero v2p-hero--tall" aria-label="About Vector New York">
+    <div class="v2p-hero-bg"
+         style="background-image: url('{{ url_for('static', filename='images/about/nyc-skyline-2.png') }}');"
+         aria-hidden="true"></div>
+    <div class="container v2p-hero-inner">
+        <p class="v2-kicker v2-fade-up">Vector New York</p>
+        <h1 class="v2-display v2-fade-up v2-fade-up-delay-1">About Us</h1>
+        <p class="v2p-hero-lede v2-fade-up v2-fade-up-delay-2">
+            New York leasing reimagined—where happy tenants and successful owners go hand-in-hand.
+        </p>
+    </div>
+</section>
+
+<section class="v2p-section">
+    <div class="container">
+        <div class="v2p-split">
+            <div>
+                <p class="v2-kicker">Our Story</p>
+                <h2 class="v2-display">New York Leasing Reimagined—Where Happy Tenants and Successful Owners Go Hand-in-Hand</h2>
+                <p class="v2p-copy">
+                    At Vector New York, we believe great leasing starts with great living. Since 2020, we've built one of the city's most trusted and innovative residential leasing operations, representing more than 25,000 homes across every corner of New York—from iconic high-rise towers and design-forward boutique buildings to charming walk-ups and thoughtfully managed affordable housing.
+                </p>
+                <p class="v2p-copy">
+                    We're not just here to fill apartments—we're here to help people find homes they can thrive in. Because when tenants love where they live, everything else falls into place.
+                </p>
+            </div>
+            <div class="v2p-media">
+                <img src="{{ url_for('static', filename='images/about/city-artsy-yellow.jpeg') }}"
+                     alt="New York City skyline study"
+                     loading="lazy"
+                     decoding="async">
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="v2p-section v2p-section--deep">
+    <div class="container">
+        <p class="v2-kicker">How We Work</p>
+        <h2 class="v2-display">Technology Meets Hospitality</h2>
+        <p class="v2p-copy" style="max-width: 48rem;">
+            We're not a traditional brokerage. Instead, we operate like a dedicated leasing department for owners and property managers—powered by automation, real-time data tracking, and a department-based approach that replaces the outdated "jack-of-all-trades" agent model.
+        </p>
+        <p class="v2p-copy" style="max-width: 48rem;">
+            This allows us to move fast, stay transparent, and deliver consistent results at scale—keeping buildings full and tenants satisfied.
+        </p>
+    </div>
+</section>
+
+<div class="v2p-stats">
+    <div class="container" style="display: contents;">
+        <div class="v2p-stat">
+            <div class="v2p-stat-value">25,000+</div>
+            <div class="v2p-stat-label">Units Represented</div>
+        </div>
+        <div class="v2p-stat">
+            <div class="v2p-stat-value">500+</div>
+            <div class="v2p-stat-label">Properties</div>
+        </div>
+        <div class="v2p-stat">
+            <div class="v2p-stat-value">2020</div>
+            <div class="v2p-stat-label">Est. Year</div>
+        </div>
+        <div class="v2p-stat">
+            <div class="v2p-stat-value">You</div>
+            <div class="v2p-stat-label">Our Focus</div>
+        </div>
+    </div>
+</div>
+
+<section class="v2p-section">
+    <div class="container">
+        <div class="v2p-split v2p-split--flip">
+            <div>
+                <p class="v2-kicker">Experience</p>
+                <h2 class="v2-display">A Better Leasing Experience for Everyone</h2>
+                <p class="v2p-copy">
+                    Whether you're a renter hoping for a streamlined, supportive path to your next apartment—or an owner looking to optimize performance across a portfolio—we make the process easy, thoughtful, and effective for all parties.
+                </p>
+                <ul class="v2p-list">
+                    <li>Quick and responsive scheduling</li>
+                    <li>Modern visuals and listing design that respect your time and taste</li>
+                    <li>Clear communication from first inquiry to lease signing</li>
+                </ul>
+                <p class="v2p-copy">
+                    Our in-house creative team ensures every listing is showcased at its best—from luxury-focused, AI-enhanced staging to dynamic video tours to clear, representative descriptions that help renters imagine daily life both inside the apartment and throughout the building—because every apartment deserves to shine, and every renter deserves to feel confident in what they're shopping for.
+                </p>
+            </div>
+            <div class="v2p-media">
+                <img src="{{ url_for('static', filename='images/about/better-leasing-large.jpeg') }}"
+                     alt="Modern apartment interior visualization"
+                     loading="lazy"
+                     decoding="async">
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="v2p-section v2p-section--deep">
+    <div class="container">
+        <div class="v2p-split">
+            <div>
+                <p class="v2-kicker">Precision</p>
+                <h2 class="v2-display">Better Data. Better Outcomes. Better Living.</h2>
+                <p class="v2p-copy">
+                    We track every phase of the leasing journey—monitoring listing engagement, response rates, tour feedback, time-to-lease, and lease outcomes—to continuously improve both the renter and owner experience.
+                </p>
+                <p class="v2p-copy">
+                    For owners, this means unmatched visibility, lower vacancy, and actionable insights that go beyond marketing. For tenants, it means faster answers, less stress, and homes that match both budget and lifestyle.
+                </p>
+                <p class="v2p-copy">
+                    At Vector New York, we're proving that technology, transparency, and a little humanity can transform the rental experience—for everyone.
+                </p>
+            </div>
+            <div class="v2p-media">
+                <img src="{{ url_for('static', filename='images/about/better-leasing-2.jpeg') }}"
+                     alt="Data-driven leasing insights"
+                     loading="lazy"
+                     decoding="async">
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="v2p-cta">
+    <div class="container">
+        <h2 class="v2-display">Browse our curated selection of premium properties or let our Vector Assistant help you find your perfect match.</h2>
+        <div class="v2p-cta-actions">
+            <a class="v2-btn v2-btn-gold" href="{{ url_for('listings', v=2) }}">Browse Listings</a>
+            <a class="v2-btn v2-btn-ghost" href="#" data-bs-toggle="modal" data-bs-target="#vectorAssistantModal">Chat with Vector Assistant</a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/vectorny_v2.js') }}"></script>
+{% endblock %}

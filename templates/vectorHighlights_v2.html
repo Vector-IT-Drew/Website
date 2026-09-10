@@ -1,0 +1,477 @@
+{% extends 'base.html' %}
+
+{% block title %}Vector Highlights - Vector New York{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/vectorny_v2.css') }}">
+<style>
+    .v2hl-portfolio {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 0;
+        border: 1px solid var(--v2-line);
+        background: var(--v2-panel);
+        cursor: pointer;
+        margin-bottom: 3.5rem;
+        transition: border-color 0.25s ease;
+    }
+
+    .v2hl-portfolio:hover {
+        border-color: rgba(213, 149, 99, 0.45);
+    }
+
+    .v2hl-gallery {
+        position: relative;
+        overflow: hidden;
+        min-height: 420px;
+        background: var(--v2-navy-deep);
+    }
+
+    .v2hl-gallery-track {
+        display: flex;
+        height: 100%;
+        transition: transform 0.55s ease;
+    }
+
+    .v2hl-gallery-track img {
+        flex: 0 0 100%;
+        width: 100%;
+        height: 100%;
+        min-height: 420px;
+        object-fit: cover;
+        display: block;
+    }
+
+    .v2hl-badge {
+        position: absolute;
+        top: 1.15rem;
+        left: 1.15rem;
+        z-index: 2;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.45rem 0.75rem;
+        background: rgba(24, 43, 67, 0.88);
+        border: 1px solid var(--v2-line);
+        color: var(--v2-cream);
+        font-size: 0.68rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+    }
+
+    .v2hl-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 2;
+        width: 2.5rem;
+        height: 2.5rem;
+        border: 1px solid rgba(168, 140, 96, 0.45);
+        background: rgba(24, 43, 67, 0.72);
+        color: var(--v2-cream);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+    .v2hl-nav:hover {
+        background: rgba(213, 149, 99, 0.22);
+        color: #fff;
+    }
+
+    .v2hl-nav.prev { left: 0.85rem; }
+    .v2hl-nav.next { right: 0.85rem; }
+
+    .v2hl-dots {
+        position: absolute;
+        left: 50%;
+        bottom: 1rem;
+        transform: translateX(-50%);
+        z-index: 2;
+        display: flex;
+        gap: 0.4rem;
+    }
+
+    .v2hl-dot {
+        width: 0.45rem;
+        height: 0.45rem;
+        border-radius: 0;
+        background: rgba(255, 255, 255, 0.35);
+        border: none;
+        padding: 0;
+        cursor: pointer;
+    }
+
+    .v2hl-dot.active {
+        background: var(--v2-cream);
+        width: 1.1rem;
+    }
+
+    .v2hl-body {
+        padding: 2rem 1.75rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 1.5rem;
+    }
+
+    .v2hl-body h3 {
+        font-family: 'Playfair Display', Georgia, serif;
+        font-size: clamp(1.45rem, 2.2vw, 1.85rem);
+        color: #fff;
+        font-weight: 500;
+        margin: 0.85rem 0 0.75rem;
+    }
+
+    .v2hl-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .v2hl-tag {
+        font-size: 0.65rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--v2-navy);
+        background: var(--v2-cream);
+        padding: 0.3rem 0.55rem;
+    }
+
+    .v2hl-stars {
+        color: var(--v2-gold);
+        font-size: 0.75rem;
+        letter-spacing: 0.12em;
+    }
+
+    .v2hl-desc {
+        color: var(--v2-muted);
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin: 0;
+    }
+
+    .v2hl-features {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.85rem 1rem;
+        border-top: 1px solid rgba(168, 140, 96, 0.16);
+        padding-top: 1.25rem;
+    }
+
+    .v2hl-feature {
+        display: flex;
+        gap: 0.65rem;
+        align-items: flex-start;
+    }
+
+    .v2hl-feature i {
+        color: var(--v2-gold);
+        margin-top: 0.15rem;
+    }
+
+    .v2hl-feature-label {
+        font-size: 0.62rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--v2-gold-soft);
+        margin-bottom: 0.15rem;
+    }
+
+    .v2hl-feature-value {
+        color: var(--v2-text);
+        font-size: 0.9rem;
+    }
+
+    .v2hl-explore {
+        align-self: flex-start;
+    }
+
+    @media (max-width: 991px) {
+        .v2hl-portfolio {
+            grid-template-columns: 1fr;
+        }
+
+        .v2hl-gallery-track img,
+        .v2hl-gallery {
+            min-height: 300px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="v2p-hero" aria-label="Vector Highlights">
+    <div class="v2p-hero-bg"
+         style="background-image: url('{{ url_for('static', filename='images/about/city-artsy-light.jpeg') }}');"
+         aria-hidden="true"></div>
+    <div class="container v2p-hero-inner">
+        <p class="v2-kicker v2-fade-up">Featured Partnerships</p>
+        <h1 class="v2-display v2-fade-up v2-fade-up-delay-1">Exclusive Portfolio Showcase</h1>
+        <p class="v2p-hero-lede v2-fade-up v2-fade-up-delay-2">
+            Discover premium properties from our carefully selected landlord partners, where exceptional quality meets unparalleled service.
+        </p>
+    </div>
+</section>
+
+<section class="v2p-section">
+    <div class="container">
+        <div class="mb-4">
+            <p class="v2-kicker">Featured Partnership</p>
+            <h2 class="v2-display">SMK Greenpoint Collection</h2>
+            <p class="v2p-copy v2p-copy-muted" style="max-width: 40rem;">
+                Our exclusive partnership with SMK brings you access to premier properties in one of Brooklyn's most sought-after neighborhoods.
+            </p>
+        </div>
+
+        <article class="v2hl-portfolio" data-href="{{ url_for('listings', portfolio='SMK', v=2) }}" role="link" tabindex="0" aria-label="Explore SMK Greenpoint listings">
+            <div class="v2hl-gallery" id="galleryContainerGreenpoint">
+                <div class="v2hl-badge"><i class="fas fa-map-marker-alt" aria-hidden="true"></i> Greenpoint, Brooklyn</div>
+                <div class="v2hl-gallery-track" id="galleryImages">
+                    <img src="https://www.dropbox.com/scl/fi/ixx70uc5pmq7g0tmuhb90/BS-669-Meeker-PH-Living-Staged.png?rlkey=migt0h1q8vvu1tioaln4vrk6f&st=s3mh2jvt&dl=1"
+                         alt="SMK Portfolio - 669 Meeker Penthouse Living Room" loading="eager" decoding="async">
+                    <img src="https://www.dropbox.com/scl/fi/8jfenhrckeffjox207jrj/667-Meeker-PH-Studio-Shot-B-Staged-THUMB.png?rlkey=ca79k7qqv5wo9vgrwlgiygo5c&st=axqnbfbt&dl=1"
+                         alt="SMK Portfolio - 667 Meeker Penthouse Studio" loading="lazy" decoding="async">
+                    <img src="https://www.dropbox.com/scl/fi/91scj2gd516p0b9y1exrz/NAPM-BK-5-Sutton-PH-Living-Staged.jpg?rlkey=tki8pd05gn8bdpxzqk878bgsx&st=ply76sqf&dl=1"
+                         alt="SMK Portfolio - 5 Sutton Penthouse Living Room" loading="lazy" decoding="async">
+                    <img src="https://www.dropbox.com/scl/fi/jbba3bi735e4ski35r1xz/166-Kingsland-PH-Living-Staged.png?rlkey=2q6khqshjarz4h5h412xbij3q&st=trva1483&dl=1"
+                         alt="SMK Portfolio - 166 Kingsland Penthouse Living Room" loading="lazy" decoding="async">
+                    <img src="https://www.dropbox.com/scl/fi/3kdvsrqglx4li3nu886h4/NAPM-BK-5-Sutton-PH-Patio-Staged.jpg?rlkey=ppo49woxf97rlhi1bj407p2ia&st=s2k99rm9&dl=1"
+                         alt="SMK Portfolio - 5 Sutton Penthouse Patio" loading="lazy" decoding="async">
+                </div>
+                <button type="button" class="v2hl-nav prev" onclick="event.stopPropagation(); changeImage(-1)" aria-label="Previous image">
+                    <i class="fas fa-chevron-left" aria-hidden="true"></i>
+                </button>
+                <button type="button" class="v2hl-nav next" onclick="event.stopPropagation(); changeImage(1)" aria-label="Next image">
+                    <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                </button>
+                <div class="v2hl-dots" id="galleryIndicators">
+                    <button type="button" class="v2hl-dot active" onclick="event.stopPropagation(); currentImage(1)" aria-label="Image 1"></button>
+                    <button type="button" class="v2hl-dot" onclick="event.stopPropagation(); currentImage(2)" aria-label="Image 2"></button>
+                    <button type="button" class="v2hl-dot" onclick="event.stopPropagation(); currentImage(3)" aria-label="Image 3"></button>
+                    <button type="button" class="v2hl-dot" onclick="event.stopPropagation(); currentImage(4)" aria-label="Image 4"></button>
+                    <button type="button" class="v2hl-dot" onclick="event.stopPropagation(); currentImage(5)" aria-label="Image 5"></button>
+                </div>
+            </div>
+            <div class="v2hl-body">
+                <div>
+                    <a class="v2-btn v2-btn-gold v2hl-explore" href="{{ url_for('listings', portfolio='SMK', v=2) }}" onclick="event.stopPropagation();">Explore Listings</a>
+                    <h3>SMK Greenpoint Offering</h3>
+                    <div class="v2hl-meta">
+                        <span class="v2hl-tag">Exclusive</span>
+                        <span class="v2hl-stars" aria-label="5 stars">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </span>
+                    </div>
+                    <p class="v2hl-desc">
+                        This updated building features keyless entry with a virtual doorman, enhanced security, and a brand-new industrial laundry room. Residents can enjoy lively common areas with art, greenery, free WiFi, and entertainment spaces.
+                        <br><br>
+                        Live at the crossroads of Greenpoint and Williamsburg, just minutes from local favorites like McGolrick Park, McCarren Park, and the newly transformed Under the K Bridge Park.
+                    </p>
+                </div>
+                <div class="v2hl-features">
+                    <div class="v2hl-feature">
+                        <i class="fas fa-shield-alt" aria-hidden="true"></i>
+                        <div>
+                            <div class="v2hl-feature-label">Security</div>
+                            <div class="v2hl-feature-value">Virtual Doorman</div>
+                        </div>
+                    </div>
+                    <div class="v2hl-feature">
+                        <i class="fas fa-tshirt" aria-hidden="true"></i>
+                        <div>
+                            <div class="v2hl-feature-label">Laundry</div>
+                            <div class="v2hl-feature-value">In Building</div>
+                        </div>
+                    </div>
+                    <div class="v2hl-feature">
+                        <i class="fas fa-tree" aria-hidden="true"></i>
+                        <div>
+                            <div class="v2hl-feature-label">Outdoor</div>
+                            <div class="v2hl-feature-value">Unit Specific</div>
+                        </div>
+                    </div>
+                    <div class="v2hl-feature">
+                        <i class="fas fa-paw" aria-hidden="true"></i>
+                        <div>
+                            <div class="v2hl-feature-label">Pets</div>
+                            <div class="v2hl-feature-value">Pet Friendly</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <div class="mb-4">
+            <p class="v2-kicker">Featured Partnership</p>
+            <h2 class="v2-display">The Aspen</h2>
+            <p class="v2p-copy v2p-copy-muted" style="max-width: 40rem;">
+                Full-service Upper East Side living with spacious studios, one- and two-bedroom homes, premium amenities, and minutes from the East River Esplanade.
+            </p>
+        </div>
+
+        <article class="v2hl-portfolio" data-href="{{ url_for('listings', portfolio='Aspen', v=2) }}" role="link" tabindex="0" aria-label="Explore The Aspen listings">
+            <div class="v2hl-gallery" id="galleryContainerAspen">
+                <div class="v2hl-badge"><i class="fas fa-map-marker-alt" aria-hidden="true"></i> Upper East Side, Manhattan</div>
+                <div class="v2hl-gallery-track" id="galleryImagesAspen">
+                    <img src="https://www.dropbox.com/scl/fi/ivr9pko4voba0iwhjt530/Aspen-2-Bed-B-Bedroom-Shot-A-Staged.jpg?rlkey=6ie6d16gjrot75ookn1q2vpt6&st=k55qixap&dl=1" alt="Aspen Portfolio - Bedroom" loading="lazy" decoding="async">
+                    <img src="https://www.dropbox.com/scl/fi/bp8rxpkortjpce68ydha3/Aspen-2-Bed-B-Living-Shot-A-Staged.jpg?rlkey=7l2fd3yxm0a7xl434in76ueo9&st=0q43zgno&dl=1" alt="Aspen Portfolio - Living Room" loading="lazy" decoding="async">
+                    <img src="https://www.dropbox.com/scl/fi/ncp19jkx6tgv8ti431sbk/Aspen-2-Bed-Bedroom-2-Staged-C.png?rlkey=w3imo8amy4u2n6l56iv2klinl&st=74y50bak&dl=1" alt="Aspen Portfolio - Second Bedroom" loading="lazy" decoding="async">
+                    <img src="https://www.dropbox.com/scl/fi/ipnn6pvp8rr4av5zf62ow/Aspen-2-Bed-Living-Staged-D.png?rlkey=2p7kvsknrn1i0lj53uymgardl&st=jcu8fpt7&dl=1" alt="Aspen Portfolio - Living Space" loading="lazy" decoding="async">
+                    <img src="https://www.dropbox.com/scl/fi/9yfltpgg50rfwry3spw8y/Aspen-3-Bed-Living-Shot-E-Staged.png?rlkey=55kujrxy0hjtaeo2wh3aom2nc&st=r3acivgz&dl=1" alt="Aspen Portfolio - Three Bedroom Living" loading="lazy" decoding="async">
+                    <img src="https://www.dropbox.com/scl/fi/tc5z9mv8ivkg2qotb7be8/Aspen-Balcony-Shot-B-Staged.jpg?rlkey=0p5jlc7wp7sjz5mvz7ux7d0yj&st=wkn9sopc&dl=1" alt="Aspen Portfolio - Balcony" loading="lazy" decoding="async">
+                </div>
+                <button type="button" class="v2hl-nav prev" onclick="event.stopPropagation(); changeImageAspen(-1)" aria-label="Previous image">
+                    <i class="fas fa-chevron-left" aria-hidden="true"></i>
+                </button>
+                <button type="button" class="v2hl-nav next" onclick="event.stopPropagation(); changeImageAspen(1)" aria-label="Next image">
+                    <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                </button>
+                <div class="v2hl-dots" id="galleryIndicatorsAspen">
+                    <button type="button" class="v2hl-dot active" onclick="event.stopPropagation(); currentImageAspen(1)" aria-label="Image 1"></button>
+                    <button type="button" class="v2hl-dot" onclick="event.stopPropagation(); currentImageAspen(2)" aria-label="Image 2"></button>
+                    <button type="button" class="v2hl-dot" onclick="event.stopPropagation(); currentImageAspen(3)" aria-label="Image 3"></button>
+                    <button type="button" class="v2hl-dot" onclick="event.stopPropagation(); currentImageAspen(4)" aria-label="Image 4"></button>
+                    <button type="button" class="v2hl-dot" onclick="event.stopPropagation(); currentImageAspen(5)" aria-label="Image 5"></button>
+                    <button type="button" class="v2hl-dot" onclick="event.stopPropagation(); currentImageAspen(6)" aria-label="Image 6"></button>
+                </div>
+            </div>
+            <div class="v2hl-body">
+                <div>
+                    <a class="v2-btn v2-btn-gold v2hl-explore" href="{{ url_for('listings', portfolio='Aspen', v=2) }}" onclick="event.stopPropagation();">Explore Listings</a>
+                    <h3>The Aspen Offering</h3>
+                    <div class="v2hl-meta">
+                        <span class="v2hl-tag">Exclusive</span>
+                        <span class="v2hl-stars" aria-label="5 stars">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </span>
+                    </div>
+                    <p class="v2hl-desc">
+                        Upper East Side living with a full-service amenity lineup. The Aspen offers spacious studios, one-, and two-bedroom rentals — many with private terraces or balconies — plus bright layouts, oversized windows, hardwood floors, central air, and in-unit dishwashers.
+                        <br><br>
+                        Enjoy the convenience of elevators, a package room, live-in super, and parking garage. Recharge with an on-site gym, media room, and outdoor garden + patio— minutes from the East River Esplanade and nearby parks.
+                    </p>
+                </div>
+                <div class="v2hl-features">
+                    <div class="v2hl-feature">
+                        <i class="fas fa-shield-alt" aria-hidden="true"></i>
+                        <div>
+                            <div class="v2hl-feature-label">Security</div>
+                            <div class="v2hl-feature-value">Full-Time Doorman</div>
+                        </div>
+                    </div>
+                    <div class="v2hl-feature">
+                        <i class="fas fa-tshirt" aria-hidden="true"></i>
+                        <div>
+                            <div class="v2hl-feature-label">Laundry</div>
+                            <div class="v2hl-feature-value">In Building</div>
+                        </div>
+                    </div>
+                    <div class="v2hl-feature">
+                        <i class="fas fa-paw" aria-hidden="true"></i>
+                        <div>
+                            <div class="v2hl-feature-label">Pets</div>
+                            <div class="v2hl-feature-value">Pet Friendly</div>
+                        </div>
+                    </div>
+                    <div class="v2hl-feature">
+                        <i class="fas fa-tree" aria-hidden="true"></i>
+                        <div>
+                            <div class="v2hl-feature-label">Outdoor</div>
+                            <div class="v2hl-feature-value">Garden &amp; Patio</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/vectorny_v2.js') }}"></script>
+<script>
+(function () {
+    let currentImageIndex = 0;
+    const totalImages = 5;
+
+    window.changeImage = function (direction) {
+        currentImageIndex += direction;
+        if (currentImageIndex >= totalImages) currentImageIndex = 0;
+        else if (currentImageIndex < 0) currentImageIndex = totalImages - 1;
+        updateGallery();
+    };
+
+    window.currentImage = function (index) {
+        currentImageIndex = index - 1;
+        updateGallery();
+    };
+
+    function updateGallery() {
+        const galleryImages = document.getElementById('galleryImages');
+        const indicators = document.querySelectorAll('#galleryIndicators .v2hl-dot');
+        if (!galleryImages) return;
+        galleryImages.style.transform = `translateX(${-currentImageIndex * 100}%)`;
+        indicators.forEach((dot, index) => {
+            dot.classList.toggle('active', index === currentImageIndex);
+        });
+    }
+
+    let autoAdvanceInterval = setInterval(() => window.changeImage(1), 6000);
+    const greenpoint = document.getElementById('galleryContainerGreenpoint');
+    if (greenpoint) {
+        greenpoint.addEventListener('mouseenter', () => clearInterval(autoAdvanceInterval));
+        greenpoint.addEventListener('mouseleave', () => {
+            autoAdvanceInterval = setInterval(() => window.changeImage(1), 6000);
+        });
+    }
+
+    let currentImageIndexAspen = 0;
+    const totalImagesAspen = 6;
+
+    window.changeImageAspen = function (direction) {
+        currentImageIndexAspen += direction;
+        if (currentImageIndexAspen >= totalImagesAspen) currentImageIndexAspen = 0;
+        else if (currentImageIndexAspen < 0) currentImageIndexAspen = totalImagesAspen - 1;
+        updateGalleryAspen();
+    };
+
+    window.currentImageAspen = function (index) {
+        currentImageIndexAspen = index - 1;
+        updateGalleryAspen();
+    };
+
+    function updateGalleryAspen() {
+        const galleryImages = document.getElementById('galleryImagesAspen');
+        const indicators = document.querySelectorAll('#galleryIndicatorsAspen .v2hl-dot');
+        if (!galleryImages || !indicators.length) return;
+        galleryImages.style.transform = `translateX(${-currentImageIndexAspen * 100}%)`;
+        indicators.forEach((dot, index) => {
+            dot.classList.toggle('active', index === currentImageIndexAspen);
+        });
+    }
+
+    let autoAdvanceIntervalAspen = setInterval(() => window.changeImageAspen(1), 6000);
+    const aspen = document.getElementById('galleryContainerAspen');
+    if (aspen) {
+        aspen.addEventListener('mouseenter', () => clearInterval(autoAdvanceIntervalAspen));
+        aspen.addEventListener('mouseleave', () => {
+            autoAdvanceIntervalAspen = setInterval(() => window.changeImageAspen(1), 6000);
+        });
+    }
+
+    document.querySelectorAll('.v2hl-portfolio[data-href]').forEach((card) => {
+        const go = () => { window.location.href = card.getAttribute('data-href'); };
+        card.addEventListener('click', go);
+        card.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                go();
+            }
+        });
+    });
+})();
+</script>
+{% endblock %}

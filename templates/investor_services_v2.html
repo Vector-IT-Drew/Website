@@ -1,0 +1,237 @@
+{% extends 'base.html' %}
+
+{% block title %}Investor Services - Vector New York{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/vectorny_v2.css') }}">
+<style>
+    .v2i-hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-top: 1.75rem;
+    }
+
+    .v2i-benefits {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0 1.75rem;
+    }
+
+    .v2i-challenges {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0 1.5rem;
+    }
+
+    #contactAgentModal .modal-content {
+        background: var(--v2-navy-deep) !important;
+        border: 1px solid var(--v2-line);
+        border-radius: 0;
+        color: var(--v2-text);
+    }
+
+    #contactAgentModal .modal-title {
+        font-family: 'Playfair Display', Georgia, serif;
+        color: #fff;
+    }
+
+    #contactAgentModal .form-control {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(168, 140, 96, 0.28);
+        border-radius: 0;
+        color: #fff;
+    }
+
+    #contactAgentModal .form-control:focus {
+        background: rgba(255, 255, 255, 0.06);
+        border-color: var(--v2-gold);
+        box-shadow: none;
+        color: #fff;
+    }
+
+    #contactAgentModal .btn-primary {
+        background: var(--v2-cream);
+        border: none;
+        border-radius: 0;
+        color: var(--v2-navy);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-size: 0.72rem;
+        font-weight: 700;
+    }
+
+    #contactAgentModal .btn-secondary {
+        background: transparent;
+        border: 1px solid rgba(168, 140, 96, 0.4);
+        border-radius: 0;
+        color: var(--v2-cream);
+    }
+
+    @media (max-width: 767px) {
+        .v2i-benefits,
+        .v2i-challenges {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+{% include 'contact_form.html' %}
+
+<section class="v2p-hero" aria-label="Investor Services">
+    <div class="v2p-hero-bg"
+         style="background-image: url('{{ url_for('static', filename='images/marbleskyline-darknavy.webp') }}'); background-position: center bottom;"
+         aria-hidden="true"></div>
+    <div class="container v2p-hero-inner">
+        <p class="v2-kicker v2-fade-up">For Owners &amp; Investors</p>
+        <h1 class="v2-display v2-fade-up v2-fade-up-delay-1">Investor Services</h1>
+        <p class="v2p-hero-lede v2-fade-up v2-fade-up-delay-2">
+            Delivering maximized returns through our streamlined, technology-driven approach to real estate management.
+        </p>
+        <div class="v2i-hero-actions v2-fade-up v2-fade-up-delay-3">
+            <a class="v2-btn v2-btn-gold" href="#" data-bs-toggle="modal" data-bs-target="#contactAgentModal">Contact Investor Services</a>
+            <a class="v2-btn v2-btn-ghost" href="{{ url_for('listings', v=2) }}">Browse Residences</a>
+        </div>
+    </div>
+</section>
+
+<section class="v2p-section" id="services">
+    <div class="container">
+        <p class="v2-kicker">Capabilities</p>
+        <h2 class="v2-display" style="margin-bottom: 2rem;">What We Deliver</h2>
+        <div class="v2p-grid">
+            <article class="v2p-tile">
+                <div class="v2p-tile-icon"><i class="fas fa-chart-pie" aria-hidden="true"></i></div>
+                <h3>Portfolio Strategy</h3>
+                <p>Tailored plans to grow and diversify real estate investments.</p>
+            </article>
+            <article class="v2p-tile">
+                <div class="v2p-tile-icon"><i class="fas fa-chart-line" aria-hidden="true"></i></div>
+                <h3>Rent Roll Optimization</h3>
+                <p>Maximizing rental income through data-driven pricing and efficient leasing.</p>
+            </article>
+            <article class="v2p-tile">
+                <div class="v2p-tile-icon"><i class="fas fa-building" aria-hidden="true"></i></div>
+                <h3>Acquisition Support</h3>
+                <p>Identifying and analyzing residential investment opportunities.</p>
+            </article>
+            <article class="v2p-tile">
+                <div class="v2p-tile-icon"><i class="fas fa-balance-scale" aria-hidden="true"></i></div>
+                <h3>Valuation Insights</h3>
+                <p>Strategic market-based property evaluations and projections.</p>
+            </article>
+            <article class="v2p-tile">
+                <div class="v2p-tile-icon"><i class="fas fa-key" aria-hidden="true"></i></div>
+                <h3>Leasing Operations</h3>
+                <p>Full-service leasing with marketing, tenant screening, and onboarding.</p>
+            </article>
+            <article class="v2p-tile">
+                <div class="v2p-tile-icon"><i class="fas fa-sign" aria-hidden="true"></i></div>
+                <h3>Sales &amp; Exits</h3>
+                <p>Streamlined processes for profitable property sales and asset repositioning.</p>
+            </article>
+            <article class="v2p-tile">
+                <div class="v2p-tile-icon"><i class="fas fa-search-dollar" aria-hidden="true"></i></div>
+                <h3>Market Intelligence</h3>
+                <p>Real-time analysis of neighborhood trends and pricing dynamics.</p>
+            </article>
+            <article class="v2p-tile">
+                <div class="v2p-tile-icon"><i class="fas fa-tachometer-alt" aria-hidden="true"></i></div>
+                <h3>Performance Tracking</h3>
+                <p>Transparent reporting and KPIs to monitor investment health.</p>
+            </article>
+        </div>
+    </div>
+</section>
+
+<section class="v2p-section v2p-section--deep" id="approach">
+    <div class="container">
+        <div class="v2p-split">
+            <div>
+                <p class="v2-kicker">Our Approach</p>
+                <h2 class="v2-display">Adaptive. Data-Led. Compounding.</h2>
+                <p class="v2p-copy">
+                    As an adaptive business, we efficiently absorb data, re-running it through automated processes to continually refine our approach. This dynamic cycle compounds our results, enhancing efficiency and delivering ever-greater value for our clients.
+                </p>
+                <div class="v2p-callout">
+                    <h3>Data-Driven Decisions</h3>
+                    <p>Our real-time analytics dashboard provides landlords with actionable insights at each phase, empowering them to make decisions based on up-to-the-minute data.</p>
+                </div>
+            </div>
+            <div class="v2i-benefits">
+                <div class="v2p-benefit">
+                    <h3><i class="fas fa-chart-line" aria-hidden="true"></i> Increased ROI</h3>
+                    <p>Our streamlined processes lead to faster leasing cycles, higher occupancy rates, and reduced operational costs, directly impacting your bottom line.</p>
+                </div>
+                <div class="v2p-benefit">
+                    <h3><i class="fas fa-bolt" aria-hidden="true"></i> Efficiency</h3>
+                    <p>By automating routine tasks and streamlining workflows, we reduce operational overhead and enable your team to focus on strategic growth initiatives.</p>
+                </div>
+                <div class="v2p-benefit">
+                    <h3><i class="fas fa-chart-bar" aria-hidden="true"></i> Market Insights</h3>
+                    <p>Our analytics provide deep understanding of market trends, helping you make informed decisions about pricing, upgrades, and acquisition strategies.</p>
+                </div>
+                <div class="v2p-benefit">
+                    <h3><i class="fas fa-users" aria-hidden="true"></i> Tenant Satisfaction</h3>
+                    <p>Our responsive platform enhances the tenant experience, leading to higher retention rates, stronger word-of-mouth referrals, and reduced vacancy periods.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="v2p-section" id="challenges">
+    <div class="container">
+        <div class="v2p-split">
+            <div>
+                <p class="v2-kicker">The Problem</p>
+                <h2 class="v2-display">Challenges of Traditional Leasing</h2>
+                <div class="v2i-challenges">
+                    <div class="v2p-challenge">
+                        <h3><i class="fas fa-dollar-sign" aria-hidden="true"></i> High Vacancy Costs</h3>
+                        <p>Every vacant day costs NYC property owners substantial lost revenue due to slow response times and manual coordination.</p>
+                    </div>
+                    <div class="v2p-challenge">
+                        <h3><i class="fas fa-clock" aria-hidden="true"></i> Manual Processes</h3>
+                        <p>Multiple fragmented steps create bottlenecks between agents, tenants, and property managers, impacting productivity.</p>
+                    </div>
+                    <div class="v2p-challenge">
+                        <h3><i class="fas fa-frown" aria-hidden="true"></i> Poor Tenant Experience</h3>
+                        <p>Modern tenants expect seamless experiences, but fragmented processes lead to abandoned applications.</p>
+                    </div>
+                    <div class="v2p-challenge">
+                        <h3><i class="fas fa-eye-slash" aria-hidden="true"></i> Limited Visibility</h3>
+                        <p>Without real-time data tracking and analytics, identifying areas for improvement remains slow and reactive.</p>
+                    </div>
+                </div>
+                <div class="v2p-callout">
+                    <h3>Our Solution</h3>
+                    <p>Vector New York's digital-first platform eliminates traditional leasing pain points, reducing vacancy periods, streamlining workflows, and providing comprehensive data analytics.</p>
+                </div>
+            </div>
+            <div class="v2p-media">
+                <img src="{{ url_for('static', filename='images/vector-services.jpeg') }}"
+                     alt="Vector investor services operations"
+                     loading="lazy"
+                     decoding="async">
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="v2p-cta">
+    <div class="container">
+        <h2 class="v2-display">Ready to modernize your portfolio performance?</h2>
+        <div class="v2p-cta-actions">
+            <a class="v2-btn v2-btn-gold" href="#" data-bs-toggle="modal" data-bs-target="#contactAgentModal">Contact Investor Services</a>
+            <a class="v2-btn v2-btn-ghost" href="{{ url_for('about', v=2) }}">About Vector</a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/vectorny_v2.js') }}"></script>
+{% endblock %}

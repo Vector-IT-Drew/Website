@@ -148,10 +148,17 @@ def index():
 @app.route('/investor-services')
 def investor_services():
     """Display investor services page"""
+    if request.args.get('v') == '2':
+        return render_template(
+            'investor_services_v2.html',
+            DASH_SERVICES_ENDPOINT=DASH_SERVICES_ENDPOINT,
+        )
     return render_template('investor_services.html', DASH_SERVICES_ENDPOINT=DASH_SERVICES_ENDPOINT)
 
 @app.route('/vector-highlights')
 def vectorHighlights():
+    if request.args.get('v') == '2':
+        return render_template('vectorHighlights_v2.html')
     return render_template('vectorHighlights.html')
 
 
@@ -229,6 +236,11 @@ def about():
     """About Us page for Vector New York"""
     print('DASH_SERVICES_ENDPOINT', DASH_SERVICES_ENDPOINT)
     print('about page accessed', datetime.datetime.now())
+    if request.args.get('v') == '2':
+        return render_template(
+            'about_v2.html',
+            DASH_SERVICES_ENDPOINT=DASH_SERVICES_ENDPOINT,
+        )
     return render_template('about.html', DASH_SERVICES_ENDPOINT=DASH_SERVICES_ENDPOINT)
 
 @app.route('/listings')

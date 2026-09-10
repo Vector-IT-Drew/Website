@@ -716,7 +716,14 @@
             const url = new URL(href, window.location.origin);
             if (url.origin !== window.location.origin) return href;
             const path = url.pathname.replace(/\/$/, '') || '/';
-            if (path === '/' || path === '/listings' || path.startsWith('/listings/')) {
+            if (
+                path === '/' ||
+                path === '/listings' ||
+                path.startsWith('/listings/') ||
+                path === '/about' ||
+                path === '/investor-services' ||
+                path === '/vector-highlights'
+            ) {
                 url.searchParams.set('v', '2');
                 return url.pathname + url.search + url.hash;
             }
