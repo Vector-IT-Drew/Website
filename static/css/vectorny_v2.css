@@ -262,13 +262,16 @@ body.v2-site .container.mt-5.pt-4:has(.alert) {
 }
 
 .v2p-stats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1.5rem;
     padding: 3rem 0;
     border-top: 1px solid var(--v2-line);
     border-bottom: 1px solid var(--v2-line);
     background: var(--v2-navy-deep);
+}
+
+.v2p-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
 }
 
 .v2p-stat {
@@ -441,7 +444,7 @@ body.v2-site .container.mt-5.pt-4:has(.alert) {
         grid-template-columns: repeat(2, 1fr);
     }
 
-    .v2p-stats {
+    .v2p-stats-grid {
         grid-template-columns: repeat(2, 1fr);
     }
 }
