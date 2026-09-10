@@ -42,8 +42,9 @@
     .v2h-hero-bg {
         position: absolute;
         left: 50%;
-        bottom: -32%;
-        height: 132%;
+        /* Pin past empty navy under building bases (~18% of square art) */
+        bottom: -36%;
+        height: 136%;
         width: auto;
         max-width: none;
         transform: translateX(-50%);
@@ -56,8 +57,11 @@
         .v2h-hero-bg {
             left: 0;
             right: 0;
-            /* Stronger pin so building bases meet the bottom edge (no navy gap) */
-            bottom: -32%;
+            /*
+              Square art width-fills; crop empty navy under bases.
+              ~0.22 * aspect ≈ 39% on 16:9 so misted bases meet the fold.
+            */
+            bottom: -40%;
             width: 100%;
             height: auto;
             min-height: 0;
@@ -84,7 +88,7 @@
         padding: 1.25rem 0 6.5rem;
         text-align: center;
         /* Gentle raise only — -25vh was clipping under the navbar */
-        transform: translateY(-8vh);
+        transform: translateY(-5vh);
     }
 
     .v2h-brand {
@@ -126,7 +130,7 @@
         position: absolute;
         left: 50%;
         /* Clearance for bob animation (moves +4px) + safe area */
-        bottom: calc(1.75rem + env(safe-area-inset-bottom, 0px));
+        bottom: calc(2rem + env(safe-area-inset-bottom, 0px));
         transform: translateX(-50%);
         z-index: 2;
         color: var(--v2-gold-soft);
