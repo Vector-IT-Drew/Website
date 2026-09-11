@@ -479,33 +479,35 @@
     /* Featured buildings */
     .v2h-buildings-track {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 1rem;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1.15rem;
     }
 
     .v2h-building-card {
-        display: flex;
-        flex-direction: column;
+        display: grid;
+        grid-template-columns: 1.05fr 1fr;
+        min-height: 100%;
         text-align: left;
-        background: #1b2b40;
+        background: linear-gradient(165deg, rgba(31, 48, 70, 0.96), rgba(21, 35, 52, 0.98));
         border: 1px solid var(--v2-line);
         color: inherit;
         cursor: pointer;
         padding: 0;
-        transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease;
+        overflow: hidden;
+        transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
     }
 
     .v2h-building-card:hover,
     .v2h-building-card:focus-visible {
         border-color: rgba(213, 149, 99, 0.55);
-        background: #203148;
         transform: translateY(-2px);
+        box-shadow: 0 14px 30px rgba(0, 0, 0, 0.22);
         outline: none;
     }
 
     .v2h-building-media {
         position: relative;
-        aspect-ratio: 16 / 11;
+        min-height: 100%;
         overflow: hidden;
         background: #132338;
     }
@@ -539,17 +541,17 @@
     .v2h-building-count { right: 0.7rem; bottom: 0.7rem; }
 
     .v2h-building-body {
-        padding: 0.95rem 1rem 1.1rem;
+        padding: 1.05rem 1.1rem 1.15rem;
         display: flex;
         flex-direction: column;
-        gap: 0.25rem;
+        gap: 0.28rem;
         flex: 1;
     }
 
     .v2h-building-name {
         margin: 0;
         color: #fff;
-        font-size: 1.05rem;
+        font-size: 1.18rem;
         font-family: 'Playfair Display', Georgia, serif;
         font-weight: 500;
         line-height: 1.25;
@@ -562,25 +564,63 @@
         font-size: 0.82rem;
     }
 
+    .v2h-building-stats {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.45rem;
+        margin-top: 0.75rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid rgba(168, 140, 96, 0.16);
+    }
+
+    .v2h-building-stat strong {
+        display: block;
+        color: #f3d19c;
+        font-family: 'Playfair Display', Georgia, serif;
+        font-size: 1.05rem;
+        font-weight: 500;
+        line-height: 1.1;
+    }
+
+    .v2h-building-stat span {
+        color: #8f99a8;
+        font-size: 0.58rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+    }
+
+    .v2h-building-amenities-label {
+        margin: 0.85rem 0 0.35rem;
+        color: rgba(243, 209, 156, 0.82);
+        font-size: 0.62rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+    }
+
     .v2h-building-chips {
         display: flex;
         flex-wrap: wrap;
         gap: 0.35rem;
-        margin-top: 0.65rem;
     }
 
     .v2h-building-chip {
         border: 1px solid rgba(168, 140, 96, 0.28);
         color: rgba(243, 209, 156, 0.9);
         font-size: 0.62rem;
-        letter-spacing: 0.08em;
+        letter-spacing: 0.06em;
         text-transform: uppercase;
-        padding: 0.2rem 0.4rem;
+        padding: 0.22rem 0.45rem;
+        background: rgba(19, 35, 56, 0.45);
+    }
+
+    .v2h-building-chip.is-muted {
+        color: #9ca5b3;
+        border-color: rgba(156, 165, 179, 0.22);
     }
 
     .v2h-building-cta {
         margin-top: auto;
-        padding-top: 0.85rem;
+        padding-top: 0.95rem;
         color: var(--v2-cream);
         font-size: 0.68rem;
         letter-spacing: 0.14em;
@@ -733,6 +773,14 @@
         text-transform: uppercase;
     }
 
+    .v2b-preview-amenities-label {
+        margin: 0 0 0.45rem;
+        color: rgba(243, 209, 156, 0.86);
+        font-size: 0.66rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+    }
+
     .v2b-preview-amenities {
         display: flex;
         flex-wrap: wrap;
@@ -748,6 +796,13 @@
         font-size: 0.68rem;
         letter-spacing: 0.06em;
         padding: 0.28rem 0.5rem;
+        background: rgba(19, 35, 56, 0.4);
+    }
+
+    .v2b-preview-amenities-empty {
+        color: #9ca5b3;
+        font-size: 0.86rem;
+        margin: 0 0 1.25rem;
     }
 
     .v2b-preview-actions {
@@ -763,7 +818,14 @@
             flex-basis: calc((100% - 0.9rem) / 2);
         }
         .v2h-buildings-track {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
+            grid-template-columns: 1fr;
+        }
+        .v2h-building-card {
+            grid-template-columns: 1fr;
+        }
+        .v2h-building-media {
+            aspect-ratio: 16 / 10;
+            min-height: 0;
         }
         .v2b-preview-modal {
             grid-template-columns: 1fr;
@@ -794,8 +856,8 @@
         }
         .v2h-featured-nav.prev { left: 0.05rem; }
         .v2h-featured-nav.next { right: 0.05rem; }
-        .v2h-buildings-track {
-            grid-template-columns: 1fr;
+        .v2h-building-stats {
+            grid-template-columns: 1fr 1fr;
         }
         .v2b-preview-stats {
             grid-template-columns: 1fr 1fr;
@@ -926,7 +988,7 @@
             <div>
                 <p class="v2-kicker">Featured Buildings</p>
                 <h2 class="v2-display">Addresses from our featured portfolios</h2>
-                <p>Selected from portfolios currently marked featured in our inventory database.</p>
+                <p>Live residences and building amenities for portfolios currently marked featured.</p>
             </div>
             <a class="v2h-section-link" href="{{ url_for('listings', v=2) }}">Browse residences</a>
         </div>
@@ -935,6 +997,7 @@
             {% for building in featured_buildings %}
             {% set display_name = building.building_name if building.building_name else building.address %}
             {% set cover = (building.images[0] if building.images else '') %}
+            {% set amenity_list = building.amenities or [] %}
             <button type="button"
                     class="v2h-building-card"
                     data-building-preview='{{ building|tojson }}'
@@ -945,9 +1008,7 @@
                          loading="{% if loop.index <= 2 %}eager{% else %}lazy{% endif %}"
                          decoding="async">
                     <div class="v2h-building-badge">Featured</div>
-                    {% if building.available_units %}
-                    <div class="v2h-building-count">{{ building.available_units }} available</div>
-                    {% endif %}
+                    <div class="v2h-building-count">{{ building.available_units or 0 }} available</div>
                 </div>
                 <div class="v2h-building-body">
                     <h3 class="v2h-building-name">{{ display_name }}</h3>
@@ -957,14 +1018,45 @@
                     {% else %}
                     <p class="v2h-building-loc">{{ building.address }}</p>
                     {% endif %}
+
+                    <div class="v2h-building-stats">
+                        <div class="v2h-building-stat">
+                            <strong>{{ building.available_units or 0 }}</strong>
+                            <span>Available</span>
+                        </div>
+                        <div class="v2h-building-stat">
+                            <strong>{{ building.bedrooms_label if building.bedrooms_label else '—' }}</strong>
+                            <span>Layouts</span>
+                        </div>
+                        <div class="v2h-building-stat">
+                            <strong>
+                                {% if building.price_from %}
+                                ${{ "{:,.0f}".format(building.price_from) }}
+                                {% else %}
+                                —
+                                {% endif %}
+                            </strong>
+                            <span>From</span>
+                        </div>
+                    </div>
+
+                    {% if amenity_list %}
+                    <p class="v2h-building-amenities-label">Building amenities</p>
                     <div class="v2h-building-chips">
-                        {% if building.bedrooms_label %}
-                        <span class="v2h-building-chip">{{ building.bedrooms_label }}</span>
-                        {% endif %}
-                        {% if building.price_from %}
-                        <span class="v2h-building-chip">From ${{ "{:,.0f}".format(building.price_from) }}</span>
+                        {% for amenity in amenity_list[:4] %}
+                        <span class="v2h-building-chip">{{ amenity }}</span>
+                        {% endfor %}
+                        {% if amenity_list|length > 4 %}
+                        <span class="v2h-building-chip is-muted">+{{ amenity_list|length - 4 }} more</span>
                         {% endif %}
                     </div>
+                    {% else %}
+                    <p class="v2h-building-amenities-label">Building amenities</p>
+                    <div class="v2h-building-chips">
+                        <span class="v2h-building-chip is-muted">Details on request</span>
+                    </div>
+                    {% endif %}
+
                     <div class="v2h-building-cta">Quick view</div>
                 </div>
             </button>
@@ -993,7 +1085,7 @@
             <p class="v2b-preview-address" id="buildingPreviewAddress"></p>
             <div class="v2b-preview-stats">
                 <div class="v2b-preview-stat">
-                    <strong id="buildingPreviewUnits">—</strong>
+                    <strong id="buildingPreviewUnits">0</strong>
                     <span>Available</span>
                 </div>
                 <div class="v2b-preview-stat">
@@ -1005,7 +1097,9 @@
                     <span>From</span>
                 </div>
             </div>
+            <p class="v2b-preview-amenities-label">Building amenities</p>
             <ul class="v2b-preview-amenities" id="buildingPreviewAmenities"></ul>
+            <p class="v2b-preview-amenities-empty" id="buildingPreviewAmenitiesEmpty" hidden>Amenity details available on request.</p>
             <div class="v2b-preview-actions">
                 <a href="#" class="v2-btn v2-btn-gold" id="buildingPreviewListings">View available listings</a>
                 <a href="#" class="v2-btn v2-btn-ghost" id="buildingPreviewTour" target="_blank" rel="noopener noreferrer">Schedule a Tour</a>
@@ -1195,6 +1289,7 @@
         const bedsEl = document.getElementById('buildingPreviewBeds');
         const priceEl = document.getElementById('buildingPreviewPrice');
         const amenitiesEl = document.getElementById('buildingPreviewAmenities');
+        const amenitiesEmptyEl = document.getElementById('buildingPreviewAmenitiesEmpty');
         const listingsBtn = document.getElementById('buildingPreviewListings');
         const tourBtn = document.getElementById('buildingPreviewTour');
         const closeBtn = document.getElementById('buildingPreviewClose');
@@ -1230,20 +1325,30 @@
             setText(kickerEl, data.portfolio || 'Featured Building');
             setText(titleEl, data.building_name || data.address || 'Building');
             setText(addressEl, data.address || '');
-            setText(unitsEl, data.available_units > 0 ? data.available_units : '—');
-            setText(bedsEl, data.bedrooms_label || '—');
-            if (data.price_from) {
-                setText(priceEl, '$' + Number(data.price_from).toLocaleString('en-US', { maximumFractionDigits: 0 }));
-            } else {
-                setText(priceEl, '—');
+
+            const available = Number(data.available_units || 0);
+            if (unitsEl) {
+                unitsEl.textContent = Number.isFinite(available) ? String(available) : '0';
+            }
+            if (bedsEl) {
+                bedsEl.textContent = data.bedrooms_label || '—';
+            }
+            if (priceEl) {
+                priceEl.textContent = (data.price_from != null && data.price_from !== '')
+                    ? ('$' + Number(data.price_from).toLocaleString('en-US', { maximumFractionDigits: 0 }))
+                    : '—';
             }
 
+            const amenities = (Array.isArray(data.amenities) ? data.amenities : []).filter(Boolean);
             amenitiesEl.innerHTML = '';
-            (Array.isArray(data.amenities) ? data.amenities : []).slice(0, 8).forEach((item) => {
+            amenities.slice(0, 10).forEach((item) => {
                 const li = document.createElement('li');
                 li.textContent = item;
                 amenitiesEl.appendChild(li);
             });
+            const hasAmenities = amenities.length > 0;
+            amenitiesEl.hidden = !hasAmenities;
+            if (amenitiesEmptyEl) amenitiesEmptyEl.hidden = hasAmenities;
 
             listingsBtn.href = data.listings_url || '/listings?v=2';
             tourBtn.href = data.schedule_tour_url || tourBtn.href;

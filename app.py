@@ -149,7 +149,7 @@ def index():
         return render_template(
             'index_v2.html',
             featured_listings=featured_listings,
-            featured_buildings=featured_buildings[:6],
+            featured_buildings=featured_buildings,
         )
     return render_template('index.html')
 

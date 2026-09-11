@@ -322,7 +322,7 @@ def _listing_matches_featured(
 
 
 def _listing_price(listing: Dict[str, Any]) -> Optional[float]:
-    for key in ("actual_rent", "price"):
+    for key in ("actual_rent", "listed_net", "price"):
         value = listing.get(key)
         if value in (None, "", "N/A", "n/a", "-"):
             continue
@@ -331,6 +331,67 @@ def _listing_price(listing: Dict[str, Any]) -> Optional[float]:
         except (TypeError, ValueError):
             continue
     return None
+
+
+def _merge_listings(
+    primary: List[Dict[str, Any]],
+    secondary: List[Dict[str, Any]],
+) -> List[Dict[str, Any]]:
+    merged: List[Dict[str, Any]] = []
+    seen: Set[str] = set()
+    for listing in list(primary or []) + list(secondary or []):
+        unit_id = str(listing.get("unit_id") or listing.get("id") or "").strip()
+        dedupe = unit_id or (
+            f"{_first_non_empty(listing.get('address')).lower()}|"
+            f"{_first_non_empty(listing.get('unit')).lower()}"
+        )
+        if not dedupe or dedupe in seen:
+            continue
+        seen.add(dedupe)
+        merged.append(listing)
+    return merged
+
+
+def fetch_listings_for_buildings(
+    buildings: List[Dict[str, Any]],
+) -> List[Dict[str, Any]]:
+    """
+    Load available units for featured buildings via per-address Dash calls.
+
+    The unfiltered /get_filtered_listings endpoint currently errors in Dash
+    (`_format_listing_move_out` undefined), so homepage enrichment must query
+    by address instead of relying on a single full inventory dump.
+    """
+    if not buildings:
+        return []
+
+    try:
+        from database import get_all_listings
+    except Exception as exc:
+        print(f"Unable to import get_all_listings for featured enrichment: {exc}")
+        return []
+
+    collected: List[Dict[str, Any]] = []
+    seen: Set[str] = set()
+    for building in buildings:
+        address = _first_non_empty(building.get("address"))
+        if not address:
+            continue
+        try:
+            rows = get_all_listings(address=address, available=True) or []
+        except Exception as exc:
+            print(f"Error fetching listings for featured address {address}: {exc}")
+            rows = []
+        for listing in rows:
+            unit_id = str(listing.get("unit_id") or listing.get("id") or "").strip()
+            dedupe = unit_id or (
+                f"{address.lower()}|{_first_non_empty(listing.get('unit')).lower()}"
+            )
+            if not dedupe or dedupe in seen:
+                continue
+            seen.add(dedupe)
+            collected.append(listing)
+    return collected
 
 
 def _listing_beds(listing: Dict[str, Any]) -> Optional[int]:
@@ -473,11 +534,15 @@ def get_homepage_featured_content(
     """Return (featured_listings, featured_buildings) from is_featured only."""
     names = fetch_featured_portfolio_names()
     buildings = fetch_featured_portfolio_buildings(dash_host=dash_host)
-    featured_listings = select_featured_listings(
+    inventory = _merge_listings(
         listings or [],
+        fetch_listings_for_buildings(buildings),
+    )
+    featured_listings = select_featured_listings(
+        inventory,
         limit=listing_limit,
         featured_portfolio_names=names,
         featured_buildings=buildings,
     )
-    featured_buildings = _enrich_buildings_from_listings(buildings, listings or [])
+    featured_buildings = _enrich_buildings_from_listings(buildings, inventory)
     return featured_listings, featured_buildings

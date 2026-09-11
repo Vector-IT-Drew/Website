@@ -87,13 +87,17 @@ def test_get_homepage_featured_content_enriches_buildings(monkeypatch):
             'entity_id': '187.0',
             'entity_name': 'ASPEN 2016 LLC',
             'images': ['https://example.com/soon.png'],
-            'amenities': [],
+            'amenities': ['Gym', 'Pool'],
             'available_units': 0,
             'price_from': None,
             'bedrooms_label': '',
             'schedule_tour_url': 'https://example.com/tour',
             'listings_url': '/listings?v=2&address=1955%201st%20Avenue&portfolio=The%20Aspen',
         }],
+    )
+    monkeypatch.setattr(
+        'listing_featured.fetch_listings_for_buildings',
+        lambda buildings: [],
     )
 
     featured_listings, featured_buildings = get_homepage_featured_content(
@@ -115,3 +119,32 @@ def test_get_homepage_featured_content_enriches_buildings(monkeypatch):
     assert featured_buildings[0]['available_units'] == 1
     assert featured_buildings[0]['price_from'] == 4200.0
     assert featured_buildings[0]['bedrooms_label'] == '2 Bed'
+    assert featured_buildings[0]['amenities'] == ['Gym', 'Pool']
+
+
+def test_fetch_listings_for_buildings_queries_by_address(monkeypatch):
+    calls = []
+
+    def fake_get_all_listings(**kwargs):
+        calls.append(kwargs)
+        if kwargs.get('address') == '420 East 61st Street':
+            return [_listing(
+                unit_id='9',
+                address='420 East 61st Street',
+                address_id=534,
+                portfolio='1 Sutton',
+                actual_rent=4100,
+                beds=1,
+            )]
+        return []
+
+    monkeypatch.setattr('database.get_all_listings', fake_get_all_listings)
+    rows = __import__('listing_featured', fromlist=['fetch_listings_for_buildings']).fetch_listings_for_buildings([
+        {'address': '420 East 61st Street', 'address_id': 534},
+        {'address': '1955 1st Avenue', 'address_id': 506},
+    ])
+    assert len(rows) == 1
+    assert rows[0]['unit_id'] == '9'
+    assert calls[0]['available'] is True
+    assert calls[0]['address'] == '420 East 61st Street'
+
