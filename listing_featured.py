@@ -12,10 +12,22 @@ import mysql.connector
 from tour_schedule import build_tour_schedule_url
 
 COMING_SOON_IMAGES = [
-    "https://storage.googleapis.com/vector_website_images/ComingSoon1.png",
-    "https://storage.googleapis.com/vector_website_images/ComingSoon2.png",
-    "https://storage.googleapis.com/vector_website_images/ComingSoon3.png",
-    "https://storage.googleapis.com/vector_website_images/ComingSoon4.png",
+    (
+        "https://dl.dropboxusercontent.com/scl/fi/fy2wl340lre6y2gm84m13/img-coming-soon-2.jpeg"
+        "?rlkey=xkao9jz2p6mrznqhb8e3hf7w6&st=k3gwz5kj&dl=0"
+    ),
+    (
+        "https://dl.dropboxusercontent.com/scl/fi/5kqjpn1lqdt6p73zo5xkj/img-coming-soon-3.jpeg"
+        "?rlkey=ngk4iu9pvl6jusqps220pi2uv&st=ttncu3xt&dl=0"
+    ),
+    (
+        "https://dl.dropboxusercontent.com/scl/fi/in5oflurzeui3k61z2vh6/img-coming-soon-4.jpeg"
+        "?rlkey=rp9ucjxfih59yldqgsib9ukdl&st=x5td7577&dl=0"
+    ),
+    (
+        "https://dl.dropboxusercontent.com/scl/fi/erhz52z0z7lskr8ru5v1h/img-coming-soon-5.jpeg"
+        "?rlkey=bf8j1tpvtqb2q02tcjy0mdp3v&st=r7mtn0d7&dl=0"
+    ),
 ]
 
 # Same defaults as Vector Database connect_MYSQL.py
