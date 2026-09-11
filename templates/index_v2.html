@@ -476,11 +476,11 @@
 
     .v2h-modal .list-group-item i { color: var(--v2-gold); }
 
-    /* Featured buildings — image on top; details in quick view */
+    /* Featured buildings — image on top; amenities only in quick view */
     .v2h-buildings-track {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 1rem;
+        gap: 1.05rem;
     }
 
     .v2h-building-card {
@@ -506,9 +506,10 @@
 
     .v2h-building-media {
         position: relative;
-        aspect-ratio: 16 / 11;
+        aspect-ratio: 16 / 10;
         overflow: hidden;
         background: #132338;
+        flex: 0 0 auto;
     }
 
     .v2h-building-media img {
@@ -544,7 +545,7 @@
         padding: 0.95rem 1rem 1.05rem;
         display: flex;
         flex-direction: column;
-        gap: 0.2rem;
+        gap: 0.18rem;
         flex: 1;
         min-width: 0;
     }
@@ -572,10 +573,10 @@
     }
 
     .v2h-building-summary {
-        margin: 0.7rem 0 0;
+        margin: 0.72rem 0 0;
         color: #f3d19c;
-        font-size: 0.78rem;
-        letter-spacing: 0.02em;
+        font-size: 0.76rem;
+        letter-spacing: 0.01em;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -944,7 +945,7 @@
             <div>
                 <p class="v2-kicker">Featured Buildings</p>
                 <h2 class="v2-display">Addresses from our featured portfolios</h2>
-                <p>Open a building for availability, layouts, pricing, and amenities.</p>
+                <p>Click a building for availability, layouts, pricing, and amenities.</p>
             </div>
             <a class="v2h-section-link" href="{{ url_for('listings', v=2) }}">Browse residences</a>
         </div>
@@ -956,6 +957,8 @@
             {% set summary_bits = [] %}
             {% if building.available_units %}
                 {% set _ = summary_bits.append((building.available_units|string) ~ ' available') %}
+            {% else %}
+                {% set _ = summary_bits.append('Coming soon') %}
             {% endif %}
             {% if building.bedrooms_label %}
                 {% set _ = summary_bits.append(building.bedrooms_label) %}
@@ -975,6 +978,8 @@
                     <div class="v2h-building-badge">Featured</div>
                     {% if building.available_units %}
                     <div class="v2h-building-count">{{ building.available_units }} available</div>
+                    {% else %}
+                    <div class="v2h-building-count">Coming soon</div>
                     {% endif %}
                 </div>
                 <div class="v2h-building-body">
@@ -985,9 +990,7 @@
                     {% else %}
                     <p class="v2h-building-loc">{{ building.address }}</p>
                     {% endif %}
-                    {% if summary_bits %}
                     <p class="v2h-building-summary">{{ summary_bits|join(' · ') }}</p>
-                    {% endif %}
                     <div class="v2h-building-cta">Quick view</div>
                 </div>
             </button>

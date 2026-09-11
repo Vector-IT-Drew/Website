@@ -148,3 +148,22 @@ def test_fetch_listings_for_buildings_queries_by_address(monkeypatch):
     assert calls[0]['available'] is True
     assert calls[0]['address'] == '420 East 61st Street'
 
+
+
+def test_enrich_buildings_uses_compact_bedroom_range():
+    from listing_featured import _enrich_buildings_from_listings
+    buildings = [{
+        'address_id': 1,
+        'address': '1 Test Ave',
+        'images': ['https://example.com/a.jpg'],
+        'amenities': ['Gym'],
+    }]
+    listings = [
+        {'address_id': 1, 'address': '1 Test Ave', 'beds': 0, 'actual_rent': 3000, 'unit_images': []},
+        {'address_id': 1, 'address': '1 Test Ave', 'beds': 1, 'actual_rent': 3500, 'unit_images': []},
+        {'address_id': 1, 'address': '1 Test Ave', 'beds': 3, 'actual_rent': 5000, 'unit_images': []},
+    ]
+    enriched = _enrich_buildings_from_listings(buildings, listings)
+    assert enriched[0]['bedrooms_label'] == 'Studio - 3 Bed'
+    assert enriched[0]['available_units'] == 3
+    assert enriched[0]['price_from'] == 3000.0
