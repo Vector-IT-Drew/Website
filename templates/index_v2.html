@@ -476,10 +476,300 @@
 
     .v2h-modal .list-group-item i { color: var(--v2-gold); }
 
+    /* Featured buildings */
+    .v2h-buildings-track {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1rem;
+    }
+
+    .v2h-building-card {
+        display: flex;
+        flex-direction: column;
+        text-align: left;
+        background: #1b2b40;
+        border: 1px solid var(--v2-line);
+        color: inherit;
+        cursor: pointer;
+        padding: 0;
+        transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease;
+    }
+
+    .v2h-building-card:hover,
+    .v2h-building-card:focus-visible {
+        border-color: rgba(213, 149, 99, 0.55);
+        background: #203148;
+        transform: translateY(-2px);
+        outline: none;
+    }
+
+    .v2h-building-media {
+        position: relative;
+        aspect-ratio: 16 / 11;
+        overflow: hidden;
+        background: #132338;
+    }
+
+    .v2h-building-media img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.45s ease;
+    }
+
+    .v2h-building-card:hover .v2h-building-media img {
+        transform: scale(1.04);
+    }
+
+    .v2h-building-badge,
+    .v2h-building-count {
+        position: absolute;
+        z-index: 1;
+        padding: 0.22rem 0.5rem;
+        font-size: 0.58rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        border: 1px solid rgba(243, 209, 156, 0.35);
+        background: rgba(24, 43, 67, 0.78);
+        color: #f3d19c;
+    }
+
+    .v2h-building-badge { left: 0.7rem; top: 0.7rem; }
+    .v2h-building-count { right: 0.7rem; bottom: 0.7rem; }
+
+    .v2h-building-body {
+        padding: 0.95rem 1rem 1.1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        flex: 1;
+    }
+
+    .v2h-building-name {
+        margin: 0;
+        color: #fff;
+        font-size: 1.05rem;
+        font-family: 'Playfair Display', Georgia, serif;
+        font-weight: 500;
+        line-height: 1.25;
+    }
+
+    .v2h-building-meta,
+    .v2h-building-loc {
+        margin: 0;
+        color: #9ca5b3;
+        font-size: 0.82rem;
+    }
+
+    .v2h-building-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+        margin-top: 0.65rem;
+    }
+
+    .v2h-building-chip {
+        border: 1px solid rgba(168, 140, 96, 0.28);
+        color: rgba(243, 209, 156, 0.9);
+        font-size: 0.62rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 0.2rem 0.4rem;
+    }
+
+    .v2h-building-cta {
+        margin-top: auto;
+        padding-top: 0.85rem;
+        color: var(--v2-cream);
+        font-size: 0.68rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+    }
+
+    /* Building preview modal */
+    .v2b-preview-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 1080;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.25rem;
+        background: rgba(8, 14, 24, 0.72);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.2s ease, visibility 0.2s ease;
+    }
+
+    .v2b-preview-overlay.is-open {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .v2b-preview-modal {
+        width: min(960px, 100%);
+        max-height: min(92vh, 820px);
+        display: grid;
+        grid-template-columns: 1.15fr 0.85fr;
+        background: #152538;
+        border: 1px solid rgba(168, 140, 96, 0.28);
+        overflow: hidden;
+        transform: translateY(12px);
+        transition: transform 0.22s ease;
+    }
+
+    .v2b-preview-overlay.is-open .v2b-preview-modal {
+        transform: translateY(0);
+    }
+
+    .v2b-preview-media {
+        position: relative;
+        min-height: 320px;
+        background: #101c2c center/cover no-repeat;
+    }
+
+    .v2b-preview-media.is-single .v2b-preview-nav,
+    .v2b-preview-media.is-single .v2b-preview-counter {
+        display: none;
+    }
+
+    .v2b-preview-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 2.4rem;
+        height: 2.4rem;
+        border: 1px solid rgba(168, 140, 96, 0.4);
+        background: rgba(24, 43, 67, 0.78);
+        color: #f3d19c;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+    .v2b-preview-nav-prev { left: 0.85rem; }
+    .v2b-preview-nav-next { right: 0.85rem; }
+
+    .v2b-preview-counter {
+        position: absolute;
+        left: 50%;
+        bottom: 0.85rem;
+        transform: translateX(-50%);
+        padding: 0.2rem 0.55rem;
+        background: rgba(24, 43, 67, 0.8);
+        border: 1px solid rgba(168, 140, 96, 0.28);
+        color: #f3d19c;
+        font-size: 0.68rem;
+        letter-spacing: 0.08em;
+    }
+
+    .v2b-preview-body {
+        position: relative;
+        padding: 1.5rem 1.4rem 1.35rem;
+        overflow: auto;
+    }
+
+    .v2b-preview-close {
+        position: absolute;
+        top: 0.85rem;
+        right: 0.85rem;
+        width: 2rem;
+        height: 2rem;
+        border: 1px solid rgba(168, 140, 96, 0.3);
+        background: transparent;
+        color: #f3d19c;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+    .v2b-preview-kicker {
+        color: var(--v2-gold);
+        font-size: 0.68rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        margin-bottom: 0.45rem;
+    }
+
+    .v2b-preview-title {
+        font-family: 'Playfair Display', Georgia, serif;
+        color: #fff;
+        font-size: clamp(1.4rem, 2.4vw, 1.85rem);
+        font-weight: 500;
+        margin: 0 0 0.35rem;
+        padding-right: 2rem;
+    }
+
+    .v2b-preview-address {
+        color: rgba(255,255,255,0.72);
+        margin: 0 0 1rem;
+        font-size: 0.95rem;
+    }
+
+    .v2b-preview-stats {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.65rem;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid rgba(168, 140, 96, 0.18);
+    }
+
+    .v2b-preview-stat strong {
+        display: block;
+        color: #f3d19c;
+        font-family: 'Playfair Display', Georgia, serif;
+        font-size: 1.25rem;
+        font-weight: 500;
+    }
+
+    .v2b-preview-stat span {
+        color: #9ca5b3;
+        font-size: 0.65rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+    }
+
+    .v2b-preview-amenities {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        margin: 0 0 1.25rem;
+        padding: 0;
+        list-style: none;
+    }
+
+    .v2b-preview-amenities li {
+        border: 1px solid rgba(168, 140, 96, 0.28);
+        color: rgba(243, 209, 156, 0.92);
+        font-size: 0.68rem;
+        letter-spacing: 0.06em;
+        padding: 0.28rem 0.5rem;
+    }
+
+    .v2b-preview-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.65rem;
+    }
+
+    body.building-preview-open { overflow: hidden; }
+
     @media (max-width: 991px) {
         .v2h-featured-card {
             flex-basis: calc((100% - 0.9rem) / 2);
         }
+        .v2h-buildings-track {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .v2b-preview-modal {
+            grid-template-columns: 1fr;
+            max-height: 92vh;
+        }
+        .v2b-preview-media { min-height: 240px; }
     }
 
     @media (max-width: 900px) {
@@ -504,6 +794,12 @@
         }
         .v2h-featured-nav.prev { left: 0.05rem; }
         .v2h-featured-nav.next { right: 0.05rem; }
+        .v2h-buildings-track {
+            grid-template-columns: 1fr;
+        }
+        .v2b-preview-stats {
+            grid-template-columns: 1fr 1fr;
+        }
     }
 </style>
 {% endblock %}
@@ -544,7 +840,7 @@
             <div>
                 <p class="v2-kicker">Featured Residences</p>
                 <h2 class="v2-display">Homes worth a closer look</h2>
-                <p>A curated selection from our active inventory—featured portfolios first, then the rest of what’s available now.</p>
+                <p>Only residences from portfolios currently marked featured in our inventory database.</p>
             </div>
             <a class="v2h-section-link" href="{{ url_for('listings', v=2) }}">View all listings</a>
         </div>
@@ -620,6 +916,103 @@
         </div>
     </div>
 </section>
+{% endif %}
+
+
+{% if featured_buildings %}
+<section class="v2h-section" id="v2h-buildings">
+    <div class="container">
+        <div class="v2h-section-head">
+            <div>
+                <p class="v2-kicker">Featured Buildings</p>
+                <h2 class="v2-display">Addresses from our featured portfolios</h2>
+                <p>Selected from portfolios currently marked featured in our inventory database.</p>
+            </div>
+            <a class="v2h-section-link" href="{{ url_for('listings', v=2) }}">Browse residences</a>
+        </div>
+
+        <div class="v2h-buildings-track" id="featuredBuildingsTrack">
+            {% for building in featured_buildings %}
+            {% set display_name = building.building_name if building.building_name else building.address %}
+            {% set cover = (building.images[0] if building.images else '') %}
+            <button type="button"
+                    class="v2h-building-card"
+                    data-building-preview='{{ building|tojson }}'
+                    aria-label="Preview {{ display_name }}">
+                <div class="v2h-building-media">
+                    <img src="{{ cover }}"
+                         alt="{{ display_name }}"
+                         loading="{% if loop.index <= 2 %}eager{% else %}lazy{% endif %}"
+                         decoding="async">
+                    <div class="v2h-building-badge">Featured</div>
+                    {% if building.available_units %}
+                    <div class="v2h-building-count">{{ building.available_units }} available</div>
+                    {% endif %}
+                </div>
+                <div class="v2h-building-body">
+                    <h3 class="v2h-building-name">{{ display_name }}</h3>
+                    <p class="v2h-building-meta">{{ building.portfolio }}</p>
+                    {% if building.neighborhood %}
+                    <p class="v2h-building-loc">{{ building.neighborhood }}</p>
+                    {% else %}
+                    <p class="v2h-building-loc">{{ building.address }}</p>
+                    {% endif %}
+                    <div class="v2h-building-chips">
+                        {% if building.bedrooms_label %}
+                        <span class="v2h-building-chip">{{ building.bedrooms_label }}</span>
+                        {% endif %}
+                        {% if building.price_from %}
+                        <span class="v2h-building-chip">From ${{ "{:,.0f}".format(building.price_from) }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="v2h-building-cta">Quick view</div>
+                </div>
+            </button>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<div class="v2b-preview-overlay" id="buildingPreviewOverlay" hidden aria-hidden="true">
+    <div class="v2b-preview-modal" role="dialog" aria-modal="true" aria-labelledby="buildingPreviewTitle">
+        <div class="v2b-preview-media is-single" id="buildingPreviewMedia">
+            <button type="button" class="v2b-preview-nav v2b-preview-nav-prev" id="buildingPreviewPrev" aria-label="Previous photo">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button type="button" class="v2b-preview-nav v2b-preview-nav-next" id="buildingPreviewNext" aria-label="Next photo">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+            <div class="v2b-preview-counter" id="buildingPreviewCounter">1 / 1</div>
+        </div>
+        <div class="v2b-preview-body">
+            <button type="button" class="v2b-preview-close" id="buildingPreviewClose" aria-label="Close building preview">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="v2b-preview-kicker" id="buildingPreviewKicker">Featured Building</div>
+            <h3 class="v2b-preview-title" id="buildingPreviewTitle"></h3>
+            <p class="v2b-preview-address" id="buildingPreviewAddress"></p>
+            <div class="v2b-preview-stats">
+                <div class="v2b-preview-stat">
+                    <strong id="buildingPreviewUnits">—</strong>
+                    <span>Available</span>
+                </div>
+                <div class="v2b-preview-stat">
+                    <strong id="buildingPreviewBeds">—</strong>
+                    <span>Layouts</span>
+                </div>
+                <div class="v2b-preview-stat">
+                    <strong id="buildingPreviewPrice">—</strong>
+                    <span>From</span>
+                </div>
+            </div>
+            <ul class="v2b-preview-amenities" id="buildingPreviewAmenities"></ul>
+            <div class="v2b-preview-actions">
+                <a href="#" class="v2-btn v2-btn-gold" id="buildingPreviewListings">View available listings</a>
+                <a href="#" class="v2-btn v2-btn-ghost" id="buildingPreviewTour" target="_blank" rel="noopener noreferrer">Schedule a Tour</a>
+            </div>
+        </div>
+    </div>
+</div>
 {% endif %}
 
 <section class="v2h-section" id="v2h-paths">
@@ -785,5 +1178,122 @@
         if (img.complete && img.naturalWidth === 0) applyFallback();
     });
 })();
+
+    // Featured building quick-view
+    (function () {
+        const overlay = document.getElementById('buildingPreviewOverlay');
+        if (!overlay) return;
+
+        const media = document.getElementById('buildingPreviewMedia');
+        const prevBtn = document.getElementById('buildingPreviewPrev');
+        const nextBtn = document.getElementById('buildingPreviewNext');
+        const counterEl = document.getElementById('buildingPreviewCounter');
+        const titleEl = document.getElementById('buildingPreviewTitle');
+        const addressEl = document.getElementById('buildingPreviewAddress');
+        const kickerEl = document.getElementById('buildingPreviewKicker');
+        const unitsEl = document.getElementById('buildingPreviewUnits');
+        const bedsEl = document.getElementById('buildingPreviewBeds');
+        const priceEl = document.getElementById('buildingPreviewPrice');
+        const amenitiesEl = document.getElementById('buildingPreviewAmenities');
+        const listingsBtn = document.getElementById('buildingPreviewListings');
+        const tourBtn = document.getElementById('buildingPreviewTour');
+        const closeBtn = document.getElementById('buildingPreviewClose');
+
+        let gallery = [];
+        let galleryIndex = 0;
+        let lastFocus = null;
+
+        function setText(el, value, fallback) {
+            if (!el) return;
+            const text = (value === 0 || value) ? String(value) : '';
+            el.textContent = text || fallback || '—';
+        }
+
+        function showImage(index) {
+            if (!gallery.length) {
+                media.style.backgroundImage = '';
+                media.classList.add('is-single');
+                counterEl.textContent = '';
+                return;
+            }
+            galleryIndex = ((index % gallery.length) + gallery.length) % gallery.length;
+            media.style.backgroundImage = "url('" + gallery[galleryIndex].replace(/'/g, "%27") + "')";
+            counterEl.textContent = (galleryIndex + 1) + ' / ' + gallery.length;
+            media.classList.toggle('is-single', gallery.length < 2);
+        }
+
+        function openPreview(data, trigger) {
+            if (!data) return;
+            lastFocus = trigger || document.activeElement;
+            gallery = Array.isArray(data.images) ? data.images.filter(Boolean) : [];
+            showImage(0);
+            setText(kickerEl, data.portfolio || 'Featured Building');
+            setText(titleEl, data.building_name || data.address || 'Building');
+            setText(addressEl, data.address || '');
+            setText(unitsEl, data.available_units > 0 ? data.available_units : '—');
+            setText(bedsEl, data.bedrooms_label || '—');
+            if (data.price_from) {
+                setText(priceEl, '$' + Number(data.price_from).toLocaleString('en-US', { maximumFractionDigits: 0 }));
+            } else {
+                setText(priceEl, '—');
+            }
+
+            amenitiesEl.innerHTML = '';
+            (Array.isArray(data.amenities) ? data.amenities : []).slice(0, 8).forEach((item) => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                amenitiesEl.appendChild(li);
+            });
+
+            listingsBtn.href = data.listings_url || '/listings?v=2';
+            tourBtn.href = data.schedule_tour_url || tourBtn.href;
+
+            overlay.hidden = false;
+            overlay.setAttribute('aria-hidden', 'false');
+            requestAnimationFrame(() => overlay.classList.add('is-open'));
+            document.body.classList.add('building-preview-open');
+            closeBtn.focus();
+        }
+
+        function closePreview() {
+            overlay.classList.remove('is-open');
+            document.body.classList.remove('building-preview-open');
+            overlay.setAttribute('aria-hidden', 'true');
+            window.setTimeout(() => {
+                if (!overlay.classList.contains('is-open')) overlay.hidden = true;
+            }, 220);
+            if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus();
+        }
+
+        document.querySelectorAll('.v2h-building-card').forEach((card) => {
+            card.addEventListener('click', () => {
+                try {
+                    openPreview(JSON.parse(card.getAttribute('data-building-preview') || '{}'), card);
+                } catch (err) {
+                    console.error(err);
+                }
+            });
+        });
+
+        prevBtn.addEventListener('click', (event) => {
+            event.stopPropagation();
+            showImage(galleryIndex - 1);
+        });
+        nextBtn.addEventListener('click', (event) => {
+            event.stopPropagation();
+            showImage(galleryIndex + 1);
+        });
+        closeBtn.addEventListener('click', closePreview);
+        overlay.addEventListener('click', (event) => {
+            if (event.target === overlay) closePreview();
+        });
+        document.addEventListener('keydown', (event) => {
+            if (!overlay.classList.contains('is-open')) return;
+            if (event.key === 'Escape') closePreview();
+            if (event.key === 'ArrowLeft') showImage(galleryIndex - 1);
+            if (event.key === 'ArrowRight') showImage(galleryIndex + 1);
+        });
+    })();
+
 </script>
 {% endblock %}

@@ -9,7 +9,7 @@ from forms import LoginForm, ListingForm, ApplicationForm
 from database import get_listing, get_all_listings, filter_listings_by_budget, filter_listings_by_bedrooms, filter_listings_by_location
 from tour_schedule import build_tour_schedule_url, build_rental_application_url
 from listing_preview import enrich_listing_preview, ensure_listing_coords, format_zip_code
-from listing_featured import get_homepage_featured_listings
+from listing_featured import get_homepage_featured_content
 from functools import wraps
 import markdown2
 from dotenv import load_dotenv
@@ -137,10 +137,19 @@ def index():
 
     logging.debug("Returning Homepage")
     if request.args.get('v') == '2':
-        featured_listings = get_homepage_featured_listings(limit=8)
+        try:
+            all_listings = get_all_listings() or []
+        except Exception:
+            all_listings = []
+        featured_listings, featured_buildings = get_homepage_featured_content(
+            all_listings,
+            listing_limit=8,
+            dash_host=DASH_SERVICES_ENDPOINT,
+        )
         return render_template(
             'index_v2.html',
             featured_listings=featured_listings,
+            featured_buildings=featured_buildings[:6],
         )
     return render_template('index.html')
 
