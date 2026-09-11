@@ -448,8 +448,11 @@ def _enrich_buildings_from_listings(
             beds = bedrooms[0]
             item["bedrooms_label"] = "Studio" if beds == 0 else f"{beds} Bed"
         else:
-            labels = ["Studio" if beds == 0 else f"{beds} Bed" for beds in bedrooms]
-            item["bedrooms_label"] = " · ".join(labels)
+            low, high = bedrooms[0], bedrooms[-1]
+            low_label = "Studio" if low == 0 else f"{low} Bed"
+            high_label = "Studio" if high == 0 else f"{high} Bed"
+            # Compact range for cards/modal (e.g. Studio – 3 Bed), even if a middle size is missing.
+            item["bedrooms_label"] = f"{low_label} – {high_label}"
 
         listing_images: List[str] = []
         for listing in matches:

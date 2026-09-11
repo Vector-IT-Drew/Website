@@ -353,12 +353,12 @@ def listings():
         except ValueError:
             pass
 
-    # Parse availability as boolean
+    # Parse availability. Default "All Units" must stay None — do NOT force
+    # available=False, which previously omitted the filter and hit a broken
+    # unfiltered Dash /get_filtered_listings path (empty listings page).
     available = None
     if availability == 'available':
         available = True
-    else:
-        available = False
 
     # Determine sort option and map to SQL ORDER BY clause
     sort_option = request.args.get('sort', '')

@@ -28,7 +28,7 @@ def test_index_v2_uses_new_homepage_and_default_stays_old(monkeypatch):
                 'amenities': ['Gym', 'Pool', 'Sky Lounge'],
                 'available_units': 12,
                 'price_from': 4200,
-                'bedrooms_label': 'Studio · 1 Bed · 2 Bed',
+                'bedrooms_label': 'Studio – 2 Bed',
                 'schedule_tour_url': 'https://example.com/tour',
                 'listings_url': '/listings?v=2&address=1955%201st%20Avenue&portfolio=The%20Aspen',
             }],
@@ -58,11 +58,15 @@ def test_index_v2_uses_new_homepage_and_default_stays_old(monkeypatch):
     assert 'Featured Buildings' in html
     assert '1955 1st Avenue' in html
     assert 'v2h-building-card' in html
+    assert 'v2h-building-summary' in html
     assert 'buildingPreviewOverlay' in html
     assert 'Building amenities' in html
     assert 'Sky Lounge' in html
     assert '12 available' in html
-    assert 'Studio · 1 Bed · 2 Bed' in html
+    assert 'Studio – 2 Bed' in html
+    assert 'From $4,200' in html
+    assert 'v2h-building-chip' not in html
+    assert 'v2h-building-stats' not in html
 
     default = client.get('/')
     assert default.status_code == 200

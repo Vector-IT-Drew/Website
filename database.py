@@ -6,8 +6,10 @@ from flask import current_app
 
 
 # API endpoints for listings
-LISTINGS_API_ENDPOINT = "https://dash-production-b25c.up.railway.app" + "/get_filtered_listings"
-LISTING_DETAIL_API_ENDPOINT = "https://dash-production-b25c.up.railway.app" + "/get_listing"
+DASH_API_HOST = "https://dash-production-b25c.up.railway.app"
+LISTINGS_API_ENDPOINT = DASH_API_HOST + "/get_filtered_listings"
+LISTING_DETAIL_API_ENDPOINT = DASH_API_HOST + "/get_listing"
+UNIQUE_VALUES_API_ENDPOINT = DASH_API_HOST + "/unique-values"
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -342,6 +344,183 @@ def _listing_from_filtered_index(listing_id):
         logger.error(f"Listings index fallback failed for {listing_id}: {e}")
     return None
 
+def _dash_payload_items(payload):
+    """Dash sometimes returns rows under `data`, sometimes under `listings`."""
+    if not isinstance(payload, dict):
+        return []
+    items = payload.get('data')
+    if isinstance(items, list):
+        return items
+    items = payload.get('listings')
+    if isinstance(items, list):
+        return items
+    return []
+
+
+def _dash_request_listings(params, req_id, retries=3, timeout=12):
+    """
+    Call Dash get_filtered_listings with retries.
+
+    Broad/unfiltered Dash queries currently fail with:
+      name '_format_listing_move_out' is not defined
+    Narrow queries (especially address=...) are more reliable.
+    """
+    import time
+
+    last_error = None
+    for attempt in range(retries):
+        try:
+            response = requests.get(LISTINGS_API_ENDPOINT, params=params, timeout=timeout)
+            payload = response.json()
+            if isinstance(payload, dict) and payload.get('status') == 'error':
+                last_error = payload.get('message') or 'Dash returned status=error'
+                logger.warning(
+                    f"[{req_id}] Dash listings error (attempt {attempt + 1}/{retries}) "
+                    f"params={params}: {last_error}"
+                )
+                time.sleep(0.25 * (attempt + 1))
+                continue
+            items = _dash_payload_items(payload)
+            logger.debug(f"[{req_id}] Dash returned {len(items)} listings for params={params}")
+            return items, None
+        except Exception as exc:
+            last_error = str(exc)
+            logger.warning(
+                f"[{req_id}] Dash listings request failed (attempt {attempt + 1}/{retries}): {exc}"
+            )
+            time.sleep(0.25 * (attempt + 1))
+    return [], last_error
+
+
+def _unique_listing_addresses(req_id):
+    try:
+        response = requests.get(UNIQUE_VALUES_API_ENDPOINT, timeout=12)
+        payload = response.json()
+        addresses = payload.get('unique_addresses') or []
+        return [a for a in addresses if a]
+    except Exception as exc:
+        logger.error(f"[{req_id}] Failed to load unique addresses for listings fallback: {exc}")
+        return []
+
+
+def _fanout_listings_by_address(base_params, req_id, max_workers=8):
+    """Assemble inventory by querying each known address (Dash unfiltered is broken)."""
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+
+    addresses = _unique_listing_addresses(req_id)
+    if not addresses:
+        return []
+
+    # Keep caller filters, but never re-use a single address across the fan-out.
+    shared = dict(base_params or {})
+    shared.pop('address', None)
+
+    # Prefer available=true on broad fan-out — unfiltered address calls can still hit
+    # the Dash move_out formatter bug for some buildings.
+    if 'available' not in shared:
+        shared['available'] = 'true'
+
+    def _one(address):
+        params = dict(shared)
+        params['address'] = address
+        items, err = _dash_request_listings(params, req_id, retries=4, timeout=20)
+        if err and not items:
+            logger.warning(f"[{req_id}] Address fan-out miss for {address}: {err}")
+        return items
+
+    collected = []
+    with ThreadPoolExecutor(max_workers=max_workers) as pool:
+        futures = [pool.submit(_one, address) for address in addresses]
+        for future in as_completed(futures):
+            try:
+                collected.extend(future.result() or [])
+            except Exception as exc:
+                logger.error(f"[{req_id}] Address fan-out worker failed: {exc}")
+
+    # De-dupe by unit/listing id when Dash returns overlaps.
+    seen = set()
+    unique_items = []
+    for item in collected:
+        key = (
+            str(item.get('unit_id') or ''),
+            str(item.get('listing_id') or ''),
+            str(item.get('address') or ''),
+            str(item.get('unit') or ''),
+        )
+        if key in seen:
+            continue
+        seen.add(key)
+        unique_items.append(item)
+
+    logger.info(
+        f"[{req_id}] Address fan-out assembled {len(unique_items)} listings "
+        f"from {len(addresses)} addresses"
+    )
+    return unique_items
+
+
+def _map_dash_listing_item(item):
+    return {
+        "id": str(item.get('listing_id')),
+        "unit_id": str(item.get('unit_id')),
+        "title": f"{item.get('address', '-')}, Unit {item.get('unit', '-')}",
+        "address": item.get('address', '-'),
+        "unit": item.get('unit', '-'),
+        "building_name": item.get('building_name', '-') if item.get('building_name') not in ['0', 'null', 'nan', None] else '-',
+        "neighborhood": item.get('neighborhood', '-') if item.get('neighborhood') not in ['0', 'null', 'nan', None] else '-',
+        "borough": item.get('borough', '-') if item.get('borough') not in ['0', 'null', 'nan', None] else '-',
+        "city": "New York",
+        "state": "NY",
+        "zip_code": int(float(item.get('zip_code')))
+        if item.get('zip_code') not in [None, '', 'null', 'nan', '0', 0]
+        and str(item.get('zip_code')).replace('.', '', 1).isdigit()
+        else '',
+        "actual_rent": item.get('listed_net', 'N/A'),
+        "beds": item.get('beds', 'N/A'),
+        "baths": item.get('baths', 'N/A'),
+        "sqft": item.get('sqft', 'N/A'),
+        "property_type": "Apartment",
+        "floor": str(item.get('floor_num', '-')) if item.get('floor_num') is not None else '-',
+        "exposure": item.get('exposure', '-') if item.get('exposure') != 'nan' else '-',
+        "listing_status": item.get('listing_status', '-'),
+        "description": item.get('description') or f"Unit {item.get('unit', '-')} at {item.get('address', '-')}",
+        "features": [],
+        "unit_amenities": safe_json_loads(item.get('unit_amenities'), []),
+        "floor_type": item.get('floor_type', ''),
+        "countertop_type": item.get('countertop_type', ''),
+        "dishwasher": item.get('dishwasher', ''),
+        "laundry_in_unit": item.get('laundry_in_unit', ''),
+        "outdoor_space": item.get('outdoor_space', ''),
+        "wheelchair_access": item.get('wheelchair_access', ''),
+        "smoke_free": item.get('smoke_free', ''),
+        "laundry_in_building": item.get('laundry_in_building', ''),
+        "pet_friendly": item.get('pet_friendly', ''),
+        "live_in_super": item.get('live_in_super', ''),
+        "concierge": item.get('concierge', ''),
+        "elevator": item.get('elevator', ''),
+        "heat_type": item.get('heat_type', ''),
+        "stove_type": item.get('stove_type', ''),
+        "num_floors": item.get('num_floors', ''),
+        "contact_email": "hello@vectorny.com",
+        "contact_phone": "+1 917 675 6696",
+        "pets_policy": item.get('pet_friendly', 0),
+        "unit_images": safe_json_loads(item.get('unit_images'), []),
+        "building_amenities": safe_json_loads(item.get('building_amenities'), []),
+        "building_image": item.get('building_image', ''),
+        "building_images": safe_json_loads(item.get('building_images'), []),
+        "expiry": item.get('expiry', '-'),
+        "move_out": item.get('move_out', '-'),
+        "portfolio": item.get('portfolio'),
+        "portfolio_email": item.get('portfolio_email'),
+        "address_id": item.get('address_id'),
+        "floorplan": item.get('floorplan'),
+        "full_address": item.get('full_address') or item.get('addr_address'),
+        "latitude": item.get('latitude'),
+        "longitude": item.get('longitude'),
+        "website_image": item.get('website_image', ''),
+    }
+
+
 def get_all_listings(address=None,
                      unit=None,
                      beds=None,
@@ -410,8 +589,11 @@ def get_all_listings(address=None,
             params['min_price'] = min_price
         if max_price is not None:
             params['max_price'] = max_price
-        if available:
-            params['available'] = True
+        # Dash is flaky with Python True; send the string form that succeeds more often.
+        if available is True:
+            params['available'] = 'true'
+        elif available is False:
+            params['available'] = 'false'
         if sort is not None and sort != '':
             params['sort'] = sort
         if exposure:
@@ -429,91 +611,45 @@ def get_all_listings(address=None,
             elif val is False:
                 params[key] = 'false'
 
-        logger.debug(f"[{req_id}] API call params: {params}")
-        response = requests.get(LISTINGS_API_ENDPOINT, params=params, timeout=12)
-        logger.debug(f"[{req_id}] Response status: {response.status_code}")
-        logger.debug(f"[{req_id}] Response text (first 500 chars): {response.text[:500]}")
+        # Broad queries (no address/unit) currently break on Dash's unfiltered path
+        # (`_format_listing_move_out`). Assemble inventory via per-address calls.
+        scoped = bool(address or unit)
+        raw_items = []
 
-        data = response.json()
-        logger.debug(f"[{req_id}] API returned {len(data.get('data', []))} listings")
+        if scoped:
+            logger.debug(f"[{req_id}] API call params: {params}")
+            raw_items, dash_error = _dash_request_listings(params, req_id)
+            if dash_error and not raw_items and available is not True:
+                # Last chance for a scoped miss: retry as available-only.
+                retry_params = dict(params)
+                retry_params['available'] = 'true'
+                raw_items, _ = _dash_request_listings(retry_params, req_id)
+        else:
+            logger.warning(
+                f"[{req_id}] Using address fan-out for broad listings query "
+                f"(Dash unfiltered get_filtered_listings is unreliable)"
+            )
+            raw_items = _fanout_listings_by_address(params, req_id)
 
         # Fallback: if amenities were requested but API returns 0, retry without amenities
         # and apply the amenities filter locally so URL-only filters work reliably.
-        if requested_amenities and len(data.get('data', [])) == 0:
+        if requested_amenities and len(raw_items) == 0:
             try:
                 params_no_amen = dict(params)
                 params_no_amen.pop('amenities', None)
-                logger.warning(f"[{req_id}] Amenities filter returned 0 from API; retrying without amenities for local filtering.")
-                response2 = requests.get(LISTINGS_API_ENDPOINT, params=params_no_amen, timeout=12)
-                data2 = response2.json()
-                logger.debug(f"[{req_id}] Retry without amenities returned {len(data2.get('data', []))} listings")
-                data = data2
+                logger.warning(
+                    f"[{req_id}] Amenities filter returned 0 from API; "
+                    "retrying without amenities for local filtering."
+                )
+                if scoped:
+                    raw_items, _ = _dash_request_listings(params_no_amen, req_id)
+                else:
+                    raw_items = _fanout_listings_by_address(params_no_amen, req_id)
                 apply_local_amenities_filter = True
             except Exception as e:
                 logger.error(f"[{req_id}] Retry without amenities failed: {e}")
 
-        listings = []
-        for item in data.get('data', []):
-            listing = {
-                "id": str(item.get('listing_id')),
-                "unit_id": str(item.get('unit_id')),
-                "title": f"{item.get('address', '-')}, Unit {item.get('unit', '-')}",
-                "address": item.get('address', '-'),
-                "unit": item.get('unit', '-'),
-                "building_name": item.get('building_name', '-') if item.get('building_name') not in ['0', 'null', 'nan', None] else '-',
-                "neighborhood": item.get('neighborhood', '-') if item.get('neighborhood') not in ['0', 'null', 'nan', None] else '-',
-                "borough": item.get('borough', '-') if item.get('borough') not in ['0', 'null', 'nan', None] else '-',
-                "city": "New York",
-                "state": "NY",
-                "zip_code": int(float(item.get('zip_code')))
-                if item.get('zip_code') not in [None, '', 'null', 'nan', '0', 0]
-                and str(item.get('zip_code')).replace('.', '', 1).isdigit()
-                else '',
-                "actual_rent": item.get('listed_net', 'N/A'),
-                "beds": item.get('beds', 'N/A'),
-                "baths": item.get('baths', 'N/A'),
-                "sqft": item.get('sqft', 'N/A'),
-                "property_type": "Apartment",
-                "floor": str(item.get('floor_num', '-')) if item.get('floor_num') is not None else '-',
-                "exposure": item.get('exposure', '-') if item.get('exposure') != 'nan' else '-',
-                "listing_status": item.get('listing_status', '-'),
-                "description": item.get('description') or f"Unit {item.get('unit', '-')} at {item.get('address', '-')}",
-                "features": [],
-                "unit_amenities": safe_json_loads(item.get('unit_amenities'), []),
-                "floor_type": item.get('floor_type', ''),
-                "countertop_type": item.get('countertop_type', ''),
-                "dishwasher": item.get('dishwasher', ''),
-                "laundry_in_unit": item.get('laundry_in_unit', ''),
-                "outdoor_space": item.get('outdoor_space', ''),
-                "wheelchair_access": item.get('wheelchair_access', ''),
-                "smoke_free": item.get('smoke_free', ''),
-                "laundry_in_building": item.get('laundry_in_building', ''),
-                "pet_friendly": item.get('pet_friendly', ''),
-                "live_in_super": item.get('live_in_super', ''),
-                "concierge": item.get('concierge', ''),
-                "elevator": item.get('elevator', ''),
-                "heat_type": item.get('heat_type', ''),
-                "stove_type": item.get('stove_type', ''),
-                "num_floors": item.get('num_floors', ''),
-                "contact_email": "hello@vectorny.com",
-                "contact_phone": "+1 917 675 6696",
-                "pets_policy": item.get('pet_friendly', 0),
-                "unit_images": safe_json_loads(item.get('unit_images'), []),
-                "building_amenities": safe_json_loads(item.get('building_amenities'), []),
-                "building_image": item.get('building_image', ''),
-                "building_images": safe_json_loads(item.get('building_images'), []),
-                "expiry": item.get('expiry', '-'),
-                "move_out": item.get('move_out', '-'),
-                "portfolio": item.get('portfolio'),
-                "portfolio_email": item.get('portfolio_email'),
-                "address_id": item.get('address_id'),
-                "floorplan": item.get('floorplan'),
-                "full_address": item.get('full_address') or item.get('addr_address'),
-                "latitude": item.get('latitude'),
-                "longitude": item.get('longitude'),
-                "website_image": item.get('website_image', ''),
-            }
-            listings.append(listing)
+        listings = [_map_dash_listing_item(item) for item in raw_items]
 
         if apply_local_amenities_filter and requested_amenities:
             if isinstance(requested_amenities, str):
