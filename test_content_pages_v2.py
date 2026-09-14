@@ -1,4 +1,18 @@
+from pathlib import Path
+
 from app import app
+
+
+def test_v2_container_side_margins_are_halved():
+    """Bootstrap containers on v2 pages use half the default side margins."""
+    css = Path('static/css/vectorny_v2.css').read_text()
+    assert 'body.v2-site .container' in css
+    assert '--bs-gutter-x: 0.75rem' in css
+    assert 'max-width: calc((540px + 100vw) / 2)' in css
+    assert 'max-width: calc((720px + 100vw) / 2)' in css
+    assert 'max-width: calc((960px + 100vw) / 2)' in css
+    assert 'max-width: calc((1140px + 100vw) / 2)' in css
+    assert 'max-width: calc((1320px + 100vw) / 2)' in css
 
 
 def test_about_v2_uses_new_design_and_default_stays_old():

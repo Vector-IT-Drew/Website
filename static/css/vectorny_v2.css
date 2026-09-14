@@ -17,6 +17,65 @@ body.v2-site {
     color: var(--v2-cream);
 }
 
+/*
+ * Halve Bootstrap .container side margins so nav, filters, and grids
+ * use more horizontal space while staying aligned with each other.
+ * Formula: halfway between the default max-width and the viewport.
+ */
+body.v2-site .container,
+body.v2-site .container-sm,
+body.v2-site .container-md,
+body.v2-site .container-lg,
+body.v2-site .container-xl,
+body.v2-site .container-xxl {
+    --bs-gutter-x: 0.75rem; /* half of Bootstrap's default 1.5rem */
+}
+
+@media (min-width: 576px) {
+    body.v2-site .container,
+    body.v2-site .container-sm {
+        max-width: calc((540px + 100vw) / 2);
+    }
+}
+
+@media (min-width: 768px) {
+    body.v2-site .container,
+    body.v2-site .container-sm,
+    body.v2-site .container-md {
+        max-width: calc((720px + 100vw) / 2);
+    }
+}
+
+@media (min-width: 992px) {
+    body.v2-site .container,
+    body.v2-site .container-sm,
+    body.v2-site .container-md,
+    body.v2-site .container-lg {
+        max-width: calc((960px + 100vw) / 2);
+    }
+}
+
+@media (min-width: 1200px) {
+    body.v2-site .container,
+    body.v2-site .container-sm,
+    body.v2-site .container-md,
+    body.v2-site .container-lg,
+    body.v2-site .container-xl {
+        max-width: calc((1140px + 100vw) / 2);
+    }
+}
+
+@media (min-width: 1400px) {
+    body.v2-site .container,
+    body.v2-site .container-sm,
+    body.v2-site .container-md,
+    body.v2-site .container-lg,
+    body.v2-site .container-xl,
+    body.v2-site .container-xxl {
+        max-width: calc((1320px + 100vw) / 2);
+    }
+}
+
 body.v2-site .navbar {
     background-color: rgba(24, 43, 67, 0.98) !important;
     border-bottom: 1px solid rgba(168, 140, 96, 0.18);
