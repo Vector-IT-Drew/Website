@@ -35,6 +35,10 @@ def _featured_listing(**overrides):
         'beds': 2,
         'baths': 2,
         'featured_image': 'https://example.com/photo.jpg',
+        'unit_images': [
+            'https://example.com/photo.jpg',
+            'https://example.com/photo-2.jpg',
+        ],
         'is_featured_portfolio': True,
     }
     listing.update(overrides)
@@ -94,8 +98,15 @@ def test_index_v2_uses_new_homepage_and_default_stays_old(monkeypatch):
     assert 'availability_label' in html
     assert 'Available Now' in html
     assert 'v2h-featured-unit' in html
-    assert 'grid-template-columns: 1.05fr' not in html
     assert 'aspect-ratio: 16 / 10' in html
+    # Building preview: larger modal, wider copy column, side-by-side CTAs, no layout wrap
+    assert 'width: min(1120px, 100%)' in html
+    assert 'grid-template-columns: 1.05fr 0.95fr' in html
+    assert 'white-space: nowrap' in html
+    assert 'grid-template-columns: 1fr 1fr' in html
+    assert 'buildingPreviewListings' in html
+    assert 'buildingPreviewTour' in html
+    assert 'v2h-featured-shot' in html
 
     default = client.get('/')
     assert default.status_code == 200

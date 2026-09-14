@@ -354,6 +354,13 @@ def get_listing(listing_id):
                     item.get('pet_friendly', 0),
                     "unit_images":
                     coerce_image_list(item.get('unit_images'), []),
+                    "building_images": (coerce_image_list(item.get('building_images'), [])
+                                        or coerce_image_list(item.get('building_image'), [])),
+                    "building_image": (coerce_image_list(item.get('building_images'), [])
+                                       or coerce_image_list(item.get('building_image'), [])
+                                       or [''])[0],
+                    "website_image":
+                    item.get('website_image', ''),
                     "expiry":
                     item.get('expiry'),
                     "availability_date":

@@ -383,10 +383,20 @@
 {% set ns = namespace(photos=[], amenity_labels=[]) %}
 {% if listing.unit_images %}
     {% for img in listing.unit_images %}
-        {% if img|has_content %}
+        {% if img|has_content and img not in ns.photos %}
             {% set _ = ns.photos.append(img) %}
         {% endif %}
     {% endfor %}
+{% endif %}
+{# After unit photos, append building photos so the gallery walks unit → building. #}
+{% if listing.building_images %}
+    {% for img in listing.building_images %}
+        {% if img|has_content and img not in ns.photos %}
+            {% set _ = ns.photos.append(img) %}
+        {% endif %}
+    {% endfor %}
+{% elif listing.building_image|has_content and listing.building_image not in ns.photos %}
+    {% set _ = ns.photos.append(listing.building_image) %}
 {% endif %}
 {% if not ns.photos %}
     {% set _ = ns.photos.append('https://dl.dropboxusercontent.com/scl/fi/in5oflurzeui3k61z2vh6/img-coming-soon-4.jpeg?rlkey=rp9ucjxfih59yldqgsib9ukdl&st=4byf8tgo&dl=0') %}

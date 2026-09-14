@@ -16,7 +16,16 @@ SAMPLE_LISTING = {
     'description': 'A bright two-bedroom residence.',
     'unit_amenities': ['Dishwasher'],
     'building_amenities': ['Doorman'],
-    'unit_images': ['https://example.com/photo.jpg'],
+    'unit_images': [
+        'https://example.com/unit-1.jpg',
+        'https://example.com/unit-2.jpg',
+        'https://example.com/unit-3.jpg',
+    ],
+    'building_images': [
+        'https://example.com/building-1.jpg',
+        'https://example.com/building-2.jpg',
+    ],
+    'building_image': 'https://example.com/building-1.jpg',
     'latitude': 40.7595253,
     'longitude': -73.9595718,
     'laundry_in_unit': '1',
@@ -42,8 +51,10 @@ def test_listing_v2_renders_map_and_keeps_default_intact(monkeypatch):
     # Fixed navbar clearance + unit photo gallery with broken-url fallback
     assert 'padding: 5.75rem 0 4.5rem' in html
     assert 'v2GalleryPhoto' in html
-    assert 'https://example.com/photo.jpg' in html
+    assert 'https://example.com/unit-1.jpg' in html
     assert 'data-fallback' in html
+    # Gallery walks unit images first, then building images
+    assert "data-images='[\"https://example.com/unit-1.jpg\", \"https://example.com/unit-2.jpg\", \"https://example.com/unit-3.jpg\", \"https://example.com/building-1.jpg\", \"https://example.com/building-2.jpg\"]'" in html
 
     default = client.get('/listings/5397')
     assert default.status_code == 200

@@ -268,6 +268,70 @@
         text-transform: uppercase;
     }
 
+    .v2h-featured-media.has-gallery .v2h-featured-badge {
+        left: 0.7rem;
+        bottom: 2.15rem;
+    }
+
+    .v2h-featured-shot {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 2;
+        width: 30px;
+        height: 30px;
+        border-radius: 999px;
+        border: 1px solid rgba(243, 209, 156, 0.4);
+        background: rgba(10, 22, 40, 0.78);
+        color: #f3d19c;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        padding: 0;
+        font-size: 0.7rem;
+    }
+
+    .v2h-featured-media.has-gallery:hover .v2h-featured-shot,
+    .v2h-featured-media.has-gallery:focus-within .v2h-featured-shot {
+        display: inline-flex;
+    }
+
+    .v2h-featured-shot:hover {
+        background: rgba(213, 149, 99, 0.4);
+        border-color: rgba(243, 209, 156, 0.7);
+        color: #fff;
+    }
+
+    .v2h-featured-shot.prev { left: 0.55rem; }
+    .v2h-featured-shot.next { right: 0.55rem; }
+
+    .v2h-featured-shot-count {
+        position: absolute;
+        left: 50%;
+        bottom: 0.55rem;
+        transform: translateX(-50%);
+        z-index: 2;
+        display: none;
+        padding: 0.15rem 0.45rem;
+        border: 1px solid rgba(243, 209, 156, 0.28);
+        background: rgba(10, 22, 40, 0.78);
+        color: #f3d19c;
+        font-size: 0.62rem;
+        letter-spacing: 0.06em;
+        white-space: nowrap;
+    }
+
+    .v2h-featured-media.has-gallery .v2h-featured-shot-count {
+        display: block;
+    }
+
+    @media (hover: none) {
+        .v2h-featured-media.has-gallery .v2h-featured-shot {
+            display: inline-flex;
+        }
+    }
+
     .v2h-featured-body {
         padding: 0.8rem 0.9rem 0.95rem;
         text-align: left;
@@ -762,10 +826,10 @@
     }
 
     .v2b-preview-modal {
-        width: min(960px, 100%);
-        max-height: min(92vh, 820px);
+        width: min(1120px, 100%);
+        max-height: min(94vh, 900px);
         display: grid;
-        grid-template-columns: 1.15fr 0.85fr;
+        grid-template-columns: 1.05fr 0.95fr;
         background: #152538;
         border: 1px solid rgba(168, 140, 96, 0.28);
         overflow: hidden;
@@ -779,7 +843,7 @@
 
     .v2b-preview-media {
         position: relative;
-        min-height: 320px;
+        min-height: 420px;
         background: #101c2c center/cover no-repeat;
     }
 
@@ -821,8 +885,11 @@
 
     .v2b-preview-body {
         position: relative;
-        padding: 1.5rem 1.4rem 1.35rem;
+        display: flex;
+        flex-direction: column;
+        padding: 1.65rem 1.65rem 1.45rem;
         overflow: auto;
+        min-width: 0;
     }
 
     .v2b-preview-close {
@@ -865,19 +932,28 @@
 
     .v2b-preview-stats {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 0.65rem;
+        grid-template-columns: minmax(4.5rem, 0.8fr) minmax(9.5rem, 1.45fr) minmax(4.5rem, 0.85fr);
+        gap: 0.85rem;
         margin-bottom: 1rem;
         padding-bottom: 1rem;
         border-bottom: 1px solid rgba(168, 140, 96, 0.18);
+        align-items: start;
+    }
+
+    .v2b-preview-stat {
+        min-width: 0;
     }
 
     .v2b-preview-stat strong {
         display: block;
         color: #f3d19c;
         font-family: 'Playfair Display', Georgia, serif;
-        font-size: 1.25rem;
+        font-size: clamp(1.05rem, 1.35vw, 1.28rem);
         font-weight: 500;
+        line-height: 1.2;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .v2b-preview-stat span {
@@ -899,9 +975,10 @@
         display: flex;
         flex-wrap: wrap;
         gap: 0.4rem;
-        margin: 0 0 1.25rem;
+        margin: 0 0 1rem;
         padding: 0;
         list-style: none;
+        flex: 1 1 auto;
     }
 
     .v2b-preview-amenities li {
@@ -920,9 +997,21 @@
     }
 
     .v2b-preview-actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.65rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.7rem;
+        margin-top: auto;
+        flex-shrink: 0;
+    }
+
+    .v2b-preview-actions .v2-btn {
+        width: 100%;
+        min-width: 0;
+        padding: 0.78rem 0.55rem;
+        font-size: 0.64rem;
+        letter-spacing: 0.08em;
+        text-align: center;
+        white-space: nowrap;
     }
 
     body.building-preview-open { overflow: hidden; }
@@ -937,8 +1026,12 @@
         .v2b-preview-modal {
             grid-template-columns: 1fr;
             max-height: 92vh;
+            width: min(640px, 100%);
         }
-        .v2b-preview-media { min-height: 240px; }
+        .v2b-preview-media { min-height: 260px; }
+        .v2b-preview-stats {
+            grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.4fr) minmax(0, 0.9fr);
+        }
     }
 
     @media (max-width: 900px) {
@@ -971,6 +1064,18 @@
         }
         .v2b-preview-stats {
             grid-template-columns: 1fr 1fr;
+        }
+        .v2b-preview-stat:nth-child(2) {
+            grid-column: 1 / -1;
+        }
+        .v2b-preview-actions {
+            grid-template-columns: 1fr 1fr;
+            gap: 0.55rem;
+        }
+        .v2b-preview-actions .v2-btn {
+            font-size: 0.58rem;
+            padding: 0.7rem 0.4rem;
+            letter-spacing: 0.06em;
         }
     }
 </style>
@@ -1054,20 +1159,32 @@
                         {% endif %}
                         <a class="v2h-featured-card"
                            href="{{ url_for('listing_detail', listing_id=listing.unit_id, v=2) }}">
-                            <div class="v2h-featured-media">
+                            {% set unit_gallery = listing.unit_images if listing.unit_images else ([listing.featured_image] if listing.featured_image else []) %}
+                            <div class="v2h-featured-media{% if unit_gallery|length > 1 %} has-gallery{% endif %}"
+                                 data-images='{{ unit_gallery|tojson }}'
+                                 data-image-index="0">
                                 {% set coming_soon_variants = [
                                     'https://dl.dropboxusercontent.com/scl/fi/fy2wl340lre6y2gm84m13/img-coming-soon-2.jpeg?rlkey=xkao9jz2p6mrznqhb8e3hf7w6&st=k3gwz5kj&dl=0',
                                     'https://dl.dropboxusercontent.com/scl/fi/5kqjpn1lqdt6p73zo5xkj/img-coming-soon-3.jpeg?rlkey=ngk4iu9pvl6jusqps220pi2uv&st=ttncu3xt&dl=0',
                                     'https://dl.dropboxusercontent.com/scl/fi/in5oflurzeui3k61z2vh6/img-coming-soon-4.jpeg?rlkey=rp9ucjxfih59yldqgsib9ukdl&st=x5td7577&dl=0',
                                     'https://dl.dropboxusercontent.com/scl/fi/erhz52z0z7lskr8ru5v1h/img-coming-soon-5.jpeg?rlkey=bf8j1tpvtqb2q02tcjy0mdp3v&st=r7mtn0d7&dl=0'
                                 ] %}
-                                <img src="{{ listing.featured_image }}"
+                                <img src="{{ unit_gallery[0] if unit_gallery else listing.featured_image }}"
                                      alt="{{ unit_line }}"
                                      loading="{% if loop.index <= 2 %}eager{% else %}lazy{% endif %}"
                                      decoding="async"
                                      {% if loop.index == 1 %}fetchpriority="high"{% endif %}
                                      data-fallback="{{ coming_soon_variants[loop.index0 % (coming_soon_variants|length)] }}"
                                      onerror="if (this.dataset.fallback && this.src !== this.dataset.fallback) { this.onerror=null; this.src=this.dataset.fallback; }">
+                                {% if unit_gallery|length > 1 %}
+                                <button type="button" class="v2h-featured-shot prev" aria-label="Previous unit photo">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <button type="button" class="v2h-featured-shot next" aria-label="Next unit photo">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                                <div class="v2h-featured-shot-count">1 / {{ unit_gallery|length }}</div>
+                                {% endif %}
                                 <div class="v2h-featured-badge">{{ listing.availability_label or 'Available Now' }}</div>
                             </div>
                             <div class="v2h-featured-body">
@@ -1606,14 +1723,27 @@
             const price = (rent == null || rent === '' || rent === 'N/A')
                 ? 'Price on request'
                 : (formatMoney(rent) + '<span>/ mo</span>');
-            const image = listing.featured_image || comingSoon[index % comingSoon.length];
+            const imageList = Array.isArray(listing.unit_images) && listing.unit_images.length
+                ? listing.unit_images.filter(Boolean)
+                : [listing.featured_image || comingSoon[index % comingSoon.length]].filter(Boolean);
+            const image = imageList[0] || comingSoon[index % comingSoon.length];
             const fallback = comingSoon[index % comingSoon.length];
             const href = '/listings/' + encodeURIComponent(listing.unit_id || listing.id || '') + '?v=2';
             const badge = '<div class="v2h-featured-badge">' + escapeHtml(listing.availability_label || 'Available Now') + '</div>';
+            const galleryClass = imageList.length > 1 ? ' has-gallery' : '';
+            const imagesAttr = escapeHtml(JSON.stringify(imageList));
+            const galleryControls = imageList.length > 1
+                ? (
+                    '<button type="button" class="v2h-featured-shot prev" aria-label="Previous unit photo"><i class="fas fa-chevron-left"></i></button>' +
+                    '<button type="button" class="v2h-featured-shot next" aria-label="Next unit photo"><i class="fas fa-chevron-right"></i></button>' +
+                    '<div class="v2h-featured-shot-count">1 / ' + imageList.length + '</div>'
+                  )
+                : '';
             return (
                 '<a class="v2h-featured-card" href="' + href + '">' +
-                  '<div class="v2h-featured-media">' +
+                  '<div class="v2h-featured-media' + galleryClass + '" data-images=\'' + imagesAttr.replace(/'/g, '&#39;') + '\' data-image-index="0">' +
                     '<img src="' + escapeHtml(image) + '" alt="' + escapeHtml(unitLine) + '" loading="' + (index < 2 ? 'eager' : 'lazy') + '" decoding="async" data-fallback="' + escapeHtml(fallback) + '" onerror="if (this.dataset.fallback && this.src !== this.dataset.fallback) { this.onerror=null; this.src=this.dataset.fallback; }">' +
+                    galleryControls +
                     badge +
                   '</div>' +
                   '<div class="v2h-featured-body">' +
@@ -1640,18 +1770,36 @@
         }
     }
 
-    function setBuildingShot(media, nextIndex) {
+    function setMediaShot(media, nextIndex, counterSelector) {
         const images = parseMediaImages(media);
         if (!images.length) return;
         const img = media.querySelector('img');
-        const counter = media.querySelector('.v2h-building-shot-count');
+        const counter = media.querySelector(counterSelector);
         const index = ((nextIndex % images.length) + images.length) % images.length;
         media.dataset.imageIndex = String(index);
         if (img) img.src = images[index];
         if (counter) counter.textContent = (index + 1) + ' / ' + images.length;
     }
 
+    function setBuildingShot(media, nextIndex) {
+        setMediaShot(media, nextIndex, '.v2h-building-shot-count');
+    }
+
+    function setFeaturedShot(media, nextIndex) {
+        setMediaShot(media, nextIndex, '.v2h-featured-shot-count');
+    }
+
     document.addEventListener('click', (event) => {
+        const unitShot = event.target.closest('.v2h-featured-shot');
+        if (unitShot) {
+            event.preventDefault();
+            event.stopPropagation();
+            const media = unitShot.closest('.v2h-featured-media');
+            if (!media) return;
+            const current = Number(media.dataset.imageIndex || 0) || 0;
+            setFeaturedShot(media, current + (unitShot.classList.contains('next') ? 1 : -1));
+            return;
+        }
         const shot = event.target.closest('.v2h-building-shot');
         if (!shot) return;
         event.preventDefault();
