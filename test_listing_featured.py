@@ -32,6 +32,7 @@ def test_select_featured_listings_uses_only_is_featured_portfolios():
                 portfolio='The Aspen',
                 address='1955 1st Avenue',
                 address_id=506,
+                unit_images=[],
                 website_image='https://example.com/web.jpg',
             ),
             _listing(
@@ -50,9 +51,12 @@ def test_select_featured_listings_uses_only_is_featured_portfolios():
         ],
     )
 
-    assert [item['unit_id'] for item in featured] == ['2', '3']
+    assert [item['unit_id'] for item in featured] == ['3', '2']
     assert all(item['is_featured_portfolio'] is True for item in featured)
-    assert featured[0]['featured_image'] == 'https://example.com/web.jpg'
+    # Unit with unit_images is preferred over website-only fallback.
+    assert featured[0]['featured_image'] == 'https://example.com/y.jpg'
+    assert featured[1]['featured_image'] == 'https://example.com/web.jpg'
+    assert featured[0]['availability_label'] == 'Available Now'
 
 
 def test_select_featured_listings_does_not_fill_from_other_inventory():
@@ -145,9 +149,8 @@ def test_fetch_listings_for_buildings_queries_by_address(monkeypatch):
     ])
     assert len(rows) == 1
     assert rows[0]['unit_id'] == '9'
-    assert calls[0]['available'] is True
-    assert calls[0]['address'] == '420 East 61st Street'
-
+    assert {c['address'] for c in calls} == {'420 East 61st Street', '1955 1st Avenue'}
+    assert all(c['available'] is True for c in calls)
 
 
 def test_enrich_buildings_uses_compact_bedroom_range():
@@ -167,6 +170,26 @@ def test_enrich_buildings_uses_compact_bedroom_range():
     assert enriched[0]['bedrooms_label'] == 'Studio - 3 Bed'
     assert enriched[0]['available_units'] == 3
     assert enriched[0]['price_from'] == 3000.0
+    # Building cards keep address-level images only (no unit photo bleed-in).
+    assert enriched[0]['images'] == ['https://example.com/a.jpg']
+
+
+def test_listing_images_ignore_building_photos():
+    from listing_featured import _listing_images
+    images = _listing_images({
+        'unit_images': [],
+        'website_image': '',
+        'building_image': 'https://example.com/building.jpg',
+        'building_images': ['https://example.com/building-2.jpg'],
+    })
+    assert images == []
+
+
+def test_availability_label_matches_listings():
+    from listing_featured import _availability_label
+    assert _availability_label({'move_out': ''}) == 'Available Now'
+    assert _availability_label({'move_out': '09/09/1999'}) == 'Available Now'
+    assert _availability_label({'move_out': '10/01/2026'}) == 'Available on 10/01/2026'
 
 
 def test_parse_image_list_handles_json_list_strings():

@@ -71,6 +71,7 @@ def test_index_v2_uses_new_homepage_and_default_stays_old(monkeypatch):
     assert '1955 1st Avenue' in html
     assert 'v2h-building-card' in html
     assert 'v2h-building-summary' in html
+    assert 'v2h-building-address' in html
     assert 'v2h-buildings-nav' in html
     assert 'v2h-building-shot' in html
     assert 'has-gallery' in html
@@ -88,6 +89,11 @@ def test_index_v2_uses_new_homepage_and_default_stays_old(monkeypatch):
     assert 'src="[' not in html
     assert 'v2h-building-chip' not in html
     assert 'v2h-building-amenities-label' not in html
+    assert 'v2h-building-badge' not in html
+    assert '>Featured<' not in html
+    assert 'availability_label' in html
+    assert 'Available Now' in html
+    assert 'v2h-featured-unit' in html
     assert 'grid-template-columns: 1.05fr' not in html
     assert 'aspect-ratio: 16 / 10' in html
 

@@ -257,7 +257,7 @@
     .v2h-featured-badge {
         position: absolute;
         left: 0.7rem;
-        top: 0.7rem;
+        bottom: 0.7rem;
         z-index: 1;
         padding: 0.22rem 0.45rem;
         border: 1px solid rgba(243, 209, 156, 0.4);
@@ -269,15 +269,19 @@
     }
 
     .v2h-featured-body {
-        padding: 0.85rem 0.9rem 1rem;
+        padding: 0.8rem 0.9rem 0.95rem;
         text-align: left;
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
     }
 
     .v2h-featured-price {
         font-family: 'Playfair Display', Georgia, serif;
         color: #f3d19c;
-        font-size: 1.2rem;
-        margin-bottom: 0.2rem;
+        font-size: 1.18rem;
+        margin: 0;
+        line-height: 1.2;
     }
 
     .v2h-featured-price span {
@@ -291,20 +295,26 @@
         color: #fff;
         font-size: 0.95rem;
         font-weight: 600;
-        margin: 0 0 0.15rem;
+        margin: 0.15rem 0 0;
         line-height: 1.25;
     }
 
     .v2h-featured-meta {
-        color: #9ca5b3;
-        font-size: 0.8rem;
+        color: #d7dde6;
+        font-size: 0.84rem;
         margin: 0;
+        line-height: 1.35;
+    }
+
+    .v2h-featured-meta .v2h-featured-unit {
+        color: #f3d19c;
+        font-weight: 600;
     }
 
     .v2h-featured-specs {
-        color: #8b95a3;
-        font-size: 0.76rem;
-        margin-top: 0.45rem;
+        color: #b7c0cb;
+        font-size: 0.78rem;
+        margin: 0.2rem 0 0;
     }
 
     .v2h-featured-nav {
@@ -592,10 +602,11 @@
         transform: scale(1.04);
     }
 
-    .v2h-building-badge,
     .v2h-building-count {
         position: absolute;
         z-index: 1;
+        right: 0.7rem;
+        bottom: 0.7rem;
         padding: 0.22rem 0.5rem;
         font-size: 0.58rem;
         letter-spacing: 0.12em;
@@ -605,9 +616,6 @@
         color: #f3d19c;
         white-space: nowrap;
     }
-
-    .v2h-building-badge { left: 0.7rem; top: 0.7rem; }
-    .v2h-building-count { right: 0.7rem; bottom: 0.7rem; }
 
     .v2h-building-shot {
         position: absolute;
@@ -675,10 +683,10 @@
     }
 
     .v2h-building-body {
-        padding: 0.95rem 1rem 1.05rem;
+        padding: 0.8rem 0.9rem 0.9rem;
         display: flex;
         flex-direction: column;
-        gap: 0.18rem;
+        gap: 0.15rem;
         flex: 1;
         min-width: 0;
     }
@@ -686,29 +694,38 @@
     .v2h-building-name {
         margin: 0;
         color: #fff;
-        font-size: 1.08rem;
+        font-size: 1.05rem;
         font-family: 'Playfair Display', Georgia, serif;
         font-weight: 500;
-        line-height: 1.25;
+        line-height: 1.22;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
     }
 
-    .v2h-building-meta,
+    .v2h-building-address {
+        margin: 0;
+        color: #e8edf4;
+        font-size: 0.84rem;
+        line-height: 1.35;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
     .v2h-building-loc {
         margin: 0;
         color: #9ca5b3;
-        font-size: 0.8rem;
+        font-size: 0.74rem;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
     }
 
     .v2h-building-summary {
-        margin: 0.72rem 0 0;
+        margin: 0.55rem 0 0;
         color: #f3d19c;
-        font-size: 0.76rem;
+        font-size: 0.74rem;
         letter-spacing: 0.01em;
         white-space: nowrap;
         overflow: hidden;
@@ -717,9 +734,9 @@
 
     .v2h-building-cta {
         margin-top: auto;
-        padding-top: 0.85rem;
+        padding-top: 0.65rem;
         color: var(--v2-cream);
-        font-size: 0.68rem;
+        font-size: 0.66rem;
         letter-spacing: 0.14em;
         text-transform: uppercase;
     }
@@ -1051,9 +1068,7 @@
                                      {% if loop.index == 1 %}fetchpriority="high"{% endif %}
                                      data-fallback="{{ coming_soon_variants[loop.index0 % (coming_soon_variants|length)] }}"
                                      onerror="if (this.dataset.fallback && this.src !== this.dataset.fallback) { this.onerror=null; this.src=this.dataset.fallback; }">
-                                {% if listing.is_featured_portfolio %}
-                                <div class="v2h-featured-badge">Featured</div>
-                                {% endif %}
+                                <div class="v2h-featured-badge">{{ listing.availability_label or 'Available Now' }}</div>
                             </div>
                             <div class="v2h-featured-body">
                                 <div class="v2h-featured-price">
@@ -1064,7 +1079,7 @@
                                     {% endif %}
                                 </div>
                                 <h3 class="v2h-featured-name">{{ display_name }}</h3>
-                                <p class="v2h-featured-meta">{{ unit_line }}</p>
+                                <p class="v2h-featured-meta">{{ listing.address }}{% if listing.unit and listing.unit != '-' %}, <span class="v2h-featured-unit">#{{ listing.unit }}</span>{% endif %}</p>
                                 {% if beds_spec or baths_spec %}
                                 <div class="v2h-featured-specs">
                                     {% if beds_spec %}{{ beds_spec }}{% endif %}
@@ -1111,7 +1126,7 @@
                 <div class="v2h-building-media" style="background:#132338;"></div>
                 <div class="v2h-building-body">
                     <h3 class="v2h-building-name">Featured buildings</h3>
-                    <p class="v2h-building-meta">Loading featured addresses…</p>
+                    <p class="v2h-building-address">Loading featured addresses…</p>
                     <p class="v2h-building-summary">Just a moment</p>
                 </div>
             </article>
@@ -1154,7 +1169,6 @@
                     </button>
                     <div class="v2h-building-shot-count">1 / {{ building_images|length }}</div>
                     {% endif %}
-                    <div class="v2h-building-badge">Featured</div>
                     {% if building.available_units %}
                     <div class="v2h-building-count">{{ building.available_units }} available</div>
                     {% else %}
@@ -1163,11 +1177,13 @@
                 </div>
                 <div class="v2h-building-body">
                     <h3 class="v2h-building-name">{{ display_name }}</h3>
-                    <p class="v2h-building-meta">{{ building.portfolio }}</p>
+                    {% if building.building_name and building.address and building.building_name != building.address %}
+                    <p class="v2h-building-address">{{ building.address }}</p>
+                    {% elif building.address and display_name != building.address %}
+                    <p class="v2h-building-address">{{ building.address }}</p>
+                    {% endif %}
                     {% if building.neighborhood %}
                     <p class="v2h-building-loc">{{ building.neighborhood }}</p>
-                    {% else %}
-                    <p class="v2h-building-loc">{{ building.address }}</p>
                     {% endif %}
                     <p class="v2h-building-summary">{{ summary_bits|join(' · ') }}</p>
                     <div class="v2h-building-cta">Quick view</div>
@@ -1580,7 +1596,9 @@
             const displayName = (buildingName && !['-', '0', '', 'null', 'None', 'nan'].includes(String(buildingName)))
                 ? buildingName
                 : ((listing.neighborhood && listing.neighborhood !== '-') ? listing.neighborhood : (listing.address || 'Residence'));
-            const unitLine = (listing.address || '') + (listing.unit && listing.unit !== '-' ? (', #' + listing.unit) : '');
+            const unitNum = (listing.unit && listing.unit !== '-') ? String(listing.unit) : '';
+            const unitLine = (listing.address || '') + (unitNum ? (', #' + unitNum) : '');
+            const unitMeta = escapeHtml(listing.address || '') + (unitNum ? (', <span class="v2h-featured-unit">#' + escapeHtml(unitNum) + '</span>') : '');
             const beds = bedsLabel(listing.beds);
             const baths = bathsLabel(listing.baths);
             const specs = [beds, baths].filter(Boolean).join(' · ');
@@ -1591,7 +1609,7 @@
             const image = listing.featured_image || comingSoon[index % comingSoon.length];
             const fallback = comingSoon[index % comingSoon.length];
             const href = '/listings/' + encodeURIComponent(listing.unit_id || listing.id || '') + '?v=2';
-            const badge = listing.is_featured_portfolio ? '<div class="v2h-featured-badge">Featured</div>' : '';
+            const badge = '<div class="v2h-featured-badge">' + escapeHtml(listing.availability_label || 'Available Now') + '</div>';
             return (
                 '<a class="v2h-featured-card" href="' + href + '">' +
                   '<div class="v2h-featured-media">' +
@@ -1601,7 +1619,7 @@
                   '<div class="v2h-featured-body">' +
                     '<div class="v2h-featured-price">' + price + '</div>' +
                     '<h3 class="v2h-featured-name">' + escapeHtml(displayName) + '</h3>' +
-                    '<p class="v2h-featured-meta">' + escapeHtml(unitLine) + '</p>' +
+                    '<p class="v2h-featured-meta">' + unitMeta + '</p>' +
                     (specs ? ('<div class="v2h-featured-specs">' + escapeHtml(specs) + '</div>') : '') +
                   '</div>' +
                 '</a>'
@@ -1661,7 +1679,9 @@
             summary.push(available > 0 ? (available + ' available') : 'Coming soon');
             if (building.bedrooms_label) summary.push(building.bedrooms_label);
             if (building.price_from) summary.push('From ' + formatMoney(building.price_from));
-            const loc = building.neighborhood || building.address || '';
+            const address = building.address || '';
+            const neighborhood = building.neighborhood || '';
+            const showAddress = Boolean(address) && address !== displayName;
             const countLabel = available > 0 ? (available + ' available') : 'Coming soon';
             const payload = escapeHtml(JSON.stringify(building));
             const imagesAttr = escapeHtml(JSON.stringify(images));
@@ -1678,13 +1698,12 @@
                   '<div class="v2h-building-media' + galleryClass + '" data-images=\'' + imagesAttr.replace(/'/g, '&#39;') + '\' data-image-index="0">' +
                     '<img src="' + escapeHtml(cover) + '" alt="' + escapeHtml(displayName) + '" loading="' + (index < 2 ? 'eager' : 'lazy') + '" decoding="async">' +
                     galleryControls +
-                    '<div class="v2h-building-badge">Featured</div>' +
                     '<div class="v2h-building-count">' + escapeHtml(countLabel) + '</div>' +
                   '</div>' +
                   '<div class="v2h-building-body">' +
                     '<h3 class="v2h-building-name">' + escapeHtml(displayName) + '</h3>' +
-                    '<p class="v2h-building-meta">' + escapeHtml(building.portfolio || '') + '</p>' +
-                    '<p class="v2h-building-loc">' + escapeHtml(loc) + '</p>' +
+                    (showAddress ? ('<p class="v2h-building-address">' + escapeHtml(address) + '</p>') : '') +
+                    (neighborhood ? ('<p class="v2h-building-loc">' + escapeHtml(neighborhood) + '</p>') : '') +
                     '<p class="v2h-building-summary">' + escapeHtml(summary.join(' · ')) + '</p>' +
                     '<div class="v2h-building-cta">Quick view</div>' +
                   '</div>' +

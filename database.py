@@ -353,7 +353,7 @@ def get_listing(listing_id):
                     "pets_policy":
                     item.get('pet_friendly', 0),
                     "unit_images":
-                    safe_json_loads(item.get('unit_images'), []),
+                    coerce_image_list(item.get('unit_images'), []),
                     "expiry":
                     item.get('expiry'),
                     "availability_date":
@@ -558,7 +558,7 @@ def _map_dash_listing_item(item):
         "contact_email": "hello@vectorny.com",
         "contact_phone": "+1 917 675 6696",
         "pets_policy": item.get('pet_friendly', 0),
-        "unit_images": safe_json_loads(item.get('unit_images'), []),
+        "unit_images": coerce_image_list(item.get('unit_images'), []),
         "building_amenities": safe_json_loads(item.get('building_amenities'), []),
         "building_images": (coerce_image_list(item.get('building_images'), [])
                             or coerce_image_list(item.get('building_image'), [])),

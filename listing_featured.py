@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import os
 import re
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Any, Dict, List, Optional, Set, Tuple
 from urllib.parse import quote
 
@@ -333,24 +334,31 @@ def fetch_featured_portfolio_buildings(
 
 
 def _listing_images(listing: Dict[str, Any]) -> List[str]:
+    """Unit-card images only: unit_images, then website_image. Never building photos."""
     images: List[str] = []
     seen: Set[str] = set()
-
-    for url in _parse_image_list(listing.get("website_image")):
-        if url not in seen:
-            seen.add(url)
-            images.append(url)
 
     for url in _parse_image_list(listing.get("unit_images")):
         if url not in seen:
             seen.add(url)
             images.append(url)
 
-    for url in _parse_image_list(listing.get("building_image")):
+    for url in _parse_image_list(listing.get("website_image")):
         if url not in seen:
             seen.add(url)
             images.append(url)
+
     return images
+
+
+def _availability_label(listing: Dict[str, Any]) -> str:
+    """Match listings_v2: Available Now, or Available on {move_out}."""
+    move_out = _clean_text(listing.get("move_out"))
+    if move_out.lower() in {"09/09/1999"}:
+        move_out = ""
+    if move_out:
+        return f"Available on {move_out}"
+    return "Available Now"
 
 
 def _normalize_featured_listing(listing: Dict[str, Any]) -> Dict[str, Any]:
@@ -362,6 +370,7 @@ def _normalize_featured_listing(listing: Dict[str, Any]) -> Dict[str, Any]:
         if images
         else _coming_soon_image_for(item.get("unit_id") or item.get("id"))
     )
+    item["availability_label"] = _availability_label(item)
     # Every listing in this strip already belongs to is_featured portfolios.
     item["is_featured_portfolio"] = True
     return item
@@ -421,13 +430,14 @@ def _merge_listings(
 
 def fetch_listings_for_buildings(
     buildings: List[Dict[str, Any]],
+    *,
+    max_workers: int = 8,
 ) -> List[Dict[str, Any]]:
     """
-    Load available units for featured buildings via per-address Dash calls.
+    Load available units for featured buildings via parallel per-address Dash calls.
 
-    The unfiltered /get_filtered_listings endpoint currently errors in Dash
-    (`_format_listing_move_out` undefined), so homepage enrichment must query
-    by address instead of relying on a single full inventory dump.
+    Buildings themselves come from MySQL (fast). Inventory/stats need Dash; fan out
+    by address in parallel so the homepage async enrich stays snappy.
     """
     if not buildings:
         return []
@@ -438,26 +448,47 @@ def fetch_listings_for_buildings(
         print(f"Unable to import get_all_listings for featured enrichment: {exc}")
         return []
 
-    collected: List[Dict[str, Any]] = []
-    seen: Set[str] = set()
+    addresses: List[str] = []
+    seen_addresses: Set[str] = set()
     for building in buildings:
         address = _first_non_empty(building.get("address"))
-        if not address:
+        key = address.lower()
+        if not address or key in seen_addresses:
             continue
+        seen_addresses.add(key)
+        addresses.append(address)
+
+    if not addresses:
+        return []
+
+    def _fetch_one(address: str) -> List[Dict[str, Any]]:
         try:
-            rows = get_all_listings(address=address, available=True) or []
+            return get_all_listings(address=address, available=True) or []
         except Exception as exc:
             print(f"Error fetching listings for featured address {address}: {exc}")
-            rows = []
-        for listing in rows:
-            unit_id = str(listing.get("unit_id") or listing.get("id") or "").strip()
-            dedupe = unit_id or (
-                f"{address.lower()}|{_first_non_empty(listing.get('unit')).lower()}"
-            )
-            if not dedupe or dedupe in seen:
-                continue
-            seen.add(dedupe)
-            collected.append(listing)
+            return []
+
+    collected: List[Dict[str, Any]] = []
+    seen: Set[str] = set()
+    workers = max(1, min(int(max_workers or 8), len(addresses)))
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        futures = {pool.submit(_fetch_one, address): address for address in addresses}
+        for future in as_completed(futures):
+            address = futures[future]
+            try:
+                rows = future.result() or []
+            except Exception as exc:
+                print(f"Error collecting listings for featured address {address}: {exc}")
+                rows = []
+            for listing in rows:
+                unit_id = str(listing.get("unit_id") or listing.get("id") or "").strip()
+                dedupe = unit_id or (
+                    f"{address.lower()}|{_first_non_empty(listing.get('unit')).lower()}"
+                )
+                if not dedupe or dedupe in seen:
+                    continue
+                seen.add(dedupe)
+                collected.append(listing)
     return collected
 
 
@@ -521,22 +552,7 @@ def _enrich_buildings_from_listings(
             # Compact range for cards/modal (e.g. Studio - 3 Bed), even if a middle size is missing.
             item["bedrooms_label"] = f"{low_label} - {high_label}"
 
-        listing_images: List[str] = []
-        for listing in matches:
-            for image in _listing_images(listing):
-                if image not in listing_images:
-                    listing_images.append(image)
-        if listing_images:
-            combined = [
-                image
-                for image in (item.get("images") or [])
-                if image not in COMING_SOON_IMAGES
-            ]
-            for image in listing_images:
-                if image not in combined:
-                    combined.append(image)
-            item["images"] = combined or listing_images
-
+        # Keep address-level building_image only — never pull unit photos into building cards.
         enriched.append(item)
     return enriched
 
@@ -580,7 +596,7 @@ def select_featured_listings(
     if not featured_names and not featured_addresses and not featured_address_ids:
         return []
 
-    selected: List[Dict[str, Any]] = []
+    matched: List[Dict[str, Any]] = []
     for listing in listings or []:
         if not _listing_matches_featured(
             listing,
@@ -589,6 +605,20 @@ def select_featured_listings(
             featured_address_ids,
         ):
             continue
+        matched.append(listing)
+
+    # Prefer units with real unit_images, then any unit-level photo, for the homepage strip.
+    matched.sort(
+        key=lambda listing: (
+            0 if _parse_image_list(listing.get("unit_images")) else (
+                1 if _listing_images(listing) else 2
+            ),
+            str(listing.get("unit_id") or ""),
+        )
+    )
+
+    selected: List[Dict[str, Any]] = []
+    for listing in matched:
         selected.append(_normalize_featured_listing(listing))
         if len(selected) >= max(1, int(limit or 8)):
             break
