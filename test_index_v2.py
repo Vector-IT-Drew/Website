@@ -109,6 +109,8 @@ def test_index_v2_uses_new_homepage_and_default_stays_old(monkeypatch):
     assert 'is-crossfading' in html
     assert 'is-swap-out' in html
     assert 'preloadImage' in html
+    assert 'v2hFeaturedImgError' in html
+    assert 'collapseFeaturedMediaToFallback' in html
     assert 'buildingPreviewListings' in html
     assert 'buildingPreviewTour' in html
     assert 'v2h-featured-shot' in html

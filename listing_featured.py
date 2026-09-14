@@ -335,16 +335,11 @@ def fetch_featured_portfolio_buildings(
 
 
 def _listing_images(listing: Dict[str, Any]) -> List[str]:
-    """Unit-card images only: unit_images, then website_image. Never building photos."""
+    """Unit-card images only from unit_images. Never building or website photos."""
     images: List[str] = []
     seen: Set[str] = set()
 
     for url in _parse_image_list(listing.get("unit_images")):
-        if url not in seen:
-            seen.add(url)
-            images.append(url)
-
-    for url in _parse_image_list(listing.get("website_image")):
         if url not in seen:
             seen.add(url)
             images.append(url)

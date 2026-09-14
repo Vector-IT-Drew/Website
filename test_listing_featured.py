@@ -53,9 +53,11 @@ def test_select_featured_listings_uses_only_is_featured_portfolios():
 
     assert [item['unit_id'] for item in featured] == ['3', '2']
     assert all(item['is_featured_portfolio'] is True for item in featured)
-    # Unit with unit_images is preferred over website-only fallback.
+    # Prefer units that actually have unit_images; website_image is not used as a unit photo.
     assert featured[0]['featured_image'] == 'https://example.com/y.jpg'
-    assert featured[1]['featured_image'] == 'https://example.com/web.jpg'
+    assert featured[0]['unit_images'] == ['https://example.com/y.jpg']
+    assert featured[1]['unit_images'] == []
+    assert 'coming-soon' in featured[1]['featured_image'] or 'img-coming-soon' in featured[1]['featured_image']
     assert featured[0]['availability_label'] == 'Available Now'
 
 
@@ -197,16 +199,22 @@ def test_enrich_buildings_uses_compact_bedroom_range():
     assert enriched[0]['images'] == ['https://example.com/a.jpg']
 
 
-def test_listing_images_ignore_building_photos():
+def test_listing_images_ignore_building_and_website_photos():
     from listing_featured import _listing_images
     images = _listing_images({
         'unit_images': [],
-        'website_image': '',
+        'website_image': 'https://example.com/web.jpg',
         'building_image': 'https://example.com/building.jpg',
         'building_images': ['https://example.com/building-2.jpg'],
     })
     assert images == []
 
+    images = _listing_images({
+        'unit_images': ['https://example.com/unit.jpg'],
+        'website_image': 'https://example.com/web.jpg',
+        'building_images': ['https://example.com/building.jpg'],
+    })
+    assert images == ['https://example.com/unit.jpg']
 
 def test_availability_label_matches_listings():
     from listing_featured import _availability_label

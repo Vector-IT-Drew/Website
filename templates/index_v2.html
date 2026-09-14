@@ -1183,31 +1183,33 @@
                         {% endif %}
                         <a class="v2h-featured-card"
                            href="{{ url_for('listing_detail', listing_id=listing.unit_id, v=2) }}">
-                            {% set unit_gallery = listing.unit_images if listing.unit_images else ([listing.featured_image] if listing.featured_image else []) %}
-                            <div class="v2h-featured-media{% if unit_gallery|length > 1 %} has-gallery{% endif %}"
+                            {% set coming_soon_variants = [
+                                'https://dl.dropboxusercontent.com/scl/fi/fy2wl340lre6y2gm84m13/img-coming-soon-2.jpeg?rlkey=xkao9jz2p6mrznqhb8e3hf7w6&st=k3gwz5kj&dl=0',
+                                'https://dl.dropboxusercontent.com/scl/fi/5kqjpn1lqdt6p73zo5xkj/img-coming-soon-3.jpeg?rlkey=ngk4iu9pvl6jusqps220pi2uv&st=ttncu3xt&dl=0',
+                                'https://dl.dropboxusercontent.com/scl/fi/in5oflurzeui3k61z2vh6/img-coming-soon-4.jpeg?rlkey=rp9ucjxfih59yldqgsib9ukdl&st=x5td7577&dl=0',
+                                'https://dl.dropboxusercontent.com/scl/fi/erhz52z0z7lskr8ru5v1h/img-coming-soon-5.jpeg?rlkey=bf8j1tpvtqb2q02tcjy0mdp3v&st=r7mtn0d7&dl=0'
+                            ] %}
+                            {% set coming_soon = coming_soon_variants[loop.index0 % (coming_soon_variants|length)] %}
+                            {# Arrows only for multiple real unit photos; otherwise one coming-soon. #}
+                            {% set unit_gallery = listing.unit_images if listing.unit_images else [coming_soon] %}
+                            <div class="v2h-featured-media{% if listing.unit_images and listing.unit_images|length > 1 %} has-gallery{% endif %}"
                                  data-images='{{ unit_gallery|tojson }}'
                                  data-image-index="0">
-                                {% set coming_soon_variants = [
-                                    'https://dl.dropboxusercontent.com/scl/fi/fy2wl340lre6y2gm84m13/img-coming-soon-2.jpeg?rlkey=xkao9jz2p6mrznqhb8e3hf7w6&st=k3gwz5kj&dl=0',
-                                    'https://dl.dropboxusercontent.com/scl/fi/5kqjpn1lqdt6p73zo5xkj/img-coming-soon-3.jpeg?rlkey=ngk4iu9pvl6jusqps220pi2uv&st=ttncu3xt&dl=0',
-                                    'https://dl.dropboxusercontent.com/scl/fi/in5oflurzeui3k61z2vh6/img-coming-soon-4.jpeg?rlkey=rp9ucjxfih59yldqgsib9ukdl&st=x5td7577&dl=0',
-                                    'https://dl.dropboxusercontent.com/scl/fi/erhz52z0z7lskr8ru5v1h/img-coming-soon-5.jpeg?rlkey=bf8j1tpvtqb2q02tcjy0mdp3v&st=r7mtn0d7&dl=0'
-                                ] %}
-                                <img src="{{ unit_gallery[0] if unit_gallery else listing.featured_image }}"
+                                <img src="{{ unit_gallery[0] }}"
                                      alt="{{ unit_line }}"
                                      loading="{% if loop.index <= 2 %}eager{% else %}lazy{% endif %}"
                                      decoding="async"
                                      {% if loop.index == 1 %}fetchpriority="high"{% endif %}
-                                     data-fallback="{{ coming_soon_variants[loop.index0 % (coming_soon_variants|length)] }}"
-                                     onerror="if (this.dataset.fallback && this.src !== this.dataset.fallback) { this.onerror=null; this.src=this.dataset.fallback; }">
-                                {% if unit_gallery|length > 1 %}
+                                     data-fallback="{{ coming_soon }}"
+                                     onerror="window.v2hFeaturedImgError && window.v2hFeaturedImgError(this)">
+                                {% if listing.unit_images and listing.unit_images|length > 1 %}
                                 <button type="button" class="v2h-featured-shot prev" aria-label="Previous unit photo">
                                     <i class="fas fa-chevron-left"></i>
                                 </button>
                                 <button type="button" class="v2h-featured-shot next" aria-label="Next unit photo">
                                     <i class="fas fa-chevron-right"></i>
                                 </button>
-                                <div class="v2h-featured-shot-count">1 / {{ unit_gallery|length }}</div>
+                                <div class="v2h-featured-shot-count">1 / {{ listing.unit_images|length }}</div>
                                 {% endif %}
                                 <div class="v2h-featured-badge">{{ listing.availability_label or 'Available Now' }}</div>
                             </div>
@@ -1749,11 +1751,14 @@
             const price = (rent == null || rent === '' || rent === 'N/A')
                 ? 'Price on request'
                 : (formatMoney(rent) + '<span>/ mo</span>');
-            const imageList = Array.isArray(listing.unit_images) && listing.unit_images.length
-                ? listing.unit_images.filter(Boolean)
-                : [listing.featured_image || comingSoon[index % comingSoon.length]].filter(Boolean);
-            const image = imageList[0] || comingSoon[index % comingSoon.length];
+            // Gallery arrows only when there are multiple real unit images.
+            // Empty / missing unit photos → exactly one coming-soon fallback, no next/prev.
+            const realUnitImages = Array.isArray(listing.unit_images)
+                ? listing.unit_images.filter((u) => typeof u === 'string' && /^https?:\/\//i.test(u.trim()))
+                : [];
             const fallback = comingSoon[index % comingSoon.length];
+            const imageList = realUnitImages.length ? realUnitImages : [fallback];
+            const image = imageList[0];
             const href = '/listings/' + encodeURIComponent(listing.unit_id || listing.id || '') + '?v=2';
             const badge = '<div class="v2h-featured-badge">' + escapeHtml(listing.availability_label || 'Available Now') + '</div>';
             const galleryClass = imageList.length > 1 ? ' has-gallery' : '';
@@ -1768,7 +1773,7 @@
             return (
                 '<a class="v2h-featured-card" href="' + href + '">' +
                   '<div class="v2h-featured-media' + galleryClass + '" data-images=\'' + imagesAttr.replace(/'/g, '&#39;') + '\' data-image-index="0">' +
-                    '<img src="' + escapeHtml(image) + '" alt="' + escapeHtml(unitLine) + '" loading="' + (index < 2 ? 'eager' : 'lazy') + '" decoding="async" data-fallback="' + escapeHtml(fallback) + '" onerror="if (this.dataset.fallback && this.src !== this.dataset.fallback) { this.onerror=null; this.src=this.dataset.fallback; }">' +
+                    '<img src="' + escapeHtml(image) + '" alt="' + escapeHtml(unitLine) + '" loading="' + (index < 2 ? 'eager' : 'lazy') + '" decoding="async" data-fallback="' + escapeHtml(fallback) + '" onerror="window.v2hFeaturedImgError && window.v2hFeaturedImgError(this)">' +
                     galleryControls +
                     badge +
                   '</div>' +
@@ -1810,6 +1815,46 @@
         });
     }
 
+    function writeMediaImages(media, images) {
+        media.setAttribute('data-images', JSON.stringify(images || []));
+    }
+
+    function collapseFeaturedMediaToFallback(media, img) {
+        if (!media) return;
+        const fallback = (img && img.dataset.fallback) || '';
+        if (!fallback) return;
+        writeMediaImages(media, [fallback]);
+        media.dataset.imageIndex = '0';
+        media.classList.remove('has-gallery');
+        media.classList.remove('is-crossfading');
+        media.dataset.swapLock = '0';
+        delete media.dataset.pendingIndex;
+        media.querySelectorAll('.v2h-featured-shot, .v2h-featured-shot-count').forEach((el) => el.remove());
+        media.style.backgroundImage = cssUrl(fallback);
+        if (img) {
+            img.onerror = null;
+            img.style.transition = 'none';
+            img.classList.remove('is-swap-out');
+            img.src = fallback;
+            void img.offsetWidth;
+            img.style.transition = '';
+        }
+    }
+
+    // When a unit photo 404s, collapse to a single coming-soon (no arrows / blank frames).
+    window.v2hFeaturedImgError = function v2hFeaturedImgError(img) {
+        if (!img) return;
+        const media = img.closest('.v2h-featured-media');
+        const fallback = img.dataset.fallback || '';
+        if (!fallback) return;
+        // Already on fallback — nothing else to try.
+        if ((img.getAttribute('src') || '') === fallback) {
+            img.onerror = null;
+            return;
+        }
+        collapseFeaturedMediaToFallback(media, img);
+    };
+
     function prefetchNeighborShots(media, index) {
         const images = parseMediaImages(media);
         if (images.length < 2) return;
@@ -1819,16 +1864,20 @@
         preloadImage(next);
     }
 
-    function setMediaShot(media, nextIndex, counterSelector) {
-        const images = parseMediaImages(media);
+    function setMediaShot(media, nextIndex, counterSelector, options) {
+        const opts = options || {};
+        const isFeatured = Boolean(opts.featured);
+        let images = parseMediaImages(media);
         if (!images.length) return;
         const img = media.querySelector('img');
         const counter = media.querySelector(counterSelector);
+        if (!img) return;
+
         const index = ((nextIndex % images.length) + images.length) % images.length;
         const url = images[index];
         media.dataset.imageIndex = String(index);
         if (counter) counter.textContent = (index + 1) + ' / ' + images.length;
-        if (!img || !url) return;
+        if (!url) return;
 
         const currentSrc = img.getAttribute('src') || '';
         if (currentSrc === url) {
@@ -1849,9 +1898,43 @@
 
         const token = String(Date.now()) + '-' + index;
         media.dataset.swapToken = token;
+        const direction = Number(media.dataset.lastDirection || 1) || 1;
 
-        preloadImage(url).then(() => {
+        preloadImage(url).then((ok) => {
             if (media.dataset.swapToken !== token) return;
+
+            if (!ok) {
+                media.classList.remove('is-crossfading');
+                media.dataset.swapLock = '0';
+                // Drop the dead URL so we never keep a blank multi-image gallery.
+                images = images.filter((item, i) => i !== index);
+                writeMediaImages(media, images);
+                if (isFeatured && images.length <= 1) {
+                    if (!images.length) {
+                        collapseFeaturedMediaToFallback(media, img);
+                    } else {
+                        media.classList.remove('has-gallery');
+                        media.querySelectorAll('.v2h-featured-shot, .v2h-featured-shot-count').forEach((el) => el.remove());
+                        media.dataset.imageIndex = '0';
+                        const only = images[0];
+                        media.style.backgroundImage = cssUrl(only);
+                        img.style.transition = 'none';
+                        img.src = only;
+                        img.classList.remove('is-swap-out');
+                        void img.offsetWidth;
+                        img.style.transition = '';
+                    }
+                    return;
+                }
+                if (!images.length) {
+                    collapseFeaturedMediaToFallback(media, img);
+                    return;
+                }
+                // Try the next living neighbor in the same direction.
+                const nextTry = direction >= 0 ? index % images.length : (index - 1 + images.length) % images.length;
+                setMediaShot(media, nextTry, counterSelector, opts);
+                return;
+            }
 
             // Place the next image behind the current <img>, then fade the img out.
             media.style.backgroundImage = cssUrl(url);
@@ -1874,7 +1957,7 @@
                 const pending = media.dataset.pendingIndex;
                 if (pending != null && pending !== '' && pending !== String(index)) {
                     delete media.dataset.pendingIndex;
-                    setMediaShot(media, Number(pending), counterSelector);
+                    setMediaShot(media, Number(pending), counterSelector, opts);
                 }
             };
             const onEnd = (event) => {
@@ -1898,7 +1981,9 @@
     }
 
     function setFeaturedShot(media, nextIndex) {
-        setMediaShot(media, nextIndex, '.v2h-featured-shot-count');
+        const current = Number(media.dataset.imageIndex || 0) || 0;
+        media.dataset.lastDirection = nextIndex >= current ? '1' : '-1';
+        setMediaShot(media, nextIndex, '.v2h-featured-shot-count', { featured: true });
     }
 
     document.addEventListener('click', (event) => {
