@@ -126,8 +126,8 @@
         flex-wrap: wrap;
         justify-content: center;
         gap: 0.75rem;
-        /* Drop CTAs ~2" toward Explore; brand + slogan stay put */
-        margin-top: clamp(4.75rem, 11vh, 7.5rem);
+        /* Space CTAs from slogan; +150px drops buttons only (logo/text stay put) */
+        margin-top: calc(clamp(4.75rem, 11vh, 7.5rem) + 150px);
     }
 
     .v2h-scroll {
