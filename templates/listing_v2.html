@@ -19,7 +19,8 @@
         --v2-gold-soft: #a88c60;
         --v2-cream: #f3d19c;
         --v2-muted: #9ca5b3;
-        padding: 0.5rem 0 4.5rem;
+        /* Clear fixed navbar so gallery/map are not tucked under the header */
+        padding: 5.75rem 0 4.5rem;
     }
 
     .v2-back {
@@ -52,7 +53,18 @@
     .v2-gallery {
         position: relative;
         min-height: 520px;
-        background: #1b2b40 center/cover no-repeat;
+        background: #1b2b40;
+        overflow: hidden;
+    }
+
+    .v2-gallery-photo {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        background: #1b2b40;
     }
 
     .v2-gallery-nav,
@@ -399,7 +411,19 @@
         </a>
 
         <div class="v2-stage">
-            <div class="v2-gallery{% if ns.photos|length < 2 %} is-single{% endif %}" id="v2Gallery" style="background-image: url('{{ ns.photos[0] }}');" data-images='{{ ns.photos|tojson }}'>
+            {% set gallery_fallback = 'https://dl.dropboxusercontent.com/scl/fi/in5oflurzeui3k61z2vh6/img-coming-soon-4.jpeg?rlkey=rp9ucjxfih59yldqgsib9ukdl&st=x5td7577&dl=0' %}
+            <div class="v2-gallery{% if ns.photos|length < 2 %} is-single{% endif %}"
+                 id="v2Gallery"
+                 data-images='{{ ns.photos|tojson }}'
+                 data-fallback="{{ gallery_fallback }}">
+                <img class="v2-gallery-photo"
+                     id="v2GalleryPhoto"
+                     src="{{ ns.photos[0] }}"
+                     alt="{{ listing.address }}{% if listing.unit|has_content %} #{{ listing.unit }}{% endif %}"
+                     decoding="async"
+                     fetchpriority="high"
+                     onerror="if (this.dataset.fallback && this.src !== this.dataset.fallback) { this.onerror=null; this.src=this.dataset.fallback; }"
+                     data-fallback="{{ gallery_fallback }}">
                 <button type="button" class="v2-gallery-nav v2-gallery-prev" id="v2Prev" aria-label="Previous photo"><i class="fas fa-chevron-left"></i></button>
                 <button type="button" class="v2-gallery-nav v2-gallery-next" id="v2Next" aria-label="Next photo"><i class="fas fa-chevron-right"></i></button>
                 <div class="v2-gallery-count" id="v2Count">1 / {{ ns.photos|length }}</div>
@@ -613,12 +637,21 @@
     if (gallery) {
         let images = [];
         try { images = JSON.parse(gallery.getAttribute('data-images') || '[]'); } catch (e) { images = []; }
+        images = (images || []).filter(Boolean);
         let index = 0;
         const count = document.getElementById('v2Count');
+        const photo = document.getElementById('v2GalleryPhoto');
+        const fallback = gallery.getAttribute('data-fallback') || '';
         function show(i) {
-            if (!images.length) return;
+            if (!images.length || !photo) return;
             index = ((i % images.length) + images.length) % images.length;
-            gallery.style.backgroundImage = `url('${images[index]}')`;
+            photo.onerror = function () {
+                if (fallback && photo.src !== fallback) {
+                    photo.onerror = null;
+                    photo.src = fallback;
+                }
+            };
+            photo.src = images[index];
             if (count) count.textContent = `${index + 1} / ${images.length}`;
         }
         document.getElementById('v2Prev')?.addEventListener('click', () => show(index - 1));

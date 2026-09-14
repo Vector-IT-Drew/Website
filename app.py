@@ -164,7 +164,7 @@ def api_homepage_featured():
     try:
         featured_listings, featured_buildings = get_homepage_featured_content(
             None,
-            listing_limit=8,
+            listing_limit=10,
             dash_host=DASH_SERVICES_ENDPOINT,
         )
     except Exception as exc:

@@ -37,7 +37,7 @@ SAMPLE_LISTINGS = [
         'sqft': 1000,
         'exposure': 'South',
         'unit_images': [],
-        'building_image': '',
+        'building_image': 'https://example.com/BUILDING-ONLY.jpg',
         'move_out': '04/01/2026',
         'laundry_in_unit': '0',
         'dishwasher': '0',
@@ -70,6 +70,7 @@ def test_listings_v2_uses_new_grid_and_default_stays_old(monkeypatch):
     assert 'v2l-photo' in html
     assert 'loading=' in html
     assert 'img-coming-soon' in html
+    assert 'BUILDING-ONLY.jpg' not in html
     assert 'listing-card h-100' not in html
     assert 'v2l-amenity' in html
     assert 'In-Unit Laundry' in html

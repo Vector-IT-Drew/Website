@@ -59,6 +59,29 @@ def test_select_featured_listings_uses_only_is_featured_portfolios():
     assert featured[0]['availability_label'] == 'Available Now'
 
 
+def test_select_featured_listings_respects_limit_of_ten():
+    rows = [
+        _listing(
+            unit_id=str(i),
+            portfolio='The Aspen',
+            address='1955 1st Avenue',
+            address_id=506,
+            unit_images=[f'https://example.com/{i}.jpg'],
+        )
+        for i in range(1, 25)
+    ]
+    featured = select_featured_listings(
+        rows,
+        limit=10,
+        featured_portfolio_names=['The Aspen'],
+        featured_buildings=[
+            {'address_id': 506, 'address': '1955 1st Avenue', 'portfolio': 'The Aspen'},
+        ],
+    )
+    assert len(featured) == 10
+    assert all(item['featured_image'].startswith('https://example.com/') for item in featured)
+
+
 def test_select_featured_listings_does_not_fill_from_other_inventory():
     featured = select_featured_listings(
         [

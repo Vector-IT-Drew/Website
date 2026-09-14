@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import random
 import re
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Any, Dict, List, Optional, Set, Tuple
@@ -607,20 +608,21 @@ def select_featured_listings(
             continue
         matched.append(listing)
 
-    # Prefer units with real unit_images, then any unit-level photo, for the homepage strip.
-    matched.sort(
-        key=lambda listing: (
-            0 if _parse_image_list(listing.get("unit_images")) else (
-                1 if _listing_images(listing) else 2
-            ),
-            str(listing.get("unit_id") or ""),
-        )
-    )
+    # Prefer a small random set of units that actually have unit_images.
+    with_unit_photos = [
+        listing for listing in matched if _parse_image_list(listing.get("unit_images"))
+    ]
+    without_unit_photos = [
+        listing for listing in matched if listing not in with_unit_photos
+    ]
+    random.shuffle(with_unit_photos)
+    random.shuffle(without_unit_photos)
+    ordered = with_unit_photos + without_unit_photos
 
     selected: List[Dict[str, Any]] = []
-    for listing in matched:
+    for listing in ordered:
         selected.append(_normalize_featured_listing(listing))
-        if len(selected) >= max(1, int(limit or 8)):
+        if len(selected) >= max(1, int(limit or 10)):
             break
     return selected
 
@@ -628,7 +630,7 @@ def select_featured_listings(
 def get_homepage_featured_content(
     listings: Optional[List[Dict[str, Any]]] = None,
     *,
-    listing_limit: int = 8,
+    listing_limit: int = 10,
     dash_host: Optional[str] = None,
 ) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
     """Return (featured_listings, featured_buildings) from is_featured only."""

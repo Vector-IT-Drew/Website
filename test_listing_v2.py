@@ -39,6 +39,11 @@ def test_listing_v2_renders_map_and_keeps_default_intact(monkeypatch):
     assert 'Apply Now' in html
     assert '10065' in html
     assert '10065.0' not in html
+    # Fixed navbar clearance + unit photo gallery with broken-url fallback
+    assert 'padding: 5.75rem 0 4.5rem' in html
+    assert 'v2GalleryPhoto' in html
+    assert 'https://example.com/photo.jpg' in html
+    assert 'data-fallback' in html
 
     default = client.get('/listings/5397')
     assert default.status_code == 200

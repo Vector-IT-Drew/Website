@@ -767,9 +767,6 @@
                     {% endif %}
                 {% endfor %}
             {% endif %}
-            {% if not ns.images and listing.building_image and listing.building_image|string not in ['0', '', '-', 'null', 'None'] %}
-                {% set _ = ns.images.append(listing.building_image) %}
-            {% endif %}
             {% if not ns.images %}
                 {% set _ = ns.images.append(default_images|random) %}
             {% endif %}
