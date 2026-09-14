@@ -974,11 +974,15 @@
     .v2b-preview-amenities {
         display: flex;
         flex-wrap: wrap;
+        align-content: flex-start;
+        align-items: center;
         gap: 0.4rem;
         margin: 0 0 1rem;
         padding: 0;
         list-style: none;
-        flex: 1 1 auto;
+        /* Do not grow into leftover modal height — that stretches each chip row
+           and makes tags look like they have an extra blank line. */
+        flex: 0 1 auto;
     }
 
     .v2b-preview-amenities li {
@@ -986,8 +990,10 @@
         color: rgba(243, 209, 156, 0.92);
         font-size: 0.68rem;
         letter-spacing: 0.06em;
+        line-height: 1.25;
         padding: 0.28rem 0.5rem;
         background: rgba(19, 35, 56, 0.4);
+        white-space: nowrap;
     }
 
     .v2b-preview-amenities-empty {
@@ -1594,8 +1600,10 @@
             const amenities = (Array.isArray(data.amenities) ? data.amenities : []).filter(Boolean);
             amenitiesEl.innerHTML = '';
             amenities.slice(0, 10).forEach((item) => {
+                const label = String(item || '').replace(/\s+/g, ' ').trim();
+                if (!label) return;
                 const li = document.createElement('li');
-                li.textContent = item;
+                li.textContent = label;
                 amenitiesEl.appendChild(li);
             });
             const hasAmenities = amenities.length > 0;
