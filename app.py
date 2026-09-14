@@ -170,6 +170,11 @@ def api_homepage_featured():
     except Exception as exc:
         logging.exception("Homepage featured API failed: %s", exc)
         featured_listings, featured_buildings = [], []
+    logging.info(
+        "Homepage featured API: %s listings, %s buildings",
+        len(featured_listings or []),
+        len(featured_buildings or []),
+    )
     return jsonify({
         'featured_listings': featured_listings or [],
         'featured_buildings': featured_buildings or [],

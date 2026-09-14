@@ -1106,6 +1106,16 @@
                 </button>
                 <div class="v2h-buildings-viewport">
                     <div class="v2h-buildings-track" id="featuredBuildingsTrack">
+            {% if featured_async and not featured_buildings %}
+            <article class="v2h-building-card" id="featuredBuildingsPlaceholder" style="pointer-events:none;opacity:0.7;">
+                <div class="v2h-building-media" style="background:#132338;"></div>
+                <div class="v2h-building-body">
+                    <h3 class="v2h-building-name">Featured buildings</h3>
+                    <p class="v2h-building-meta">Loading featured addresses…</p>
+                    <p class="v2h-building-summary">Just a moment</p>
+                </div>
+            </article>
+            {% endif %}
             {% for building in featured_buildings %}
             {% set display_name = building.building_name if building.building_name else building.address %}
             {% set cover = (building.images[0] if building.images else '') %}
@@ -1685,19 +1695,42 @@
     }
 
     const buildingsSection = document.getElementById('featuredBuildingsSection');
+    const listingsTrack = document.getElementById('featuredTrack');
+    const buildingsTrack = document.getElementById('featuredBuildingsTrack');
     const shouldAsync = (buildingsSection && buildingsSection.dataset.async === '1')
-        || document.getElementById('featuredListingsPlaceholder');
-    if (shouldAsync) {
+        || document.getElementById('featuredListingsPlaceholder')
+        || document.getElementById('featuredBuildingsPlaceholder')
+        || (!!listingsTrack && !!buildingsTrack);
+
+    if (shouldAsync && (listingsTrack || buildingsTrack)) {
         const loadingEl = document.getElementById('featuredBuildingsLoading');
         if (loadingEl) loadingEl.hidden = false;
-        fetch('/api/homepage-featured')
-            .then((response) => response.json())
+        console.info('[vector] Loading featured homepage content…');
+        fetch('/api/homepage-featured', { headers: { 'Accept': 'application/json' } })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Featured API HTTP ' + response.status);
+                }
+                return response.json();
+            })
             .then((data) => {
-                renderFeaturedListings(Array.isArray(data.featured_listings) ? data.featured_listings : []);
-                renderFeaturedBuildings(Array.isArray(data.featured_buildings) ? data.featured_buildings : []);
+                const listings = Array.isArray(data.featured_listings) ? data.featured_listings : [];
+                const buildings = Array.isArray(data.featured_buildings) ? data.featured_buildings : [];
+                console.info('[vector] Featured content ready', {
+                    listings: listings.length,
+                    buildings: buildings.length,
+                });
+                renderFeaturedListings(listings);
+                renderFeaturedBuildings(buildings);
             })
             .catch((err) => {
-                console.error('Featured content refresh failed', err);
+                console.error('[vector] Featured content refresh failed', err);
+                if (listingsTrack && !listingsTrack.querySelector('.v2h-featured-card:not(#featuredListingsPlaceholder)')) {
+                    listingsTrack.innerHTML = '<p class="v2h-buildings-loading">Featured residences are unavailable right now.</p>';
+                }
+                if (buildingsTrack && !buildingsTrack.querySelector('.v2h-building-card:not(#featuredBuildingsPlaceholder)')) {
+                    buildingsTrack.innerHTML = '<p class="v2h-buildings-loading">Featured buildings are unavailable right now.</p>';
+                }
             })
             .finally(() => {
                 if (loadingEl) loadingEl.hidden = true;
