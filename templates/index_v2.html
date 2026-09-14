@@ -247,10 +247,19 @@
         height: 100%;
         object-fit: cover;
         display: block;
-        transition: transform 0.45s ease;
+        transition: opacity 0.35s ease, transform 0.45s ease;
+        will-change: opacity;
     }
 
-    .v2h-featured-card:hover .v2h-featured-media img {
+    .v2h-featured-media img.is-swap-out {
+        opacity: 0;
+    }
+
+    .v2h-featured-media.is-crossfading img {
+        transform: none;
+    }
+
+    .v2h-featured-card:hover .v2h-featured-media:not(.is-crossfading) img {
         transform: scale(1.04);
     }
 
@@ -650,7 +659,7 @@
         position: relative;
         aspect-ratio: 16 / 10;
         overflow: hidden;
-        background: #132338;
+        background: #132338 center/cover no-repeat;
         flex: 0 0 auto;
     }
 
@@ -659,10 +668,19 @@
         height: 100%;
         object-fit: cover;
         display: block;
-        transition: transform 0.45s ease;
+        transition: opacity 0.35s ease, transform 0.45s ease;
+        will-change: opacity;
     }
 
-    .v2h-building-card:hover .v2h-building-media img {
+    .v2h-building-media img.is-swap-out {
+        opacity: 0;
+    }
+
+    .v2h-building-media.is-crossfading img {
+        transform: none;
+    }
+
+    .v2h-building-card:hover .v2h-building-media:not(.is-crossfading) img {
         transform: scale(1.04);
     }
 
@@ -1778,15 +1796,101 @@
         }
     }
 
+    function cssUrl(url) {
+        return 'url(' + JSON.stringify(String(url || '')) + ')';
+    }
+
+    function preloadImage(url) {
+        return new Promise((resolve) => {
+            if (!url) return resolve(false);
+            const probe = new Image();
+            probe.onload = () => resolve(true);
+            probe.onerror = () => resolve(false);
+            probe.src = url;
+        });
+    }
+
+    function prefetchNeighborShots(media, index) {
+        const images = parseMediaImages(media);
+        if (images.length < 2) return;
+        const prev = images[((index - 1) % images.length + images.length) % images.length];
+        const next = images[(index + 1) % images.length];
+        preloadImage(prev);
+        preloadImage(next);
+    }
+
     function setMediaShot(media, nextIndex, counterSelector) {
         const images = parseMediaImages(media);
         if (!images.length) return;
         const img = media.querySelector('img');
         const counter = media.querySelector(counterSelector);
         const index = ((nextIndex % images.length) + images.length) % images.length;
+        const url = images[index];
         media.dataset.imageIndex = String(index);
-        if (img) img.src = images[index];
         if (counter) counter.textContent = (index + 1) + ' / ' + images.length;
+        if (!img || !url) return;
+
+        const currentSrc = img.getAttribute('src') || '';
+        if (currentSrc === url) {
+            prefetchNeighborShots(media, index);
+            return;
+        }
+
+        // Queue latest request if a crossfade is already running.
+        if (media.dataset.swapLock === '1') {
+            media.dataset.pendingIndex = String(index);
+            return;
+        }
+
+        media.dataset.swapLock = '1';
+        media.classList.add('is-crossfading');
+        // Hold the current frame as background so navy never flashes mid-load.
+        if (currentSrc) media.style.backgroundImage = cssUrl(currentSrc);
+
+        const token = String(Date.now()) + '-' + index;
+        media.dataset.swapToken = token;
+
+        preloadImage(url).then(() => {
+            if (media.dataset.swapToken !== token) return;
+
+            // Place the next image behind the current <img>, then fade the img out.
+            media.style.backgroundImage = cssUrl(url);
+
+            let finished = false;
+            const finalize = () => {
+                if (finished || media.dataset.swapToken !== token) return;
+                finished = true;
+                img.removeEventListener('transitionend', onEnd);
+                // Snap back to full opacity on the already-decoded src (no fade-in flash).
+                img.style.transition = 'none';
+                img.src = url;
+                img.classList.remove('is-swap-out');
+                void img.offsetWidth;
+                img.style.transition = '';
+                media.classList.remove('is-crossfading');
+                media.dataset.swapLock = '0';
+                prefetchNeighborShots(media, index);
+
+                const pending = media.dataset.pendingIndex;
+                if (pending != null && pending !== '' && pending !== String(index)) {
+                    delete media.dataset.pendingIndex;
+                    setMediaShot(media, Number(pending), counterSelector);
+                }
+            };
+            const onEnd = (event) => {
+                if (event.target !== img) return;
+                if (event.propertyName && event.propertyName !== 'opacity') return;
+                finalize();
+            };
+
+            img.addEventListener('transitionend', onEnd);
+            // Next frame so the browser applies background before opacity transition.
+            requestAnimationFrame(() => {
+                if (media.dataset.swapToken !== token) return;
+                img.classList.add('is-swap-out');
+            });
+            setTimeout(finalize, 420);
+        });
     }
 
     function setBuildingShot(media, nextIndex) {
