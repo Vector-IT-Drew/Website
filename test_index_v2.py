@@ -87,6 +87,8 @@ def test_index_v2_uses_new_homepage_and_default_stays_old(monkeypatch):
     assert 'Studio - 2 Bed' in html
     assert 'From $4,200' in html
     assert 'translateY(-20vh)' in html
+    assert 'margin-top: clamp(4.75rem, 11vh, 7.5rem)' in html
+    assert 'bindHeroSkylineFade' in html
     assert 'data-async="1"' in html
     assert 'api/homepage-featured' in html
     assert 'src="https://example.com/building.jpg"' in html

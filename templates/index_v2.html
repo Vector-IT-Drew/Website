@@ -51,6 +51,8 @@
         z-index: 0;
         pointer-events: none;
         user-select: none;
+        opacity: 1;
+        will-change: opacity;
     }
 
     @media (min-aspect-ratio: 1.15 / 1) {
@@ -124,6 +126,8 @@
         flex-wrap: wrap;
         justify-content: center;
         gap: 0.75rem;
+        /* Drop CTAs ~2" toward Explore; brand + slogan stay put */
+        margin-top: clamp(4.75rem, 11vh, 7.5rem);
     }
 
     .v2h-scroll {
@@ -1490,6 +1494,28 @@
 <script>
 (function () {
     document.body.classList.add('v2-site');
+
+    // Fade skyline into navy as the hero scrolls away (rAF-throttled, opacity only).
+    (function bindHeroSkylineFade() {
+        const hero = document.querySelector('.v2h-hero');
+        const skyline = document.querySelector('.v2h-hero-bg');
+        if (!hero || !skyline) return;
+        let ticking = false;
+        const update = () => {
+            ticking = false;
+            const rect = hero.getBoundingClientRect();
+            const height = rect.height || 1;
+            // Fully visible at top; blended out by the time the next section arrives.
+            const progress = Math.min(1, Math.max(0, -rect.top / (height * 0.9)));
+            skyline.style.opacity = String(1 - progress);
+        };
+        window.addEventListener('scroll', () => {
+            if (ticking) return;
+            ticking = true;
+            requestAnimationFrame(update);
+        }, { passive: true });
+        update();
+    })();
 
     function withV2(href) {
         try {
