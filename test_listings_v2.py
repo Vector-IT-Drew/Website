@@ -35,7 +35,7 @@ SAMPLE_LISTINGS = [
         'beds': 2,
         'baths': 2,
         'sqft': 1000,
-        'exposure': 'South',
+        'exposure': 'SW',
         'unit_images': [],
         'building_image': 'https://example.com/BUILDING-ONLY.jpg',
         'move_out': '04/01/2026',
@@ -46,7 +46,40 @@ SAMPLE_LISTINGS = [
         'preview_summary': '',
         'preview_highlights': [],
     },
+    {
+        'unit_id': '5553',
+        'address': '200 East 61st Street',
+        'unit': '8C',
+        'building_name': 'Sutton Tower',
+        'neighborhood': 'Midtown East',
+        'borough': 'Manhattan',
+        'actual_rent': 4200,
+        'beds': 0,
+        'baths': 1,
+        'sqft': 500,
+        'exposure': '',
+        'unit_images': ['https://example.com/c.jpg'],
+        'building_image': '',
+        'move_out': '',
+        'laundry_in_unit': '0',
+        'dishwasher': '0',
+        'outdoor_space': '0',
+        'unit_amenities': [],
+        'preview_summary': '',
+        'preview_highlights': [],
+    },
 ]
+
+
+def test_exposure_dirs_filter():
+    from app import exposure_dirs
+    assert exposure_dirs('East') == ['E']
+    assert exposure_dirs('SW') == ['S', 'W']
+    assert exposure_dirs('South-West') == ['S', 'W']
+    assert exposure_dirs('N/E') == ['N', 'E']
+    assert exposure_dirs('') == []
+    assert exposure_dirs('-') == []
+    assert exposure_dirs(None) == []
 
 
 def test_listings_v2_uses_new_grid_and_default_stays_old(monkeypatch):
@@ -80,6 +113,16 @@ def test_listings_v2_uses_new_grid_and_default_stays_old(monkeypatch):
     assert 'v2l-amenities' in html
     assert html.index('class="v2l-amenities"') < html.index('class="v2l-badge"')
     assert html.index('class="v2l-amenities"') < html.index('class="v2l-body"')
+    # Exposure compass on photos: East → E; SW → S+W; empty → hidden
+    assert 'v2l-exposure' in html
+    assert 'v2l-exposure-dir is-on">E<' in html
+    assert 'v2l-exposure-dir is-on">S<' in html
+    assert 'v2l-exposure-dir is-on">W<' in html
+    assert html.count('class="v2l-exposure"') == 2
+    assert 'v2l-exposure-dot' in html
+    assert 'aria-label="Exposure East"' in html
+    assert 'aria-label="Exposure SW"' in html
+    assert 'max-width: calc(100% - 5.75rem)' in html
 
     default = client.get('/listings')
     assert default.status_code == 200

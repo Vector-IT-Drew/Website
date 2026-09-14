@@ -70,6 +70,30 @@ def is_true(value):
     return str(value).strip().lower() in {'1', 'true', 'yes', 't', 'y'}
 
 
+@app.template_filter('exposure_dirs')
+def exposure_dirs(value):
+    """Return active NESW letters from exposure values like E, East, SW, South-West."""
+    if value is None:
+        return []
+    text = str(value).strip().upper()
+    if not text or text.lower() in _BLANK_TOKENS or text in {'—'}:
+        return []
+    active = set()
+    for word, letter in (
+        ('NORTH', 'N'),
+        ('EAST', 'E'),
+        ('SOUTH', 'S'),
+        ('WEST', 'W'),
+    ):
+        if word in text:
+            active.add(letter)
+            text = text.replace(word, ' ')
+    for ch in text:
+        if ch in {'N', 'E', 'S', 'W'}:
+            active.add(ch)
+    return [letter for letter in ('N', 'E', 'S', 'W') if letter in active]
+
+
 @app.template_filter('display_zip')
 def display_zip(value):
     return format_zip_code(value)

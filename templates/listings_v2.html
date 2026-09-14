@@ -252,12 +252,67 @@
         background: rgba(24, 43, 67, 0.62);
     }
 
+    /* Exposure compass — N · E · S · W overlay, active dirs gold + underline */
+    .v2l-exposure {
+        position: absolute;
+        z-index: 3;
+        top: 0.62rem;
+        right: 0.62rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.32rem;
+        padding: 0.32rem 0.5rem 0.28rem;
+        border: 1px solid rgba(243, 209, 156, 0.2);
+        background: rgba(8, 18, 34, 0.58);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        color: rgba(255, 255, 255, 0.92);
+        font-size: 0.66rem;
+        font-weight: 500;
+        letter-spacing: 0.08em;
+        line-height: 1;
+        pointer-events: none;
+        user-select: none;
+    }
+
+    .v2l-exposure-dir {
+        position: relative;
+        display: inline-block;
+        min-width: 0.7em;
+        text-align: center;
+        padding-bottom: 0.22rem;
+    }
+
+    .v2l-exposure-dir.is-on {
+        color: #f3d19c;
+        font-weight: 700;
+    }
+
+    .v2l-exposure-dir.is-on::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        width: 125%;
+        height: 1.5px;
+        background: #f3d19c;
+        transform: translateX(-50%);
+    }
+
+    .v2l-exposure-dot {
+        color: rgba(190, 205, 220, 0.55);
+        font-size: 0.5rem;
+        line-height: 1;
+        transform: translateY(-0.08em);
+    }
+
     .v2l-amenities {
         position: absolute;
         z-index: 2;
         top: 0.7rem;
         left: 0.7rem;
-        right: 0.7rem;
+        right: auto;
+        max-width: calc(100% - 5.75rem);
         display: flex;
         flex-wrap: wrap;
         gap: 0.28rem;
@@ -873,6 +928,18 @@
                          {% if loop.index <= 3 %}fetchpriority="high"{% endif %}
                          data-fallback="{{ default_images[loop.index0 % (default_images|length)] }}"
                          onerror="if (this.dataset.fallback && this.src !== this.dataset.fallback) { this.onerror=null; this.src=this.dataset.fallback; }">
+                    {% set exposure_dirs = listing.exposure|exposure_dirs %}
+                    {% if exposure_dirs %}
+                    <div class="v2l-exposure" aria-label="Exposure {{ listing.exposure }}">
+                        <span class="v2l-exposure-dir{% if 'N' in exposure_dirs %} is-on{% endif %}">N</span>
+                        <span class="v2l-exposure-dot" aria-hidden="true">·</span>
+                        <span class="v2l-exposure-dir{% if 'E' in exposure_dirs %} is-on{% endif %}">E</span>
+                        <span class="v2l-exposure-dot" aria-hidden="true">·</span>
+                        <span class="v2l-exposure-dir{% if 'S' in exposure_dirs %} is-on{% endif %}">S</span>
+                        <span class="v2l-exposure-dot" aria-hidden="true">·</span>
+                        <span class="v2l-exposure-dir{% if 'W' in exposure_dirs %} is-on{% endif %}">W</span>
+                    </div>
+                    {% endif %}
                     {% if has_laundry or has_dishwasher or has_outdoor %}
                     <div class="v2l-amenities">
                         {% if has_laundry %}
