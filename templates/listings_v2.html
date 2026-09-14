@@ -252,27 +252,26 @@
         background: rgba(24, 43, 67, 0.62);
     }
 
-    /* Exposure compass — N · E · S · W overlay, active dirs gold + underline */
+    /* Exposure compass — text-only N · E · S · W, active dirs gold + underline */
     .v2l-exposure {
         position: absolute;
         z-index: 3;
-        top: 0.62rem;
-        right: 0.62rem;
+        top: 0.55rem;
+        right: 0.6rem;
         display: inline-flex;
         align-items: center;
-        gap: 0.32rem;
-        padding: 0.32rem 0.5rem 0.28rem;
-        border: 1px solid rgba(243, 209, 156, 0.2);
-        background: rgba(8, 18, 34, 0.58);
-        backdrop-filter: blur(5px);
-        -webkit-backdrop-filter: blur(5px);
-        color: rgba(255, 255, 255, 0.92);
-        font-size: 0.66rem;
+        gap: 0.3rem;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: rgba(255, 255, 255, 0.94);
+        font-size: 0.68rem;
         font-weight: 500;
         letter-spacing: 0.08em;
         line-height: 1;
         pointer-events: none;
         user-select: none;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55), 0 0 10px rgba(0, 0, 0, 0.35);
     }
 
     .v2l-exposure-dir {
@@ -297,10 +296,11 @@
         height: 1.5px;
         background: #f3d19c;
         transform: translateX(-50%);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
     }
 
     .v2l-exposure-dot {
-        color: rgba(190, 205, 220, 0.55);
+        color: rgba(230, 236, 242, 0.72);
         font-size: 0.5rem;
         line-height: 1;
         transform: translateY(-0.08em);
@@ -431,10 +431,11 @@
     }
 
     .v2l-preview-modal {
-        width: min(980px, 100%);
-        max-height: min(88vh, 720px);
+        width: min(1180px, 100%);
+        max-height: min(88vh, 760px);
         display: grid;
-        grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+        /* Wider photo column so landscape shots crop less */
+        grid-template-columns: minmax(0, 1.38fr) minmax(280px, 0.9fr);
         overflow: hidden;
         background: #1f3046;
         border: 1px solid rgba(168, 140, 96, 0.28);
@@ -449,8 +450,8 @@
 
     .v2l-preview-media {
         position: relative;
-        min-height: 320px;
-        background: #132338 center/cover no-repeat;
+        min-height: 360px;
+        background: #132338 center / cover no-repeat;
     }
 
     .v2l-preview-nav {

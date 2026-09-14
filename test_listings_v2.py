@@ -123,6 +123,9 @@ def test_listings_v2_uses_new_grid_and_default_stays_old(monkeypatch):
     assert 'aria-label="Exposure East"' in html
     assert 'aria-label="Exposure SW"' in html
     assert 'max-width: calc(100% - 5.75rem)' in html
+    assert 'background: transparent' in html
+    assert 'width: min(1180px, 100%)' in html
+    assert 'minmax(0, 1.38fr)' in html
 
     default = client.get('/listings')
     assert default.status_code == 200
