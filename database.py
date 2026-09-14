@@ -16,8 +16,29 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
+_URL_IN_TEXT_RE = re.compile(r"https?://[^\s\]\"'<>]+", re.IGNORECASE)
+
+
+def _extract_urls_from_text(text):
+    """Pull every http(s) URL out of a freeform / bracketed image cell."""
+    out = []
+    seen = set()
+    for match in _URL_IN_TEXT_RE.findall(text or ""):
+        url = match.rstrip(".,;)]}")
+        if url.startswith("http") and url not in seen:
+            seen.add(url)
+            out.append(url)
+    return out
+
+
 def coerce_image_list(value, default=None):
-    """Normalize image fields that may be a URL, JSON list string, or list."""
+    """Normalize image fields that may be a URL, JSON list string, or list.
+
+    Supports shapes like:
+      - https://...
+      - ["https://a", "https://b"]
+      - [https://a, https://b, https://c]
+    """
     if default is None:
         default = []
     if value is None or value in ['', '[]', 'null', 'nan', '0']:
@@ -31,24 +52,23 @@ def coerce_image_list(value, default=None):
         text = value.strip()
         if not text:
             return list(default)
-        if text.startswith('http'):
+        if text.startswith('http') and '[' not in text:
             return [text]
-        if text[0] in '[{':
+        if text[0] in '[{' or 'http://' in text or 'https://' in text:
+            # Prefer regex extraction for bare / single-quoted URL lists to avoid noisy JSON errors.
+            if text[0] in '[{' and '"' not in text:
+                found = _extract_urls_from_text(text)
+                if found:
+                    return found
             # Use a sentinel so failed JSON does not collapse to [].
             _miss = object()
             parsed = safe_json_loads(text, _miss)
             if parsed is not _miss:
                 return coerce_image_list(parsed, [])
-            # Bracketed bare URL(s): [https://...]
-            if text.startswith('[') and text.endswith(']'):
-                inner = text[1:-1].strip()
-                chunks = [
-                    part.strip().strip("'").strip('"')
-                    for part in inner.split(',')
-                    if part.strip()
-                ]
-                return coerce_image_list(chunks, [])
-            return list(default)
+            found = _extract_urls_from_text(text)
+            return found if found else list(default)
+        return list(default)
+    return list(default)
 
 def safe_json_loads(json_string, default=None):
     """

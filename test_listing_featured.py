@@ -173,6 +173,25 @@ def test_parse_image_list_handles_json_list_strings():
     from listing_featured import _parse_image_list
     assert _parse_image_list('["https://example.com/a.jpg"]') == ['https://example.com/a.jpg']
     assert _parse_image_list('[https://example.com/a.jpg]') == ['https://example.com/a.jpg']
+    assert _parse_image_list(
+        '[https://example.com/a.jpg, https://example.com/b.jpg, https://example.com/c.jpg]'
+    ) == [
+        'https://example.com/a.jpg',
+        'https://example.com/b.jpg',
+        'https://example.com/c.jpg',
+    ]
+    assert _parse_image_list(
+        '["https://example.com/a.jpg", "https://example.com/b.jpg"]'
+    ) == [
+        'https://example.com/a.jpg',
+        'https://example.com/b.jpg',
+    ]
+    assert _parse_image_list(
+        "['https://example.com/a.jpg', 'https://example.com/b.jpg']"
+    ) == [
+        'https://example.com/a.jpg',
+        'https://example.com/b.jpg',
+    ]
     assert _parse_image_list(['https://example.com/a.jpg', 'https://example.com/b.jpg']) == [
         'https://example.com/a.jpg',
         'https://example.com/b.jpg',

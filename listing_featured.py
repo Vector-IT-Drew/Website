@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 from typing import Any, Dict, List, Optional, Set, Tuple
 from urllib.parse import quote
 
@@ -79,8 +80,30 @@ def _clean_image_url(raw: Any) -> str:
     return url
 
 
+_URL_IN_TEXT_RE = re.compile(r"https?://[^\s\]\"'<>]+", re.IGNORECASE)
+
+
+def _extract_urls_from_text(text: str) -> List[str]:
+    """Pull every http(s) URL out of a freeform / bracketed image cell."""
+    out: List[str] = []
+    seen: Set[str] = set()
+    for match in _URL_IN_TEXT_RE.findall(text or ""):
+        url = _clean_image_url(match.rstrip(".,;)]}"))
+        if url and url not in seen:
+            seen.add(url)
+            out.append(url)
+    return out
+
+
 def _parse_image_list(raw: Any) -> List[str]:
-    """Parse image fields that may be a URL, JSON list string, or list (like unit_images)."""
+    """Parse image fields that may be a URL, JSON list string, or list (like unit_images).
+
+    Supports shapes like:
+      - https://...
+      - ["https://a", "https://b"]
+      - [https://a, https://b, https://c]
+      - ['https://a', 'https://b']
+    """
     if raw is None:
         return []
     if isinstance(raw, (bytes, bytearray)):
@@ -106,18 +129,17 @@ def _parse_image_list(raw: Any) -> List[str]:
             return []
         if text[0] in "[{":
             try:
-                return _parse_image_list(json.loads(text))
+                parsed = json.loads(text)
             except Exception:
-                # Bracketed bare URL(s): [https://..., https://...]
-                if text.startswith("[") and text.endswith("]"):
-                    inner = text[1:-1].strip()
-                    chunks = [
-                        part.strip().strip("'").strip('"')
-                        for part in inner.split(",")
-                        if part.strip()
-                    ]
-                    return _parse_image_list(chunks)
-                return []
+                parsed = None
+            if parsed is not None:
+                return _parse_image_list(parsed)
+            # Bare / single-quoted list blobs: [url1, url2, ...]
+            return _extract_urls_from_text(text)
+        if "http://" in text or "https://" in text:
+            found = _extract_urls_from_text(text)
+            if found:
+                return found
         url = _clean_image_url(text)
         return [url] if url else []
     return []

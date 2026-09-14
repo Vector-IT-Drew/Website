@@ -609,6 +609,71 @@
     .v2h-building-badge { left: 0.7rem; top: 0.7rem; }
     .v2h-building-count { right: 0.7rem; bottom: 0.7rem; }
 
+    .v2h-building-shot {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 2;
+        width: 30px;
+        height: 30px;
+        border-radius: 999px;
+        border: 1px solid rgba(243, 209, 156, 0.4);
+        background: rgba(10, 22, 40, 0.78);
+        color: #f3d19c;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        padding: 0;
+        font-size: 0.7rem;
+        transition: background 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+    }
+
+    .v2h-building-media.has-gallery:hover .v2h-building-shot,
+    .v2h-building-media.has-gallery:focus-within .v2h-building-shot {
+        display: inline-flex;
+    }
+
+    .v2h-building-shot:hover {
+        background: rgba(213, 149, 99, 0.4);
+        border-color: rgba(243, 209, 156, 0.7);
+        color: #fff;
+    }
+
+    .v2h-building-shot.prev { left: 0.55rem; }
+    .v2h-building-shot.next { right: 0.55rem; }
+
+    .v2h-building-shot-count {
+        position: absolute;
+        left: 0.7rem;
+        bottom: 0.7rem;
+        z-index: 2;
+        padding: 0.18rem 0.42rem;
+        font-size: 0.58rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        border: 1px solid rgba(243, 209, 156, 0.28);
+        background: rgba(24, 43, 67, 0.78);
+        color: #f3d19c;
+        display: none;
+    }
+
+    .v2h-building-media.has-gallery .v2h-building-shot-count {
+        display: inline-block;
+    }
+
+    .v2h-building-media.has-gallery .v2h-building-count {
+        right: 0.7rem;
+        bottom: 2.15rem;
+    }
+
+    @media (hover: none) {
+        .v2h-building-media.has-gallery .v2h-building-shot {
+            display: inline-flex;
+            opacity: 0.92;
+        }
+    }
+
     .v2h-building-body {
         padding: 0.95rem 1rem 1.05rem;
         display: flex;
@@ -930,7 +995,7 @@
             <div>
                 <p class="v2-kicker">Featured Residences</p>
                 <h2 class="v2-display">Homes worth a closer look</h2>
-                <p>Only residences from portfolios currently marked featured in our inventory database.</p>
+                <p>A curated selection of homes from our featured buildings across the city.</p>
             </div>
             <a class="v2h-section-link" href="{{ url_for('listings', v=2) }}">View all listings</a>
         </div>
@@ -951,7 +1016,7 @@
                             <div class="v2h-featured-body">
                                 <div class="v2h-featured-price">Loading…</div>
                                 <h3 class="v2h-featured-name">Featured residences</h3>
-                                <p class="v2h-featured-meta">Updating from live inventory</p>
+                                <p class="v2h-featured-meta">Loading featured homes…</p>
                             </div>
                         </div>
                         {% endif %}
@@ -1025,8 +1090,8 @@
         <div class="v2h-section-head">
             <div>
                 <p class="v2-kicker">Featured Buildings</p>
-                <h2 class="v2-display">Addresses from our featured portfolios</h2>
-                <p>Click a building for availability, layouts, pricing, and amenities.</p>
+                <h2 class="v2-display">Featured addresses worth exploring</h2>
+                <p>Browse the buildings we're highlighting right now—then open one for availability, layouts, pricing, and amenities.</p>
             </div>
             <a class="v2h-section-link" href="{{ url_for('listings', v=2) }}">Browse residences</a>
         </div>
@@ -1056,15 +1121,29 @@
             {% if building.price_from %}
                 {% set _ = summary_bits.append('From $' ~ "{:,.0f}".format(building.price_from)) %}
             {% endif %}
-            <button type="button"
+            {% set building_images = building.images if building.images else [] %}
+            <article
                     class="v2h-building-card"
+                    role="button"
+                    tabindex="0"
                     data-building-preview='{{ building|tojson }}'
                     aria-label="Preview {{ display_name }}">
-                <div class="v2h-building-media">
+                <div class="v2h-building-media{% if building_images|length > 1 %} has-gallery{% endif %}"
+                     data-images='{{ building_images|tojson }}'
+                     data-image-index="0">
                     <img src="{{ cover }}"
                          alt="{{ display_name }}"
                          loading="{% if loop.index <= 2 %}eager{% else %}lazy{% endif %}"
                          decoding="async">
+                    {% if building_images|length > 1 %}
+                    <button type="button" class="v2h-building-shot prev" aria-label="Previous building photo">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button type="button" class="v2h-building-shot next" aria-label="Next building photo">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <div class="v2h-building-shot-count">1 / {{ building_images|length }}</div>
+                    {% endif %}
                     <div class="v2h-building-badge">Featured</div>
                     {% if building.available_units %}
                     <div class="v2h-building-count">{{ building.available_units }} available</div>
@@ -1083,13 +1162,13 @@
                     <p class="v2h-building-summary">{{ summary_bits|join(' · ') }}</p>
                     <div class="v2h-building-cta">Quick view</div>
                 </div>
-            </button>
+            </article>
             {% endfor %}
                     </div>
                 </div>
             </div>
             {% if featured_async %}
-            <p class="v2h-buildings-loading" id="featuredBuildingsLoading" hidden>Updating availability…</p>
+            <p class="v2h-buildings-loading" id="featuredBuildingsLoading" hidden>Refreshing availability…</p>
             {% endif %}
         </div>
     </div>
@@ -1400,14 +1479,28 @@
             if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus();
         }
 
-        document.addEventListener('click', (event) => {
-            const card = event.target.closest('.v2h-building-card');
+        function openCardPreview(card) {
             if (!card) return;
             try {
                 openPreview(JSON.parse(card.getAttribute('data-building-preview') || '{}'), card);
             } catch (err) {
                 console.error(err);
             }
+        }
+
+        document.addEventListener('click', (event) => {
+            if (event.target.closest('.v2h-building-shot')) return;
+            const card = event.target.closest('.v2h-building-card');
+            if (!card) return;
+            openCardPreview(card);
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key !== 'Enter' && event.key !== ' ') return;
+            const card = event.target.closest('.v2h-building-card');
+            if (!card || event.target.closest('.v2h-building-shot')) return;
+            event.preventDefault();
+            openCardPreview(card);
         });
 
         if (prevBtn) prevBtn.addEventListener('click', (event) => {
@@ -1507,6 +1600,40 @@
         if (featuredCarousel) featuredCarousel.updateNav();
     }
 
+
+    function parseMediaImages(media) {
+        if (!media) return [];
+        try {
+            const raw = media.getAttribute('data-images') || '[]';
+            const parsed = JSON.parse(raw);
+            return Array.isArray(parsed) ? parsed.filter(Boolean) : [];
+        } catch (err) {
+            return [];
+        }
+    }
+
+    function setBuildingShot(media, nextIndex) {
+        const images = parseMediaImages(media);
+        if (!images.length) return;
+        const img = media.querySelector('img');
+        const counter = media.querySelector('.v2h-building-shot-count');
+        const index = ((nextIndex % images.length) + images.length) % images.length;
+        media.dataset.imageIndex = String(index);
+        if (img) img.src = images[index];
+        if (counter) counter.textContent = (index + 1) + ' / ' + images.length;
+    }
+
+    document.addEventListener('click', (event) => {
+        const shot = event.target.closest('.v2h-building-shot');
+        if (!shot) return;
+        event.preventDefault();
+        event.stopPropagation();
+        const media = shot.closest('.v2h-building-media');
+        if (!media) return;
+        const current = Number(media.dataset.imageIndex || 0) || 0;
+        setBuildingShot(media, current + (shot.classList.contains('next') ? 1 : -1));
+    }, true);
+
     function renderFeaturedBuildings(buildings) {
         const track = document.getElementById('featuredBuildingsTrack');
         if (!track) return;
@@ -1517,7 +1644,8 @@
         }
         track.innerHTML = buildings.map((building, index) => {
             const displayName = building.building_name || building.address || 'Building';
-            const cover = (Array.isArray(building.images) && building.images[0]) ? building.images[0] : '';
+            const images = Array.isArray(building.images) ? building.images.filter(Boolean) : [];
+            const cover = images[0] || '';
             const available = Number(building.available_units || 0);
             const summary = [];
             summary.push(available > 0 ? (available + ' available') : 'Coming soon');
@@ -1526,10 +1654,20 @@
             const loc = building.neighborhood || building.address || '';
             const countLabel = available > 0 ? (available + ' available') : 'Coming soon';
             const payload = escapeHtml(JSON.stringify(building));
+            const imagesAttr = escapeHtml(JSON.stringify(images));
+            const galleryClass = images.length > 1 ? ' has-gallery' : '';
+            const galleryControls = images.length > 1
+                ? (
+                    '<button type="button" class="v2h-building-shot prev" aria-label="Previous building photo"><i class="fas fa-chevron-left"></i></button>' +
+                    '<button type="button" class="v2h-building-shot next" aria-label="Next building photo"><i class="fas fa-chevron-right"></i></button>' +
+                    '<div class="v2h-building-shot-count">1 / ' + images.length + '</div>'
+                  )
+                : '';
             return (
-                '<button type="button" class="v2h-building-card" data-building-preview=\'' + payload.replace(/'/g, '&#39;') + '\' aria-label="Preview ' + escapeHtml(displayName) + '">' +
-                  '<div class="v2h-building-media">' +
+                '<article class="v2h-building-card" role="button" tabindex="0" data-building-preview=\'' + payload.replace(/'/g, '&#39;') + '\' aria-label="Preview ' + escapeHtml(displayName) + '">' +
+                  '<div class="v2h-building-media' + galleryClass + '" data-images=\'' + imagesAttr.replace(/'/g, '&#39;') + '\' data-image-index="0">' +
                     '<img src="' + escapeHtml(cover) + '" alt="' + escapeHtml(displayName) + '" loading="' + (index < 2 ? 'eager' : 'lazy') + '" decoding="async">' +
+                    galleryControls +
                     '<div class="v2h-building-badge">Featured</div>' +
                     '<div class="v2h-building-count">' + escapeHtml(countLabel) + '</div>' +
                   '</div>' +
@@ -1540,7 +1678,7 @@
                     '<p class="v2h-building-summary">' + escapeHtml(summary.join(' · ')) + '</p>' +
                     '<div class="v2h-building-cta">Quick view</div>' +
                   '</div>' +
-                '</button>'
+                '</article>'
             );
         }).join('');
         if (buildingsCarousel) buildingsCarousel.updateNav();

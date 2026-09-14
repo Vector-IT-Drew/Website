@@ -8,7 +8,11 @@ def _featured_building(**overrides):
         'building_name': '',
         'portfolio': 'The Aspen',
         'neighborhood': 'Upper East Side',
-        'images': ['https://example.com/building.jpg'],
+        'images': [
+            'https://example.com/building.jpg',
+            'https://example.com/building-2.jpg',
+            'https://example.com/building-3.jpg',
+        ],
         'amenities': ['Gym', 'Pool', 'Sky Lounge'],
         'available_units': 12,
         'price_from': 4200,
@@ -61,11 +65,15 @@ def test_index_v2_uses_new_homepage_and_default_stays_old(monkeypatch):
     assert 'Investor Services' in html
     assert 'v2h-featured' in html
     assert 'Featured Residences' in html
+    assert 'A curated selection of homes from our featured buildings across the city.' in html
+    assert 'inventory database' not in html
     assert 'Featured Buildings' in html
     assert '1955 1st Avenue' in html
     assert 'v2h-building-card' in html
     assert 'v2h-building-summary' in html
     assert 'v2h-buildings-nav' in html
+    assert 'v2h-building-shot' in html
+    assert 'has-gallery' in html
     assert 'featuredBuildingsTrack' in html
     assert 'buildingPreviewOverlay' in html
     assert 'Building amenities' in html
