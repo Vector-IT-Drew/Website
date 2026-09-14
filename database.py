@@ -15,6 +15,41 @@ UNIQUE_VALUES_API_ENDPOINT = DASH_API_HOST + "/unique-values"
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
+
+def coerce_image_list(value, default=None):
+    """Normalize image fields that may be a URL, JSON list string, or list."""
+    if default is None:
+        default = []
+    if value is None or value in ['', '[]', 'null', 'nan', '0']:
+        return list(default)
+    if isinstance(value, list):
+        out = []
+        for item in value:
+            out.extend(coerce_image_list(item, []))
+        return out
+    if isinstance(value, str):
+        text = value.strip()
+        if not text:
+            return list(default)
+        if text.startswith('http'):
+            return [text]
+        if text[0] in '[{':
+            # Use a sentinel so failed JSON does not collapse to [].
+            _miss = object()
+            parsed = safe_json_loads(text, _miss)
+            if parsed is not _miss:
+                return coerce_image_list(parsed, [])
+            # Bracketed bare URL(s): [https://...]
+            if text.startswith('[') and text.endswith(']'):
+                inner = text[1:-1].strip()
+                chunks = [
+                    part.strip().strip("'").strip('"')
+                    for part in inner.split(',')
+                    if part.strip()
+                ]
+                return coerce_image_list(chunks, [])
+            return list(default)
+
 def safe_json_loads(json_string, default=None):
     """
     Safely parse a JSON string with various error handling
@@ -128,7 +163,6 @@ def safe_json_loads(json_string, default=None):
 
                 # For other cases, try manual extraction
                 # Example: '["Gym", "Pool", "Children\'s Playroom", "Resident\'s Lounge"]'
-                import re
                 # Use regex to extract quoted strings
                 items = re.findall(r'"([^"]*)"', json_string)
                 if items:
@@ -506,8 +540,10 @@ def _map_dash_listing_item(item):
         "pets_policy": item.get('pet_friendly', 0),
         "unit_images": safe_json_loads(item.get('unit_images'), []),
         "building_amenities": safe_json_loads(item.get('building_amenities'), []),
-        "building_image": item.get('building_image', ''),
-        "building_images": safe_json_loads(item.get('building_images'), []),
+        "building_images": (coerce_image_list(item.get('building_images'), [])
+                            or coerce_image_list(item.get('building_image'), [])),
+        "building_image": (coerce_image_list(item.get('building_images'), [])
+                           or coerce_image_list(item.get('building_image'), []) or [''])[0],
         "expiry": item.get('expiry', '-'),
         "move_out": item.get('move_out', '-'),
         "portfolio": item.get('portfolio'),

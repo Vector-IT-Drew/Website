@@ -1,38 +1,46 @@
 from app import app
 
 
+def _featured_building(**overrides):
+    building = {
+        'address_id': 506,
+        'address': '1955 1st Avenue',
+        'building_name': '',
+        'portfolio': 'The Aspen',
+        'neighborhood': 'Upper East Side',
+        'images': ['https://example.com/building.jpg'],
+        'amenities': ['Gym', 'Pool', 'Sky Lounge'],
+        'available_units': 12,
+        'price_from': 4200,
+        'bedrooms_label': 'Studio - 2 Bed',
+        'schedule_tour_url': 'https://example.com/tour',
+        'listings_url': '/listings?v=2&address=1955%201st%20Avenue&portfolio=The%20Aspen',
+    }
+    building.update(overrides)
+    return building
+
+
+def _featured_listing(**overrides):
+    listing = {
+        'unit_id': '5551',
+        'address': '1113 York Avenue',
+        'unit': '036B',
+        'building_name': 'York House',
+        'neighborhood': 'Upper East Side',
+        'actual_rent': 9500,
+        'beds': 2,
+        'baths': 2,
+        'featured_image': 'https://example.com/photo.jpg',
+        'is_featured_portfolio': True,
+    }
+    listing.update(overrides)
+    return listing
+
+
 def test_index_v2_uses_new_homepage_and_default_stays_old(monkeypatch):
-    monkeypatch.setattr('app.get_all_listings', lambda **kwargs: [])
     monkeypatch.setattr(
-        'app.get_homepage_featured_content',
-        lambda listings=None, listing_limit=8, dash_host=None: (
-            [{
-                'unit_id': '5551',
-                'address': '1113 York Avenue',
-                'unit': '036B',
-                'building_name': 'York House',
-                'neighborhood': 'Upper East Side',
-                'actual_rent': 9500,
-                'beds': 2,
-                'baths': 2,
-                'featured_image': 'https://example.com/photo.jpg',
-                'is_featured_portfolio': True,
-            }],
-            [{
-                'address_id': 506,
-                'address': '1955 1st Avenue',
-                'building_name': '',
-                'portfolio': 'The Aspen',
-                'neighborhood': 'Upper East Side',
-                'images': ['https://example.com/building.jpg'],
-                'amenities': ['Gym', 'Pool', 'Sky Lounge'],
-                'available_units': 12,
-                'price_from': 4200,
-                'bedrooms_label': 'Studio - 2 Bed',
-                'schedule_tour_url': 'https://example.com/tour',
-                'listings_url': '/listings?v=2&address=1955%201st%20Avenue&portfolio=The%20Aspen',
-            }],
-        ),
+        'app.fetch_featured_portfolio_buildings',
+        lambda **kwargs: [_featured_building()],
     )
     client = app.test_client()
 
@@ -53,18 +61,23 @@ def test_index_v2_uses_new_homepage_and_default_stays_old(monkeypatch):
     assert 'Investor Services' in html
     assert 'v2h-featured' in html
     assert 'Featured Residences' in html
-    assert '/listings/5551?v=2' in html
-    assert 'York House' in html
     assert 'Featured Buildings' in html
     assert '1955 1st Avenue' in html
     assert 'v2h-building-card' in html
     assert 'v2h-building-summary' in html
+    assert 'v2h-buildings-nav' in html
+    assert 'featuredBuildingsTrack' in html
     assert 'buildingPreviewOverlay' in html
     assert 'Building amenities' in html
     assert 'Sky Lounge' in html
     assert '12 available' in html
     assert 'Studio - 2 Bed' in html
     assert 'From $4,200' in html
+    assert 'translateY(-20vh)' in html
+    assert 'data-async="1"' in html
+    assert 'api/homepage-featured' in html
+    assert 'src="https://example.com/building.jpg"' in html
+    assert 'src="[' not in html
     assert 'v2h-building-chip' not in html
     assert 'v2h-building-amenities-label' not in html
     assert 'grid-template-columns: 1.05fr' not in html
@@ -76,3 +89,19 @@ def test_index_v2_uses_new_homepage_and_default_stays_old(monkeypatch):
     assert 'v2h-hero' not in default_html
     assert 'hero-section' in default_html
     assert 'Experience the Vector Difference' in default_html
+
+
+def test_homepage_featured_api_returns_listings_and_buildings(monkeypatch):
+    monkeypatch.setattr(
+        'app.get_homepage_featured_content',
+        lambda listings=None, listing_limit=8, dash_host=None: (
+            [_featured_listing()],
+            [_featured_building()],
+        ),
+    )
+    client = app.test_client()
+    response = client.get('/api/homepage-featured')
+    assert response.status_code == 200
+    payload = response.get_json()
+    assert payload['featured_listings'][0]['unit_id'] == '5551'
+    assert payload['featured_buildings'][0]['address'] == '1955 1st Avenue'

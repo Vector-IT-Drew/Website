@@ -71,7 +71,56 @@ def _clean_image_url(raw: Any) -> str:
     url = _clean_text(raw)
     if not url or url.lower() in {"0", "0.0"}:
         return ""
+    # Reject JSON / list blobs accidentally used as a single src.
+    if url[0] in "[{":
+        return ""
+    if not (url.startswith("http://") or url.startswith("https://") or url.startswith("/")):
+        return ""
     return url
+
+
+def _parse_image_list(raw: Any) -> List[str]:
+    """Parse image fields that may be a URL, JSON list string, or list (like unit_images)."""
+    if raw is None:
+        return []
+    if isinstance(raw, (bytes, bytearray)):
+        raw = raw.decode("utf-8", errors="ignore")
+    if isinstance(raw, (list, tuple)):
+        out: List[str] = []
+        seen: Set[str] = set()
+        for part in raw:
+            for url in _parse_image_list(part):
+                if url not in seen:
+                    seen.add(url)
+                    out.append(url)
+        return out
+    if isinstance(raw, dict):
+        for key in ("url", "src", "href", "image", "link"):
+            url = _clean_image_url(raw.get(key))
+            if url:
+                return [url]
+        return []
+    if isinstance(raw, str):
+        text = raw.strip()
+        if not text:
+            return []
+        if text[0] in "[{":
+            try:
+                return _parse_image_list(json.loads(text))
+            except Exception:
+                # Bracketed bare URL(s): [https://..., https://...]
+                if text.startswith("[") and text.endswith("]"):
+                    inner = text[1:-1].strip()
+                    chunks = [
+                        part.strip().strip("'").strip('"')
+                        for part in inner.split(",")
+                        if part.strip()
+                    ]
+                    return _parse_image_list(chunks)
+                return []
+        url = _clean_image_url(text)
+        return [url] if url else []
+    return []
 
 
 def _parse_amenities(raw: Any) -> List[str]:
@@ -219,10 +268,7 @@ def fetch_featured_portfolio_buildings(
                 continue
             seen.add(dedupe_key)
 
-            images: List[str] = []
-            image = _clean_image_url(row.get("building_image"))
-            if image:
-                images.append(image)
+            images = _parse_image_list(row.get("building_image"))
             if not images:
                 images = [_coming_soon_image_for(address)]
 
@@ -268,21 +314,20 @@ def _listing_images(listing: Dict[str, Any]) -> List[str]:
     images: List[str] = []
     seen: Set[str] = set()
 
-    website = _clean_image_url(listing.get("website_image"))
-    if website and website not in seen:
-        seen.add(website)
-        images.append(website)
+    for url in _parse_image_list(listing.get("website_image")):
+        if url not in seen:
+            seen.add(url)
+            images.append(url)
 
-    for raw in listing.get("unit_images") or []:
-        url = _clean_image_url(raw)
-        if not url or url in seen:
-            continue
-        seen.add(url)
-        images.append(url)
+    for url in _parse_image_list(listing.get("unit_images")):
+        if url not in seen:
+            seen.add(url)
+            images.append(url)
 
-    building = _clean_image_url(listing.get("building_image"))
-    if building and building not in seen:
-        images.append(building)
+    for url in _parse_image_list(listing.get("building_image")):
+        if url not in seen:
+            seen.add(url)
+            images.append(url)
     return images
 
 

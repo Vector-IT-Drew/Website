@@ -87,8 +87,8 @@
         /* Room above for nav clearance + room below for Explore */
         padding: 1.25rem 0 6.5rem;
         text-align: center;
-        /* Gentle raise only — -25vh was clipping under the navbar */
-        transform: translateY(-5vh);
+        /* Raise logo / slogan ~15% more while keeping nav clearance */
+        transform: translateY(-20vh);
     }
 
     .v2h-brand {
@@ -476,11 +476,79 @@
 
     .v2h-modal .list-group-item i { color: var(--v2-gold); }
 
-    /* Featured buildings — image on top; amenities only in quick view */
+    /* Featured buildings — sleek horizontal carousel */
+    .v2h-buildings {
+        position: relative;
+    }
+
+    .v2h-buildings-shell {
+        position: relative;
+    }
+
+    .v2h-buildings-viewport {
+        overflow: hidden;
+        padding: 0 2.6rem;
+    }
+
     .v2h-buildings-track {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 1.05rem;
+        display: flex;
+        gap: 0.95rem;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scroll-behavior: smooth;
+        padding: 0.15rem 0.15rem 0.65rem;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+
+    .v2h-buildings-track::-webkit-scrollbar { display: none; }
+
+    .v2h-buildings-track .v2h-building-card {
+        flex: 0 0 calc((100% - 1.9rem) / 3);
+        min-width: 240px;
+        scroll-snap-align: start;
+    }
+
+    .v2h-buildings-nav {
+        position: absolute;
+        top: 38%;
+        transform: translateY(-50%);
+        z-index: 3;
+        width: 40px;
+        height: 40px;
+        border-radius: 999px;
+        border: 1px solid rgba(243, 209, 156, 0.35);
+        background: rgba(10, 22, 40, 0.92);
+        color: #f3d19c;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35);
+        transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .v2h-buildings-nav:hover {
+        background: rgba(213, 149, 99, 0.35);
+        border-color: rgba(243, 209, 156, 0.65);
+        color: #fff;
+        transform: translateY(-50%) scale(1.04);
+    }
+
+    .v2h-buildings-nav.prev { left: 0.15rem; }
+    .v2h-buildings-nav.next { right: 0.15rem; }
+
+    .v2h-buildings-nav:disabled {
+        opacity: 0.35;
+        cursor: default;
+        transform: translateY(-50%);
+        box-shadow: none;
+    }
+
+    .v2h-buildings-loading {
+        color: var(--v2-muted);
+        font-size: 0.9rem;
+        padding: 1.25rem 0.25rem 0.5rem;
     }
 
     .v2h-building-card {
@@ -781,8 +849,8 @@
         .v2h-featured-card {
             flex-basis: calc((100% - 0.9rem) / 2);
         }
-        .v2h-buildings-track {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
+        .v2h-buildings-track .v2h-building-card {
+            flex-basis: calc((100% - 0.95rem) / 2);
         }
         .v2b-preview-modal {
             grid-template-columns: 1fr;
@@ -813,8 +881,11 @@
         }
         .v2h-featured-nav.prev { left: 0.05rem; }
         .v2h-featured-nav.next { right: 0.05rem; }
-        .v2h-buildings-track {
-            grid-template-columns: 1fr;
+        .v2h-buildings-viewport { padding: 0 2.2rem; }
+        .v2h-buildings-nav.prev { left: 0.05rem; }
+        .v2h-buildings-nav.next { right: 0.05rem; }
+        .v2h-buildings-track .v2h-building-card {
+            flex-basis: 85%;
         }
         .v2b-preview-stats {
             grid-template-columns: 1fr 1fr;
@@ -852,7 +923,7 @@
     </a>
 </section>
 
-{% if featured_listings %}
+{% if featured_listings or featured_async %}
 <section class="v2h-section" id="v2h-featured">
     <div class="container">
         <div class="v2h-section-head">
@@ -874,6 +945,16 @@
                 </button>
                 <div class="v2h-featured-viewport">
                     <div class="v2h-featured-track" id="featuredTrack">
+                        {% if featured_async and not featured_listings %}
+                        <div class="v2h-featured-card" id="featuredListingsPlaceholder" style="pointer-events:none;opacity:0.7;">
+                            <div class="v2h-featured-media" style="background:#132338;"></div>
+                            <div class="v2h-featured-body">
+                                <div class="v2h-featured-price">Loading…</div>
+                                <h3 class="v2h-featured-name">Featured residences</h3>
+                                <p class="v2h-featured-meta">Updating from live inventory</p>
+                            </div>
+                        </div>
+                        {% endif %}
                         {% for listing in featured_listings %}
                         {% set display_name = listing.building_name if listing.building_name and listing.building_name|string not in ['-', '0', '', 'null', 'None', 'nan'] else (listing.neighborhood if listing.neighborhood and listing.neighborhood != '-' else listing.address) %}
                         {% set unit_line = listing.address ~ (', #' ~ listing.unit if listing.unit and listing.unit != '-' else '') %}
@@ -938,7 +1019,7 @@
 {% endif %}
 
 
-{% if featured_buildings %}
+{% if featured_buildings or featured_async %}
 <section class="v2h-section" id="v2h-buildings">
     <div class="container">
         <div class="v2h-section-head">
@@ -950,7 +1031,16 @@
             <a class="v2h-section-link" href="{{ url_for('listings', v=2) }}">Browse residences</a>
         </div>
 
-        <div class="v2h-buildings-track" id="featuredBuildingsTrack">
+        <div class="v2h-buildings" id="featuredBuildingsSection" data-async="{% if featured_async %}1{% else %}0{% endif %}">
+            <div class="v2h-buildings-shell">
+                <button type="button" class="v2h-buildings-nav prev" id="buildingsPrev" aria-label="Previous featured buildings">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button type="button" class="v2h-buildings-nav next" id="buildingsNext" aria-label="Next featured buildings">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                <div class="v2h-buildings-viewport">
+                    <div class="v2h-buildings-track" id="featuredBuildingsTrack">
             {% for building in featured_buildings %}
             {% set display_name = building.building_name if building.building_name else building.address %}
             {% set cover = (building.images[0] if building.images else '') %}
@@ -995,6 +1085,12 @@
                 </div>
             </button>
             {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% if featured_async %}
+            <p class="v2h-buildings-loading" id="featuredBuildingsLoading" hidden>Updating availability…</p>
+            {% endif %}
         </div>
     </div>
 </section>
@@ -1165,53 +1261,57 @@
         });
     });
 
-    const track = document.getElementById('featuredTrack');
-    const prevBtn = document.getElementById('featuredPrev');
-    const nextBtn = document.getElementById('featuredNext');
-    if (!track || !prevBtn || !nextBtn) return;
+    function bindCarousel(trackId, prevId, nextId, cardSelector) {
+        const track = document.getElementById(trackId);
+        const prevBtn = document.getElementById(prevId);
+        const nextBtn = document.getElementById(nextId);
+        if (!track || !prevBtn || !nextBtn) return null;
 
-    function cardStep() {
-        const card = track.querySelector('.v2h-featured-card');
-        if (!card) return track.clientWidth;
-        const styles = window.getComputedStyle(track);
-        const gap = parseFloat(styles.columnGap || styles.gap || '0') || 0;
-        return card.getBoundingClientRect().width + gap;
+        function cardStep() {
+            const card = track.querySelector(cardSelector);
+            if (!card) return track.clientWidth;
+            const styles = window.getComputedStyle(track);
+            const gap = parseFloat(styles.columnGap || styles.gap || '0') || 0;
+            return card.getBoundingClientRect().width + gap;
+        }
+
+        function updateNav() {
+            const maxScroll = Math.max(0, track.scrollWidth - track.clientWidth - 2);
+            prevBtn.disabled = track.scrollLeft <= 2;
+            nextBtn.disabled = track.scrollLeft >= maxScroll;
+        }
+
+        prevBtn.addEventListener('click', () => {
+            track.scrollBy({ left: -cardStep(), behavior: 'smooth' });
+        });
+        nextBtn.addEventListener('click', () => {
+            track.scrollBy({ left: cardStep(), behavior: 'smooth' });
+        });
+        track.addEventListener('scroll', updateNav, { passive: true });
+        window.addEventListener('resize', updateNav);
+        updateNav();
+        return { track, updateNav };
     }
 
-    function updateNav() {
-        const maxScroll = Math.max(0, track.scrollWidth - track.clientWidth - 2);
-        prevBtn.disabled = track.scrollLeft <= 2;
-        nextBtn.disabled = track.scrollLeft >= maxScroll;
+    const featuredCarousel = bindCarousel('featuredTrack', 'featuredPrev', 'featuredNext', '.v2h-featured-card');
+    const buildingsCarousel = bindCarousel('featuredBuildingsTrack', 'buildingsPrev', 'buildingsNext', '.v2h-building-card');
+
+    if (featuredCarousel) {
+        featuredCarousel.track.querySelectorAll('.v2h-featured-media img').forEach((img) => {
+            const applyFallback = () => {
+                const fallbackSrc = img.dataset.fallback;
+                if (!fallbackSrc || img.dataset.failed === '1') return;
+                img.dataset.failed = '1';
+                img.src = fallbackSrc;
+            };
+            img.addEventListener('error', applyFallback);
+            if (img.complete && img.naturalWidth === 0) applyFallback();
+        });
     }
 
-    prevBtn.addEventListener('click', () => {
-        track.scrollBy({ left: -cardStep(), behavior: 'smooth' });
-    });
-    nextBtn.addEventListener('click', () => {
-        track.scrollBy({ left: cardStep(), behavior: 'smooth' });
-    });
-    track.addEventListener('scroll', updateNav, { passive: true });
-    window.addEventListener('resize', updateNav);
-    updateNav();
-
-    // Swap broken carousel photos to a coming-soon variant.
-    track.querySelectorAll('.v2h-featured-media img').forEach((img) => {
-        const applyFallback = () => {
-            const fallbackSrc = img.dataset.fallback;
-            if (!fallbackSrc || img.dataset.failed === '1') return;
-            img.dataset.failed = '1';
-            img.src = fallbackSrc;
-        };
-        img.addEventListener('error', applyFallback);
-        if (img.complete && img.naturalWidth === 0) applyFallback();
-    });
-})();
-
-    // Featured building quick-view
-    (function () {
-        const overlay = document.getElementById('buildingPreviewOverlay');
-        if (!overlay) return;
-
+    // Featured building quick-view (event delegation so async cards work)
+    const overlay = document.getElementById('buildingPreviewOverlay');
+    if (overlay) {
         const media = document.getElementById('buildingPreviewMedia');
         const prevBtn = document.getElementById('buildingPreviewPrev');
         const nextBtn = document.getElementById('buildingPreviewNext');
@@ -1261,12 +1361,8 @@
             setText(addressEl, data.address || '');
 
             const available = Number(data.available_units || 0);
-            if (unitsEl) {
-                unitsEl.textContent = Number.isFinite(available) ? String(available) : '0';
-            }
-            if (bedsEl) {
-                bedsEl.textContent = data.bedrooms_label || '—';
-            }
+            if (unitsEl) unitsEl.textContent = Number.isFinite(available) ? String(available) : '0';
+            if (bedsEl) bedsEl.textContent = data.bedrooms_label || '—';
             if (priceEl) {
                 priceEl.textContent = (data.price_from != null && data.price_from !== '')
                     ? ('$' + Number(data.price_from).toLocaleString('en-US', { maximumFractionDigits: 0 }))
@@ -1291,7 +1387,7 @@
             overlay.setAttribute('aria-hidden', 'false');
             requestAnimationFrame(() => overlay.classList.add('is-open'));
             document.body.classList.add('building-preview-open');
-            closeBtn.focus();
+            if (closeBtn) closeBtn.focus();
         }
 
         function closePreview() {
@@ -1304,25 +1400,25 @@
             if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus();
         }
 
-        document.querySelectorAll('.v2h-building-card').forEach((card) => {
-            card.addEventListener('click', () => {
-                try {
-                    openPreview(JSON.parse(card.getAttribute('data-building-preview') || '{}'), card);
-                } catch (err) {
-                    console.error(err);
-                }
-            });
+        document.addEventListener('click', (event) => {
+            const card = event.target.closest('.v2h-building-card');
+            if (!card) return;
+            try {
+                openPreview(JSON.parse(card.getAttribute('data-building-preview') || '{}'), card);
+            } catch (err) {
+                console.error(err);
+            }
         });
 
-        prevBtn.addEventListener('click', (event) => {
+        if (prevBtn) prevBtn.addEventListener('click', (event) => {
             event.stopPropagation();
             showImage(galleryIndex - 1);
         });
-        nextBtn.addEventListener('click', (event) => {
+        if (nextBtn) nextBtn.addEventListener('click', (event) => {
             event.stopPropagation();
             showImage(galleryIndex + 1);
         });
-        closeBtn.addEventListener('click', closePreview);
+        if (closeBtn) closeBtn.addEventListener('click', closePreview);
         overlay.addEventListener('click', (event) => {
             if (event.target === overlay) closePreview();
         });
@@ -1332,7 +1428,144 @@
             if (event.key === 'ArrowLeft') showImage(galleryIndex - 1);
             if (event.key === 'ArrowRight') showImage(galleryIndex + 1);
         });
-    })();
+    }
 
+    function escapeHtml(value) {
+        return String(value == null ? '' : value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    function formatMoney(value) {
+        const num = Number(value);
+        if (!Number.isFinite(num)) return '';
+        return '$' + num.toLocaleString('en-US', { maximumFractionDigits: 0 });
+    }
+
+    function bedsLabel(beds) {
+        if (beds === 0 || beds === '0') return 'Studio';
+        if (beds == null || beds === '' || beds === 'N/A') return '';
+        const n = String(beds);
+        return n + ' Bed' + (n === '1' || n === '1.0' ? '' : 's');
+    }
+
+    function bathsLabel(baths) {
+        if (baths == null || baths === '' || baths === 'N/A') return '';
+        const n = String(baths);
+        return n + ' Bath' + (n === '1' || n === '1.0' ? '' : 's');
+    }
+
+    function renderFeaturedListings(listings) {
+        const track = document.getElementById('featuredTrack');
+        if (!track) return;
+        const comingSoon = [
+            'https://dl.dropboxusercontent.com/scl/fi/fy2wl340lre6y2gm84m13/img-coming-soon-2.jpeg?rlkey=xkao9jz2p6mrznqhb8e3hf7w6&st=k3gwz5kj&dl=0',
+            'https://dl.dropboxusercontent.com/scl/fi/5kqjpn1lqdt6p73zo5xkj/img-coming-soon-3.jpeg?rlkey=ngk4iu9pvl6jusqps220pi2uv&st=ttncu3xt&dl=0',
+            'https://dl.dropboxusercontent.com/scl/fi/in5oflurzeui3k61z2vh6/img-coming-soon-4.jpeg?rlkey=rp9ucjxfih59yldqgsib9ukdl&st=x5td7577&dl=0',
+            'https://dl.dropboxusercontent.com/scl/fi/erhz52z0z7lskr8ru5v1h/img-coming-soon-5.jpeg?rlkey=bf8j1tpvtqb2q02tcjy0mdp3v&st=r7mtn0d7&dl=0'
+        ];
+        if (!listings.length) {
+            track.innerHTML = '<p class="v2h-buildings-loading">Featured residences will appear here when available.</p>';
+            if (featuredCarousel) featuredCarousel.updateNav();
+            return;
+        }
+        track.innerHTML = listings.map((listing, index) => {
+            const buildingName = listing.building_name;
+            const displayName = (buildingName && !['-', '0', '', 'null', 'None', 'nan'].includes(String(buildingName)))
+                ? buildingName
+                : ((listing.neighborhood && listing.neighborhood !== '-') ? listing.neighborhood : (listing.address || 'Residence'));
+            const unitLine = (listing.address || '') + (listing.unit && listing.unit !== '-' ? (', #' + listing.unit) : '');
+            const beds = bedsLabel(listing.beds);
+            const baths = bathsLabel(listing.baths);
+            const specs = [beds, baths].filter(Boolean).join(' · ');
+            const rent = listing.actual_rent;
+            const price = (rent == null || rent === '' || rent === 'N/A')
+                ? 'Price on request'
+                : (formatMoney(rent) + '<span>/ mo</span>');
+            const image = listing.featured_image || comingSoon[index % comingSoon.length];
+            const fallback = comingSoon[index % comingSoon.length];
+            const href = '/listings/' + encodeURIComponent(listing.unit_id || listing.id || '') + '?v=2';
+            const badge = listing.is_featured_portfolio ? '<div class="v2h-featured-badge">Featured</div>' : '';
+            return (
+                '<a class="v2h-featured-card" href="' + href + '">' +
+                  '<div class="v2h-featured-media">' +
+                    '<img src="' + escapeHtml(image) + '" alt="' + escapeHtml(unitLine) + '" loading="' + (index < 2 ? 'eager' : 'lazy') + '" decoding="async" data-fallback="' + escapeHtml(fallback) + '" onerror="if (this.dataset.fallback && this.src !== this.dataset.fallback) { this.onerror=null; this.src=this.dataset.fallback; }">' +
+                    badge +
+                  '</div>' +
+                  '<div class="v2h-featured-body">' +
+                    '<div class="v2h-featured-price">' + price + '</div>' +
+                    '<h3 class="v2h-featured-name">' + escapeHtml(displayName) + '</h3>' +
+                    '<p class="v2h-featured-meta">' + escapeHtml(unitLine) + '</p>' +
+                    (specs ? ('<div class="v2h-featured-specs">' + escapeHtml(specs) + '</div>') : '') +
+                  '</div>' +
+                '</a>'
+            );
+        }).join('');
+        if (featuredCarousel) featuredCarousel.updateNav();
+    }
+
+    function renderFeaturedBuildings(buildings) {
+        const track = document.getElementById('featuredBuildingsTrack');
+        if (!track) return;
+        if (!buildings.length) {
+            track.innerHTML = '<p class="v2h-buildings-loading">Featured buildings will appear here when available.</p>';
+            if (buildingsCarousel) buildingsCarousel.updateNav();
+            return;
+        }
+        track.innerHTML = buildings.map((building, index) => {
+            const displayName = building.building_name || building.address || 'Building';
+            const cover = (Array.isArray(building.images) && building.images[0]) ? building.images[0] : '';
+            const available = Number(building.available_units || 0);
+            const summary = [];
+            summary.push(available > 0 ? (available + ' available') : 'Coming soon');
+            if (building.bedrooms_label) summary.push(building.bedrooms_label);
+            if (building.price_from) summary.push('From ' + formatMoney(building.price_from));
+            const loc = building.neighborhood || building.address || '';
+            const countLabel = available > 0 ? (available + ' available') : 'Coming soon';
+            const payload = escapeHtml(JSON.stringify(building));
+            return (
+                '<button type="button" class="v2h-building-card" data-building-preview=\'' + payload.replace(/'/g, '&#39;') + '\' aria-label="Preview ' + escapeHtml(displayName) + '">' +
+                  '<div class="v2h-building-media">' +
+                    '<img src="' + escapeHtml(cover) + '" alt="' + escapeHtml(displayName) + '" loading="' + (index < 2 ? 'eager' : 'lazy') + '" decoding="async">' +
+                    '<div class="v2h-building-badge">Featured</div>' +
+                    '<div class="v2h-building-count">' + escapeHtml(countLabel) + '</div>' +
+                  '</div>' +
+                  '<div class="v2h-building-body">' +
+                    '<h3 class="v2h-building-name">' + escapeHtml(displayName) + '</h3>' +
+                    '<p class="v2h-building-meta">' + escapeHtml(building.portfolio || '') + '</p>' +
+                    '<p class="v2h-building-loc">' + escapeHtml(loc) + '</p>' +
+                    '<p class="v2h-building-summary">' + escapeHtml(summary.join(' · ')) + '</p>' +
+                    '<div class="v2h-building-cta">Quick view</div>' +
+                  '</div>' +
+                '</button>'
+            );
+        }).join('');
+        if (buildingsCarousel) buildingsCarousel.updateNav();
+    }
+
+    const buildingsSection = document.getElementById('featuredBuildingsSection');
+    const shouldAsync = (buildingsSection && buildingsSection.dataset.async === '1')
+        || document.getElementById('featuredListingsPlaceholder');
+    if (shouldAsync) {
+        const loadingEl = document.getElementById('featuredBuildingsLoading');
+        if (loadingEl) loadingEl.hidden = false;
+        fetch('/api/homepage-featured')
+            .then((response) => response.json())
+            .then((data) => {
+                renderFeaturedListings(Array.isArray(data.featured_listings) ? data.featured_listings : []);
+                renderFeaturedBuildings(Array.isArray(data.featured_buildings) ? data.featured_buildings : []);
+            })
+            .catch((err) => {
+                console.error('Featured content refresh failed', err);
+            })
+            .finally(() => {
+                if (loadingEl) loadingEl.hidden = true;
+            });
+    }
+})();
 </script>
 {% endblock %}
+

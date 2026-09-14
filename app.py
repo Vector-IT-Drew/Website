@@ -9,7 +9,10 @@ from forms import LoginForm, ListingForm, ApplicationForm
 from database import get_listing, get_all_listings, filter_listings_by_budget, filter_listings_by_bedrooms, filter_listings_by_location
 from tour_schedule import build_tour_schedule_url, build_rental_application_url
 from listing_preview import enrich_listing_preview, ensure_listing_coords, format_zip_code
-from listing_featured import get_homepage_featured_content
+from listing_featured import (
+    get_homepage_featured_content,
+    fetch_featured_portfolio_buildings,
+)
 from functools import wraps
 import markdown2
 from dotenv import load_dotenv
@@ -137,21 +140,40 @@ def index():
 
     logging.debug("Returning Homepage")
     if request.args.get('v') == '2':
+        # Fast first paint: MySQL featured buildings only (no Dash fan-out).
+        # Listings + availability enrich in the background via /api/homepage-featured.
         try:
-            all_listings = get_all_listings() or []
-        except Exception:
-            all_listings = []
+            featured_buildings = fetch_featured_portfolio_buildings(
+                dash_host=DASH_SERVICES_ENDPOINT
+            ) or []
+        except Exception as exc:
+            logging.exception("Fast featured buildings failed: %s", exc)
+            featured_buildings = []
+        return render_template(
+            'index_v2.html',
+            featured_listings=[],
+            featured_buildings=featured_buildings,
+            featured_async=True,
+        )
+    return render_template('index.html')
+
+
+@app.route('/api/homepage-featured')
+def api_homepage_featured():
+    """Background payload for homepage featured listings + enriched buildings."""
+    try:
         featured_listings, featured_buildings = get_homepage_featured_content(
-            all_listings,
+            None,
             listing_limit=8,
             dash_host=DASH_SERVICES_ENDPOINT,
         )
-        return render_template(
-            'index_v2.html',
-            featured_listings=featured_listings,
-            featured_buildings=featured_buildings,
-        )
-    return render_template('index.html')
+    except Exception as exc:
+        logging.exception("Homepage featured API failed: %s", exc)
+        featured_listings, featured_buildings = [], []
+    return jsonify({
+        'featured_listings': featured_listings or [],
+        'featured_buildings': featured_buildings or [],
+    })
 
 
 @app.route('/investor-services')

@@ -167,3 +167,14 @@ def test_enrich_buildings_uses_compact_bedroom_range():
     assert enriched[0]['bedrooms_label'] == 'Studio - 3 Bed'
     assert enriched[0]['available_units'] == 3
     assert enriched[0]['price_from'] == 3000.0
+
+
+def test_parse_image_list_handles_json_list_strings():
+    from listing_featured import _parse_image_list
+    assert _parse_image_list('["https://example.com/a.jpg"]') == ['https://example.com/a.jpg']
+    assert _parse_image_list('[https://example.com/a.jpg]') == ['https://example.com/a.jpg']
+    assert _parse_image_list(['https://example.com/a.jpg', 'https://example.com/b.jpg']) == [
+        'https://example.com/a.jpg',
+        'https://example.com/b.jpg',
+    ]
+    assert _parse_image_list('https://example.com/a.jpg') == ['https://example.com/a.jpg']
