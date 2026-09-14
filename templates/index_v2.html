@@ -228,7 +228,7 @@
     }
 
     .v2h-featured-card:hover,
-    .v2h-featured-card:focus-visible {
+    .v2h-featured-card:focus-within {
         border-color: rgba(213, 149, 99, 0.55);
         background: #203148;
         transform: translateY(-2px);
@@ -240,6 +240,14 @@
         aspect-ratio: 4 / 3;
         background: #132338 center/cover no-repeat;
         overflow: hidden;
+    }
+
+    /* Keep photo open-link behind arrows so next/prev never nest inside <a>. */
+    .v2h-featured-media-link {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        display: block;
     }
 
     .v2h-featured-media img {
@@ -267,7 +275,7 @@
         position: absolute;
         left: 0.7rem;
         bottom: 0.7rem;
-        z-index: 1;
+        z-index: 2;
         padding: 0.22rem 0.45rem;
         border: 1px solid rgba(243, 209, 156, 0.4);
         background: rgba(24, 43, 67, 0.72);
@@ -275,6 +283,7 @@
         font-size: 0.58rem;
         letter-spacing: 0.12em;
         text-transform: uppercase;
+        pointer-events: none;
     }
 
     .v2h-featured-media.has-gallery .v2h-featured-badge {
@@ -286,12 +295,12 @@
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
-        z-index: 2;
-        width: 30px;
-        height: 30px;
+        z-index: 3;
+        width: 34px;
+        height: 34px;
         border-radius: 999px;
         border: 1px solid rgba(243, 209, 156, 0.4);
-        background: rgba(10, 22, 40, 0.78);
+        background: rgba(10, 22, 40, 0.82);
         color: #f3d19c;
         display: none;
         align-items: center;
@@ -299,6 +308,7 @@
         cursor: pointer;
         padding: 0;
         font-size: 0.7rem;
+        pointer-events: auto;
     }
 
     .v2h-featured-media.has-gallery:hover .v2h-featured-shot,
@@ -320,7 +330,7 @@
         left: 50%;
         bottom: 0.55rem;
         transform: translateX(-50%);
-        z-index: 2;
+        z-index: 3;
         display: none;
         padding: 0.15rem 0.45rem;
         border: 1px solid rgba(243, 209, 156, 0.28);
@@ -329,6 +339,7 @@
         font-size: 0.62rem;
         letter-spacing: 0.06em;
         white-space: nowrap;
+        pointer-events: none;
     }
 
     .v2h-featured-media.has-gallery .v2h-featured-shot-count {
@@ -347,6 +358,8 @@
         display: flex;
         flex-direction: column;
         gap: 0.2rem;
+        text-decoration: none;
+        color: inherit;
     }
 
     .v2h-featured-price {
@@ -1181,8 +1194,8 @@
                         {% else %}
                             {% set baths_spec = '' %}
                         {% endif %}
-                        <a class="v2h-featured-card"
-                           href="{{ url_for('listing_detail', listing_id=listing.unit_id, v=2) }}">
+                        {% set listing_href = url_for('listing_detail', listing_id=listing.unit_id, v=2) %}
+                        <article class="v2h-featured-card">
                             {% set coming_soon_variants = [
                                 'https://dl.dropboxusercontent.com/scl/fi/fy2wl340lre6y2gm84m13/img-coming-soon-2.jpeg?rlkey=xkao9jz2p6mrznqhb8e3hf7w6&st=k3gwz5kj&dl=0',
                                 'https://dl.dropboxusercontent.com/scl/fi/5kqjpn1lqdt6p73zo5xkj/img-coming-soon-3.jpeg?rlkey=ngk4iu9pvl6jusqps220pi2uv&st=ttncu3xt&dl=0',
@@ -1195,13 +1208,15 @@
                             <div class="v2h-featured-media{% if listing.unit_images and listing.unit_images|length > 1 %} has-gallery{% endif %}"
                                  data-images='{{ unit_gallery|tojson }}'
                                  data-image-index="0">
-                                <img src="{{ unit_gallery[0] }}"
-                                     alt="{{ unit_line }}"
-                                     loading="{% if loop.index <= 2 %}eager{% else %}lazy{% endif %}"
-                                     decoding="async"
-                                     {% if loop.index == 1 %}fetchpriority="high"{% endif %}
-                                     data-fallback="{{ coming_soon }}"
-                                     onerror="window.v2hFeaturedImgError && window.v2hFeaturedImgError(this)">
+                                <a class="v2h-featured-media-link" href="{{ listing_href }}" tabindex="-1" aria-label="View {{ unit_line }}">
+                                    <img src="{{ unit_gallery[0] }}"
+                                         alt="{{ unit_line }}"
+                                         loading="{% if loop.index <= 2 %}eager{% else %}lazy{% endif %}"
+                                         decoding="async"
+                                         {% if loop.index == 1 %}fetchpriority="high"{% endif %}
+                                         data-fallback="{{ coming_soon }}"
+                                         onerror="window.v2hFeaturedImgError && window.v2hFeaturedImgError(this)">
+                                </a>
                                 {% if listing.unit_images and listing.unit_images|length > 1 %}
                                 <button type="button" class="v2h-featured-shot prev" aria-label="Previous unit photo">
                                     <i class="fas fa-chevron-left"></i>
@@ -1213,7 +1228,7 @@
                                 {% endif %}
                                 <div class="v2h-featured-badge">{{ listing.availability_label or 'Available Now' }}</div>
                             </div>
-                            <div class="v2h-featured-body">
+                            <a class="v2h-featured-body" href="{{ listing_href }}">
                                 <div class="v2h-featured-price">
                                     {% if listing.actual_rent is none or listing.actual_rent == 'N/A' or not listing.actual_rent %}
                                         Price on request
@@ -1230,8 +1245,8 @@
                                     {% if baths_spec %}{{ baths_spec }}{% endif %}
                                 </div>
                                 {% endif %}
-                            </div>
-                        </a>
+                            </a>
+                        </article>
                         {% endfor %}
                     </div>
                 </div>
@@ -1771,19 +1786,21 @@
                   )
                 : '';
             return (
-                '<a class="v2h-featured-card" href="' + href + '">' +
+                '<article class="v2h-featured-card">' +
                   '<div class="v2h-featured-media' + galleryClass + '" data-images=\'' + imagesAttr.replace(/'/g, '&#39;') + '\' data-image-index="0">' +
-                    '<img src="' + escapeHtml(image) + '" alt="' + escapeHtml(unitLine) + '" loading="' + (index < 2 ? 'eager' : 'lazy') + '" decoding="async" data-fallback="' + escapeHtml(fallback) + '" onerror="window.v2hFeaturedImgError && window.v2hFeaturedImgError(this)">' +
+                    '<a class="v2h-featured-media-link" href="' + href + '" tabindex="-1" aria-label="View ' + escapeHtml(unitLine) + '">' +
+                      '<img src="' + escapeHtml(image) + '" alt="' + escapeHtml(unitLine) + '" loading="' + (index < 2 ? 'eager' : 'lazy') + '" decoding="async" data-fallback="' + escapeHtml(fallback) + '" onerror="window.v2hFeaturedImgError && window.v2hFeaturedImgError(this)">' +
+                    '</a>' +
                     galleryControls +
                     badge +
                   '</div>' +
-                  '<div class="v2h-featured-body">' +
+                  '<a class="v2h-featured-body" href="' + href + '">' +
                     '<div class="v2h-featured-price">' + price + '</div>' +
                     '<h3 class="v2h-featured-name">' + escapeHtml(displayName) + '</h3>' +
                     '<p class="v2h-featured-meta">' + unitMeta + '</p>' +
                     (specs ? ('<div class="v2h-featured-specs">' + escapeHtml(specs) + '</div>') : '') +
-                  '</div>' +
-                '</a>'
+                  '</a>' +
+                '</article>'
             );
         }).join('');
         if (featuredCarousel) featuredCarousel.updateNav();
@@ -1991,6 +2008,7 @@
         if (unitShot) {
             event.preventDefault();
             event.stopPropagation();
+            if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
             const media = unitShot.closest('.v2h-featured-media');
             if (!media) return;
             const current = Number(media.dataset.imageIndex || 0) || 0;
@@ -2001,6 +2019,7 @@
         if (!shot) return;
         event.preventDefault();
         event.stopPropagation();
+        if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
         const media = shot.closest('.v2h-building-media');
         if (!media) return;
         const current = Number(media.dataset.imageIndex || 0) || 0;
