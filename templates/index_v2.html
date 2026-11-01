@@ -25,11 +25,12 @@
         min-height: 100dvh;
         min-height: 100svh;
         display: flex;
-        align-items: center;
+        /* Pin brand to the top under the nav (not vertically centered) */
+        align-items: flex-start;
         justify-content: center;
         overflow: hidden;
         background-color: #182b43;
-        /* Keep logo / CTAs in the band under the fixed nav (not under it) */
+        /* Hard-coded clearance for fixed navbar height */
         padding-top: 4.5rem;
         box-sizing: border-box;
     }
@@ -86,11 +87,10 @@
         position: relative;
         z-index: 2;
         width: 100%;
-        /* Room above for nav clearance + room below for Explore */
-        padding: 1.25rem 0 6.5rem;
+        /* Hard 8px gap under the navbar — no vh translate (that sank the logo on iPad) */
+        padding: 0.5rem 0 6.5rem;
         text-align: center;
-        /* Raise logo / slogan while keeping nav clearance; +125px places brand + CTAs lower */
-        transform: translateY(calc(-20vh + 125px));
+        transform: none;
     }
 
     .v2h-brand {
